@@ -1,0 +1,10 @@
+__pycache__/
+build/
+dist/
+build_env/
+.idea/
+secrets/
+*.spec
+images/
+scraping/images_jpg/
+models/

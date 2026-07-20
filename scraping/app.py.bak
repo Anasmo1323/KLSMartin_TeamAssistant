@@ -1,0 +1,1798 @@
+import sys
+import os
+import re
+import io
+import ctypes
+import pandas as pd
+from PIL import Image as PILImage
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import mm
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_CENTER
+from reportlab.platypus import (SimpleDocTemplate, Table, TableStyle, Paragraph,
+                                 Image as RLImage, Spacer)
+from PyQt6.QtWidgets import (QApplication, QMainWindow, QTabWidget, QWidget,
+                             QVBoxLayout, QHBoxLayout, QPushButton, QFileDialog,
+                             QTableWidget, QTableWidgetItem, QLineEdit, QLabel,
+                             QDialog, QComboBox, QFormLayout, QMessageBox, QHeaderView,
+                             QStyleFactory, QCheckBox, QScrollArea, QFrame, QTextBrowser,
+                             QMenu, QInputDialog, QSplitter)
+from PyQt6.QtCore import Qt, QEvent, pyqtSignal
+from PyQt6.QtGui import QPalette, QColor, QFont, QIntValidator, QIcon, QPixmap, QTextDocument
+from PyQt6.QtPrintSupport import QPrinter
+from PyQt6.QtGui import QPalette, QColor, QFont, QIntValidator, QIcon, QPixmap, QTextDocument, QPainter
+APP_STYLESHEET = """
+QMainWindow, QDialog {
+    background-color: #F4F6F9;
+}
+QWidget {
+    font-family: 'Segoe UI';
+    font-size: 10pt;
+    color: #1F2937;
+}
+QLabel {
+    color: #1F2937;
+    background: transparent;
+}
+
+/* Tabs */
+QTabWidget::pane {
+    border: 1px solid #DDE3EC;
+    border-radius: 8px;
+    background: #FFFFFF;
+    top: -1px;
+}
+QTabBar::tab {
+    background: #E7EBF2;
+    color: #52607A;
+    padding: 9px 22px;
+    margin-right: 3px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    font-weight: 600;
+}
+QTabBar::tab:selected {
+    background: #FFFFFF;
+    color: #111827;
+    border-bottom: 3px solid #2563EB;
+}
+QTabBar::tab:hover:!selected {
+    background: #F0F3F9;
+}
+
+/* Buttons */
+QPushButton {
+    background-color: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    border-radius: 6px;
+    padding: 7px 16px;
+    color: #1F2937;
+    font-weight: 500;
+}
+QPushButton:hover {
+    background-color: #F1F5F9;
+    border-color: #94A3B8;
+}
+QPushButton:pressed {
+    background-color: #E2E8F0;
+}
+QPushButton:disabled {
+    color: #A0AAB8;
+    background-color: #F3F4F6;
+    border-color: #E2E8F0;
+}
+QPushButton#primaryButton {
+    background-color: #2563EB;
+    border: 1px solid #2563EB;
+    color: #FFFFFF;
+}
+QPushButton#primaryButton:hover {
+    background-color: #1D4ED8;
+}
+QPushButton#primaryButton:pressed {
+    background-color: #1E40AF;
+}
+QPushButton#primaryButton:disabled {
+    background-color: #93B4F5;
+    border-color: #93B4F5;
+    color: #F0F4FF;
+}
+QPushButton#addButton {
+    background-color: #16A34A;
+    border: 1px solid #16A34A;
+    color: #FFFFFF;
+    border-radius: 12px;
+    padding: 0px;
+    font-weight: 700;
+    font-size: 16px;
+}
+QPushButton#addButton:hover {
+    background-color: #15803D;
+    border-color: #15803D;
+}
+QPushButton#addButton:pressed {
+    background-color: #166534;
+}
+QPushButton#removeButton {
+    background-color: #DC2626;
+    border: 1px solid #DC2626;
+    color: #FFFFFF;
+    border-radius: 12px;
+    padding: 0px;
+    font-weight: 700;
+    font-size: 16px;
+}
+QPushButton#removeButton:hover {
+    background-color: #B91C1C;
+    border-color: #B91C1C;
+}
+QPushButton#removeButton:pressed {
+    background-color: #991B1B;
+}
+
+/* Inputs */
+QLineEdit, QComboBox {
+    background-color: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    border-radius: 6px;
+    padding: 5px 8px;
+    selection-background-color: #2563EB;
+    selection-color: #FFFFFF;
+}
+QLineEdit:focus, QComboBox:focus {
+    border: 1px solid #2563EB;
+}
+QLineEdit:disabled {
+    background-color: #F3F4F6;
+    color: #A0AAB8;
+}
+QComboBox::drop-down {
+    border: none;
+    width: 22px;
+}
+
+/* Tables */
+QTableWidget {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    gridline-color: #EEF1F6;
+    selection-background-color: #DBEAFE;
+    selection-color: #1E3A8A;
+    alternate-background-color: #F8FAFC;
+}
+QTableWidget::item {
+    padding: 5px;
+}
+QHeaderView::section {
+    background-color: #F1F5F9;
+    color: #334155;
+    padding: 7px;
+    border: none;
+    border-bottom: 1px solid #E2E8F0;
+    border-right: 1px solid #E9EDF3;
+    font-weight: 600;
+}
+QTableCornerButton::section {
+    background-color: #F1F5F9;
+    border: none;
+}
+
+QCheckBox {
+    spacing: 6px;
+}
+
+/* Side panel card */
+QFrame#productSidePanel {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+}
+
+QTextBrowser {
+    border: none;
+    background: transparent;
+}
+
+/* Scrollbars */
+QScrollBar:vertical {
+    background: #F1F5F9;
+    width: 11px;
+    margin: 0;
+    border-radius: 5px;
+}
+QScrollBar::handle:vertical {
+    background: #CBD5E1;
+    border-radius: 5px;
+    min-height: 24px;
+}
+QScrollBar::handle:vertical:hover {
+    background: #94A3B8;
+}
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+}
+QScrollBar:horizontal {
+    background: #F1F5F9;
+    height: 11px;
+    border-radius: 5px;
+}
+QScrollBar::handle:horizontal {
+    background: #CBD5E1;
+    border-radius: 5px;
+    min-width: 24px;
+}
+QScrollBar::handle:horizontal:hover {
+    background: #94A3B8;
+}
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
+    width: 0px;
+}
+
+QMenu {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    padding: 4px;
+}
+QMenu::item {
+    padding: 6px 20px;
+    border-radius: 4px;
+}
+QMenu::item:selected {
+    background-color: #EFF6FF;
+    color: #1D4ED8;
+}
+"""
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
+class DynamicTableWidget(QTableWidget):
+    """Custom Table Widget allowing column renaming and removal via header right-click."""
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.horizontalHeader().setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.horizontalHeader().customContextMenuRequested.connect(self.show_header_menu)
+        self.setAlternatingRowColors(True)
+        self.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        self.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
+        self.verticalHeader().setVisible(False)
+        self.setVerticalScrollMode(QTableWidget.ScrollMode.ScrollPerPixel)
+
+    def show_header_menu(self, pos):
+        col_index = self.horizontalHeader().logicalIndexAt(pos)
+        if col_index < 0:
+            return
+
+        menu = QMenu(self)
+        rename_action = menu.addAction("Rename Column")
+        hide_action = menu.addAction("Hide Column")
+
+        action = menu.exec(self.horizontalHeader().mapToGlobal(pos))
+
+        if action == rename_action:
+            current_name = self.horizontalHeaderItem(col_index).text() if self.horizontalHeaderItem(col_index) else ""
+            new_name, ok = QInputDialog.getText(self, "Rename Column", "Enter new column name:", text=current_name)
+            if ok and new_name.strip():
+                if not self.horizontalHeaderItem(col_index):
+                    self.setHorizontalHeaderItem(col_index, QTableWidgetItem())
+                self.horizontalHeaderItem(col_index).setText(new_name.strip())
+
+        elif action == hide_action:
+            self.setColumnHidden(col_index, True)
+class FullscreenImageDialog(QDialog):
+    """Dialog window to display the full-resolution image safely."""
+    def __init__(self, image_path, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Full Screen Image Viewer")
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowMaximizeButtonHint)
+        self.resize(800, 600)
+        
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        
+        # Reuse our smart painting label for the full screen to prevent growth loops
+        self.img_label = ClickableImageLabel()
+        self.img_label.setToolTip("") 
+        self.img_label.setCursor(Qt.CursorShape.ArrowCursor)
+        self.img_label.setStyleSheet("background-color: #000000;") # Optional: dark background for viewer
+        
+        pixmap = QPixmap(image_path)
+        self.img_label.set_image(pixmap, None)
+        
+        layout.addWidget(self.img_label)
+
+
+class ClickableImageLabel(QLabel):
+    """Custom label that natively scales and centers images using QPainter."""
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.current_image_path = None
+        self.current_pixmap = None
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.setToolTip("Double-click to expand image")
+        self.setMinimumSize(100, 100) # Allows shrinking when panel is resized
+        self.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+    def set_image(self, pixmap, path):
+        self.current_pixmap = pixmap
+        self.current_image_path = path
+        self.setText("") # Clear fallback text
+        self.update() # Trigger a repaint
+        
+    def clear_image(self, text):
+        self.current_pixmap = None
+        self.current_image_path = None
+        self.setText(text)
+        self.update()
+
+    def paintEvent(self, event):
+        """Draws the image natively centered while preserving aspect ratio."""
+        # 1. Allow the base QLabel to paint the background and borders first
+        super().paintEvent(event)
+        
+        # 2. Open our custom painter only if there is an image to draw
+        if self.current_pixmap and not self.current_pixmap.isNull():
+            painter = QPainter(self)
+            painter.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform)
+            
+            scaled = self.current_pixmap.scaled(
+                self.size(), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation
+            )
+            
+            # Calculate precise center coordinates
+            x = int((self.width() - scaled.width()) / 2)
+            y = int((self.height() - scaled.height()) / 2)
+            
+            # Draw the image in the calculated center
+            painter.drawPixmap(x, y, scaled)
+            
+            # 3. Explicitly close the painter to free the memory and avoid engine conflicts
+            painter.end()
+
+    def mouseDoubleClickEvent(self, event):
+        if event.button() == Qt.MouseButton.LeftButton and self.current_image_path:
+            if os.path.exists(self.current_image_path):
+                dialog = FullscreenImageDialog(self.current_image_path, self)
+                dialog.exec()
+class ProductSidePanel(QFrame):
+    def __init__(self, master_tab, parent=None):
+        super().__init__(parent)
+        self.master_tab = master_tab
+        self.setFixedWidth(350)
+        self.setObjectName("productSidePanel")
+        self.init_ui()
+
+    def init_ui(self):
+        panel_layout = QVBoxLayout(self)
+        panel_layout.setContentsMargins(16, 16, 16, 16)
+        panel_layout.setSpacing(10)
+
+        header_layout = QHBoxLayout()
+        title = QLabel("Product Master Data")
+        title.setStyleSheet("font-size: 12px; font-weight: 700; color: #64748B; letter-spacing: 0.5px;")
+        header_layout.addWidget(title)
+        panel_layout.addLayout(header_layout, stretch=0)
+
+        # 40% Height Allocation via stretch
+        self.image_label = ClickableImageLabel()
+        self.image_label.clear_image("No Image Selected")
+        self.image_label.setStyleSheet("border: 1px solid #E2E8F0; border-radius: 6px; background-color: #F8FAFC;")
+        panel_layout.addWidget(self.image_label, stretch=40) 
+
+        # 60% Height Allocation for text data via stretch
+        text_layout = QVBoxLayout()
+        text_layout.setSpacing(6)
+        
+        self.arabic_label = QLabel("")
+        self.arabic_label.setWordWrap(True)
+        self.arabic_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop)
+        self.arabic_label.setStyleSheet("font-size: 14px; font-weight: bold; color: #1F2937;")
+        text_layout.addWidget(self.arabic_label)
+
+        self.panel_content = QTextBrowser()
+        self.panel_content.setOpenExternalLinks(True)
+        text_layout.addWidget(self.panel_content)
+        
+        panel_layout.addLayout(text_layout, stretch=60)
+
+    def update_panel(self, code_val):
+        master_df = self.master_tab.df
+        if master_df is None or master_df.empty:
+            self.arabic_label.setText("الترجمة غير متوفرة")
+            self.image_label.setText("No Master Data Available")
+            self.panel_content.setHtml("<i>Please upload Master CSV.</i>")
+            return
+
+        clean_code = str(code_val).replace('-', '').strip().lower()
+        mask = master_df['code'].astype(str).str.replace('-', '').str.strip().str.lower() == clean_code
+        match = master_df[mask]
+
+        if match.empty:
+            self.arabic_label.setText("الترجمة غير متوفرة")
+            self.image_label.clear()
+            self.image_label.setText("No Image Available")
+            self.panel_content.setHtml(f"<h3 style='color:red;'>Code Not Found</h3><p>'{code_val}' does not exist.</p>")
+            return
+
+        row = match.iloc[0]
+
+        description_arabic = row.get('description_arabic', '')
+        if pd.isna(description_arabic) or str(description_arabic).strip() == "":
+            self.arabic_label.setText("الترجمة غير متوفرة")
+        else:
+            self.arabic_label.setText(str(description_arabic))
+
+        # 2. Update Image
+        local_image_path = row.get('local_image_path', '')
+        if pd.isna(local_image_path) or str(local_image_path).strip() in {"", "No Image", "Download Failed", "HTTP Error"}:
+            self.image_label.clear_image("No Image Available")
+        else:
+            image_path = str(local_image_path)
+            if os.path.exists(image_path):
+                pixmap = QPixmap(image_path)
+                if not pixmap.isNull():
+                    self.image_label.set_image(pixmap, image_path)
+                else:
+                    self.image_label.clear_image("No Image Available")
+            else:
+                self.image_label.clear_image("Image File Missing")
+
+        url = row.get("product_url", "#")
+        url_html = f"<a href='{url}'>Open on KLS Martin Website</a>" if "http" in str(url) else "N/A"
+        html = f"""
+        <h3 style='color:#007BFF;'>{row.get('code', code_val)}</h3>
+        <p><b>Description:</b><br> {row.get('description', 'N/A')}</p>
+        <hr/>
+        <p><b>Associated Catalogues:</b> {self.master_tab.process_brochures(row.get('brochures', ''))}</p>
+        <hr/>
+        <p><b>Web Link:</b><br>{url_html}</p>
+        """
+        self.panel_content.setHtml(html)
+class PdfSettingsDialog(QDialog):
+    """Dialog to gather custom header information and export preferences for the PDF."""
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("PDF Export Settings")
+        self.resize(400, 250)
+        self.init_ui()
+
+    def init_ui(self):
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(20, 20, 20, 20)
+        layout.setSpacing(12)
+
+        form_layout = QFormLayout()
+        form_layout.setSpacing(10)
+        
+        self.txt_company = QLineEdit("KLS Martin SE & Co. KG, Europe")
+        form_layout.addRow("<b>Main Header:</b>", self.txt_company)
+        
+        self.txt_subtitle = QLineEdit("KLS Martin Products")
+        form_layout.addRow("<b>Sub-Header:</b>", self.txt_subtitle)
+        
+        self.txt_reference = QLineEdit("Official Offer Document")
+        form_layout.addRow("<b>Reference text:</b>", self.txt_reference)
+        
+        layout.addLayout(form_layout)
+
+        self.chk_images = QCheckBox("Include Product Images")
+        self.chk_images.setChecked(True)
+        layout.addWidget(self.chk_images)
+
+        btn_layout = QHBoxLayout()
+        self.btn_export = QPushButton("Generate PDF")
+        self.btn_export.setObjectName("primaryButton")
+        self.btn_export.clicked.connect(self.accept)
+        self.btn_cancel = QPushButton("Cancel")
+        self.btn_cancel.clicked.connect(self.reject)
+        
+        btn_layout.addStretch()
+        btn_layout.addWidget(self.btn_cancel)
+        btn_layout.addWidget(self.btn_export)
+        
+        layout.addLayout(btn_layout)
+
+    def get_settings(self):
+        return {
+            "header": self.txt_company.text().strip(),
+            "subheader": self.txt_subtitle.text().strip(),
+            "reference": self.txt_reference.text().strip(),
+            "include_images": self.chk_images.isChecked()
+        }
+class OfferTab(QWidget):
+    def __init__(self, master_tab):
+        super().__init__()
+        self.master_tab = master_tab
+        self.offer_data = []
+        self.init_ui()
+
+    def init_ui(self):
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(4, 4, 4, 4)
+        layout.setSpacing(8)
+
+        left_widget = QWidget()
+        left_layout = QVBoxLayout(left_widget)
+        left_layout.setContentsMargins(0,0,0,0)
+        left_layout.setSpacing(8)
+
+        header_layout = QHBoxLayout()
+        header_layout.addWidget(QLabel("<b>Available Products</b>"))
+        self.btn_refresh = QPushButton("Load Master Data")
+        self.btn_refresh.clicked.connect(self.load_master_data)
+        header_layout.addWidget(self.btn_refresh)
+        left_layout.addLayout(header_layout)
+
+        self.txt_search = QLineEdit()
+        self.txt_search.setPlaceholderText("Search code or description...")
+        self.txt_search.textChanged.connect(self.filter_master)
+        left_layout.addWidget(self.txt_search)
+
+        self.master_table = DynamicTableWidget()
+        self.master_table.setColumnCount(3)
+        self.master_table.setHorizontalHeaderLabels(["ADD", "CODE", "DESCRIPTION"])
+        self.master_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
+        self.master_table.setColumnWidth(0, 68)
+        left_layout.addWidget(self.master_table)
+
+        right_widget = QWidget()
+        right_layout = QVBoxLayout(right_widget)
+        right_layout.setContentsMargins(0,0,0,0)
+        right_layout.addWidget(QLabel("<b>Current Offer List</b>"))
+
+        self.offer_table = DynamicTableWidget()
+        self.offer_table.setColumnCount(4)
+        self.offer_table.setHorizontalHeaderLabels(["", "CODE", "DESCRIPTION", "QTY"])
+        self.offer_table.setColumnWidth(0, 54)
+        self.offer_table.itemChanged.connect(self.on_offer_item_changed)
+        right_layout.addWidget(self.offer_table)
+
+        btn_layout = QHBoxLayout()
+        self.btn_clear = QPushButton("Clear List")
+        self.btn_clear.clicked.connect(self.clear_offer_list)
+        self.btn_export_excel = QPushButton("Export to Excel")
+        self.btn_export_excel.clicked.connect(self.export_excel)
+        self.btn_export_pdf = QPushButton("Export to PDF")
+        self.btn_export_pdf.setObjectName("primaryButton")
+        self.btn_export_pdf.clicked.connect(self.export_pdf)
+
+        self.btn_bulk_upload = QPushButton("Bulk Upload (Excel/CSV)")
+        self.btn_bulk_upload.clicked.connect(self.bulk_upload_offer)
+
+        btn_layout.addWidget(self.btn_clear)
+        btn_layout.addStretch()
+        btn_layout.addWidget(self.btn_bulk_upload)
+        btn_layout.addWidget(self.btn_export_excel)
+        btn_layout.addWidget(self.btn_export_pdf)
+        right_layout.addLayout(btn_layout)
+
+        splitter = QSplitter(Qt.Orientation.Horizontal)
+        splitter.addWidget(left_widget)
+        splitter.addWidget(right_widget)
+        layout.addWidget(splitter)
+
+    def load_master_data(self):
+        df = self.master_tab.df
+        if df is None or df.empty:
+            QMessageBox.warning(self, "No Data", "Please load the Master CSV in the first tab.")
+            return
+        self.populate_master_table(df)
+
+    def populate_master_table(self, dataframe):
+        self.master_table.setRowCount(len(dataframe))
+        self.master_table.setColumnWidth(0, 48)
+        for row_idx, (_, row) in enumerate(dataframe.iterrows()):
+            code = str(row.get('code', ''))
+            desc = str(row.get('description', ''))
+
+            btn = QPushButton("+")
+            btn.setObjectName("addButton")
+            btn.setStyleSheet("color: #000000;")
+            btn.setFixedSize(24, 24)
+            btn.setCursor(Qt.CursorShape.PointingHandCursor)
+            btn.setToolTip(f"Add {code} to offer list")
+            btn.clicked.connect(lambda _, c=code, d=desc: self.add_to_offer(c, d))
+
+            btn_container = QWidget()
+            btn_container.setObjectName("addButtonCell")
+            btn_container.setStyleSheet("QWidget { background: transparent; }")
+            btn_layout = QHBoxLayout(btn_container)
+            btn_layout.setContentsMargins(0, 0, 0, 0)
+            btn_layout.addWidget(btn, alignment=Qt.AlignmentFlag.AlignCenter)
+            self.master_table.setRowHeight(row_idx, 36)
+            self.master_table.setCellWidget(row_idx, 0, btn_container)
+
+            item_code = QTableWidgetItem(code)
+            item_code.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
+            self.master_table.setItem(row_idx, 1, item_code)
+
+            item_desc = QTableWidgetItem(desc)
+            item_desc.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
+            self.master_table.setItem(row_idx, 2, item_desc)
+
+    def filter_master(self):
+        search_txt = self.txt_search.text().strip().lower()
+        df = self.master_tab.df
+        if df is None or df.empty:
+            return
+
+        if search_txt:
+            mask = df.astype(str).apply(lambda x: x.str.lower().str.contains(search_txt)).any(axis=1)
+            filtered_df = df[mask]
+        else:
+            filtered_df = df
+        self.populate_master_table(filtered_df)
+
+    def _add_or_merge_offer_item(self, code, desc, qty):
+        """Add a new offer row, or if the code already exists, add the qty to the existing row."""
+        clean_code = str(code).replace('-', '').strip().lower()
+        for existing in self.offer_data:
+            if str(existing["code"]).replace('-', '').strip().lower() == clean_code:
+                existing["qty"] += qty
+                return
+        self.offer_data.append({"code": code, "desc": desc, "qty": qty})
+
+    def add_to_offer(self, code, desc):
+        qty, ok = QInputDialog.getInt(self, "Quantity", f"Enter quantity for {code}:", 1, 1, 9999)
+        if ok:
+            self._add_or_merge_offer_item(code, desc, qty)
+            self.refresh_offer_table()
+
+    def refresh_offer_table(self):
+        self.offer_table.blockSignals(True)
+        self.offer_table.clearSpans() # Reset spans to prevent rendering glitches
+        self.offer_table.setRowCount(len(self.offer_data))
+        
+        for i, data in enumerate(self.offer_data):
+            btn = QPushButton("−")
+            btn.setObjectName("removeButton")
+            btn.setStyleSheet("color: #000000;")
+            btn.setFixedSize(24, 24)
+            btn.setCursor(Qt.CursorShape.PointingHandCursor)
+            btn.setToolTip("Remove from offer list")
+            btn.clicked.connect(lambda _, row=i: self.remove_offer_item(row))
+
+            btn_container = QWidget()
+            btn_container.setStyleSheet("QWidget { background: transparent; }")
+            btn_layout = QHBoxLayout(btn_container)
+            btn_layout.setContentsMargins(0, 0, 0, 0)
+            btn_layout.addWidget(btn, alignment=Qt.AlignmentFlag.AlignCenter)
+            self.offer_table.setRowHeight(i, 36)
+            self.offer_table.setCellWidget(i, 0, btn_container)
+
+            if data.get("is_section", False):
+                # Render Section Header spanning across columns 1, 2, and 3
+                item_desc = QTableWidgetItem(data["desc"])
+                item_desc.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsEnabled)
+                item_desc.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
+                item_desc.setBackground(QColor("#DDE3EC"))
+                item_desc.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                
+                self.offer_table.setItem(i, 1, item_desc)
+                self.offer_table.setSpan(i, 1, 1, 3) 
+            else:
+                # Render Standard Item
+                item_code = QTableWidgetItem(data["code"])
+                item_code.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsEnabled)
+                self.offer_table.setItem(i, 1, item_code)
+
+                item_desc = QTableWidgetItem(data["desc"])
+                item_desc.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsEnabled)
+                self.offer_table.setItem(i, 2, item_desc)
+
+                item_qty = QTableWidgetItem(str(data["qty"]))
+                item_qty.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsEnabled)
+                self.offer_table.setItem(i, 3, item_qty)
+
+        self.offer_table.blockSignals(False)
+
+    def on_offer_item_changed(self, item):
+        row = item.row()
+        col = item.column()
+
+        if row < 0 or row >= len(self.offer_data):
+            return
+
+        new_val = item.text().strip()
+
+        if col == 1:
+            self.offer_data[row]["code"] = new_val
+        elif col == 2:
+            self.offer_data[row]["desc"] = new_val
+        elif col == 3:
+            try:
+                self.offer_data[row]["qty"] = int(new_val)
+            except ValueError:
+                pass
+
+    def remove_offer_item(self, row_idx):
+        if 0 <= row_idx < len(self.offer_data):
+            self.offer_data.pop(row_idx)
+            self.refresh_offer_table()
+
+    def clear_offer_list(self):
+        self.offer_data.clear()
+        self.refresh_offer_table()
+
+    def bulk_upload_offer(self):
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Open Offer Upload File",
+            "",
+            "Data Files (*.csv *.xlsx *.xls)"
+        )
+        if not file_path:
+            return
+
+        dlg = MappingDialog(file_path, ['code', 'description', 'quantity'], allow_extras=False, parent=self)
+        if dlg.exec() != QDialog.DialogCode.Accepted:
+            return
+
+        try:
+            if file_path.lower().endswith('.csv'):
+                raw_df = pd.read_csv(file_path)
+            else:
+                raw_df = pd.read_excel(file_path, sheet_name=dlg.selected_sheet)
+
+            rename_map = {'code': 'code', 'description': 'desc', 'quantity': 'qty'}
+            mapped_cols = {}
+            for source_col, target_key in rename_map.items():
+                if source_col in dlg.mappings:
+                    mapped_cols[source_col] = dlg.mappings[source_col]
+                else:
+                    mapped_cols[source_col] = None
+
+            if mapped_cols['code'] is None or mapped_cols['description'] is None or mapped_cols['quantity'] is None:
+                QMessageBox.warning(self, "Invalid Mapping", "Please map 'code', 'description', and 'quantity' columns.")
+                return
+
+            upload_df = raw_df[[mapped_cols['code'], mapped_cols['description'], mapped_cols['quantity']]].copy()
+            upload_df.columns = ['code', 'desc', 'qty']
+            upload_df['qty'] = pd.to_numeric(upload_df['qty'], errors='coerce').fillna(0).astype(int)
+
+            master_df = self.master_tab.df
+            if master_df is None or master_df.empty:
+                QMessageBox.warning(self, "No Master Data", "Please load the master catalogue before bulk uploading offers.")
+                return
+
+            master_codes = set(master_df['code'].astype(str).str.replace('-', '').str.strip().str.lower())
+            valid_rows = []
+            skipped_codes = []
+
+            for _, row in upload_df.iterrows():
+                code_val = str(row['code']).strip() if pd.notna(row['code']) else ""
+                desc_val = str(row['desc']).strip() if pd.notna(row['desc']) else ""
+
+                # SECTION HEADER DETECTION: No code, but has a description
+                if (not code_val or code_val.lower() == 'nan') and desc_val and desc_val.lower() != 'nan':
+                    self.offer_data.append({"code": "", "desc": desc_val, "qty": "", "is_section": True})
+                    valid_rows.append(desc_val)
+                    continue
+
+                if not code_val or code_val.lower() == 'nan':
+                    continue
+
+                normalized_code = code_val.replace('-', '').strip().lower()
+                if normalized_code not in master_codes:
+                    skipped_codes.append(code_val)
+                    continue
+
+                qty_val = int(row['qty']) if pd.notna(row['qty']) else 1
+                
+                # Append directly instead of merging to preserve sequential sets and individual item quantities.
+                # Use desc_val straight from the uploaded Excel sheet instead of querying the master DB.
+                self.offer_data.append({"code": code_val, "desc": desc_val, "qty": qty_val, "is_section": False})
+                valid_rows.append(code_val)
+
+            if valid_rows:
+                self.refresh_offer_table()
+
+            if skipped_codes:
+                QMessageBox.warning(
+                    self,
+                    "Skipped Invalid Codes",
+                    f"The following codes were skipped because they were not found in the master catalogue:\n{', '.join(sorted(set(skipped_codes)))}"
+                )
+            else:
+                QMessageBox.information(self, "Bulk Upload Complete", "All uploaded items and sections were added.")
+        except Exception as e:
+            QMessageBox.critical(self, "Bulk Upload Error", f"Failed to process uploaded file: {e}")
+
+    def export_excel(self):
+        if not self.offer_data:
+            return
+        path, _ = QFileDialog.getSaveFileName(self, "Save Excel", "Offer_List.xlsx", "Excel Files (*.xlsx)")
+        if path:
+            export_list = []
+            for data in self.offer_data:
+                if data.get("is_section", False):
+                    export_list.append({
+                        "CODE": "", 
+                        "DESCRIPTION": data["desc"], 
+                        "QTY": ""
+                    })
+                else:
+                    export_list.append({
+                        "CODE": data["code"], 
+                        "DESCRIPTION": data["desc"], 
+                        "QTY": data["qty"]
+                    })
+
+            df = pd.DataFrame(export_list)
+            df.to_excel(path, index=False)
+            QMessageBox.information(self, "Success", "Excel Exported Successfully.")
+
+    def _find_image_path(self, code):
+        """Look up the local product image path for a given code from the master data."""
+        master_df = self.master_tab.df
+        if master_df is None or master_df.empty:
+            return None
+        mask = master_df['code'].astype(str).str.replace('-', '').str.strip().str.lower() == str(code).replace('-', '').strip().lower()
+        match = master_df[mask]
+        if match.empty:
+            return None
+        img_path = str(match.iloc[0].get('local_image_path', ''))
+        return img_path if img_path and os.path.exists(img_path) else None
+
+    def _scaled_pdf_image(self, img_path, max_w_mm=22, max_h_mm=15):
+        """Return an RLImage flowable scaled to fit within the given box, preserving aspect ratio.
+
+        Many instrument photos (scissors, forceps, etc.) are long and thin. If the box is
+        landscape and the photo is portrait (or vice versa), scaling it upright can shrink it
+        to a sliver. So we compare the achievable scale upright vs. rotated 90 degrees and use
+        whichever orientation renders it meaningfully larger and clearer.
+        """
+        max_w, max_h = max_w_mm * mm, max_h_mm * mm
+        try:
+            img = PILImage.open(img_path)
+            img.load()
+        except Exception:
+            return Paragraph("N/A", ParagraphStyle("na", fontSize=7, alignment=TA_CENTER))
+
+        w, h = img.size
+        ratio_upright = min(max_w / w, max_h / h)
+        ratio_rotated = min(max_w / h, max_h / w)
+
+        # Only rotate if it's a clear win (avoids flipping near-square images for no reason)
+        if ratio_rotated > ratio_upright * 1.15:
+            img = img.rotate(-90, expand=True)
+            w, h = img.size
+            ratio = ratio_rotated
+        else:
+            ratio = ratio_upright
+
+        buf = io.BytesIO()
+        img.convert("RGB").save(buf, format="PNG")
+        buf.seek(0)
+        return RLImage(buf, width=w * ratio, height=h * ratio)
+
+    def export_pdf(self):
+        if not self.offer_data:
+            return
+
+        settings_dialog = PdfSettingsDialog(self)
+        if settings_dialog.exec() != QDialog.DialogCode.Accepted:
+            return
+        settings = settings_dialog.get_settings()
+
+        path, _ = QFileDialog.getSaveFileName(self, "Save PDF", "Offer_List.pdf", "PDF Files (*.pdf)")
+        if not path:
+            return
+
+        try:
+            styles = getSampleStyleSheet()
+            cell_style = ParagraphStyle("cell", parent=styles["Normal"], fontSize=8, leading=10)
+            qty_style = ParagraphStyle("qty", parent=cell_style, alignment=TA_CENTER)
+            header_cell_style = ParagraphStyle(
+                "hcell", parent=styles["Normal"], fontSize=8, leading=10,
+                textColor=colors.white, fontName="Helvetica-Bold")
+
+            doc = SimpleDocTemplate(
+                path, pagesize=A4,
+                leftMargin=15 * mm, rightMargin=15 * mm,
+                topMargin=15 * mm, bottomMargin=15 * mm,
+                title=settings.get("reference", "Offer")
+            )
+
+            story = []
+            if settings.get('header'):
+                story.append(Paragraph(settings['header'], ParagraphStyle(
+                    "h1", parent=styles["Heading1"], fontSize=16, spaceAfter=2)))
+            if settings.get('subheader'):
+                story.append(Paragraph(settings['subheader'], ParagraphStyle(
+                    "h2", parent=styles["Heading2"], fontSize=12, textColor=colors.grey, spaceAfter=2)))
+            if settings.get('reference'):
+                story.append(Paragraph(settings['reference'], ParagraphStyle(
+                    "h3", parent=styles["Normal"], fontSize=10, spaceAfter=10)))
+            story.append(Spacer(1, 6))
+
+            header_row = [
+                Paragraph("Art. No.", header_cell_style),
+                Paragraph("Description", header_cell_style),
+                Paragraph("Qty", header_cell_style),
+                Paragraph("Image", header_cell_style),
+            ]
+            table_data = [header_row]
+            
+            dynamic_styles = []
+
+            for row_idx, data in enumerate(self.offer_data, start=1):
+                if data.get("is_section", False):
+                    sec_p = Paragraph(f"<b>{data['desc']}</b>", ParagraphStyle("sec", parent=cell_style, alignment=TA_CENTER))
+                    # Add an empty row filled with the section title in the first cell
+                    table_data.append([sec_p, "", "", ""])
+                    # Tell reportlab to merge this row from the first column to the last column
+                    dynamic_styles.append(("SPAN", (0, row_idx), (-1, row_idx)))
+                    dynamic_styles.append(("BACKGROUND", (0, row_idx), (-1, row_idx), colors.HexColor("#DDE3EC")))
+                    dynamic_styles.append(("ALIGN", (0, row_idx), (-1, row_idx), "CENTER"))
+                else:
+                    img_cell = ""
+                    if settings['include_images']:
+                        img_path = self._find_image_path(data['code'])
+                        img_cell = self._scaled_pdf_image(img_path) if img_path else Paragraph("—", cell_style)
+
+                    table_data.append([
+                        Paragraph(str(data['code']), cell_style),
+                        Paragraph(str(data['desc']), cell_style),
+                        Paragraph(str(data['qty']), qty_style),
+                        img_cell,
+                    ])
+
+            col_widths = [28 * mm, 90 * mm, 12 * mm, 25 * mm]
+            tbl = Table(table_data, colWidths=col_widths, repeatRows=1)
+            
+            base_style = [
+                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#2C3E50")),
+                ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#CCCCCC")),
+                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                ("TOPPADDING", (0, 0), (-1, -1), 4),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+                ("LEFTPADDING", (0, 0), (-1, -1), 5),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 5),
+            ]
+            
+            # Combine the strict table structural styles with the dynamic row spanning styles
+            tbl.setStyle(TableStyle(base_style + dynamic_styles))
+            story.append(tbl)
+
+            doc.build(story)
+
+            QMessageBox.information(self, "Success", "PDF Generated Successfully.")
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Generation failed: {str(e)}")
+
+class SegmentedCodeEdit(QWidget):
+    """Custom composite text field for XX-XXX-XX-XX format."""
+    
+    # Custom signal emitted when Enter is pressed in any of the boxes
+    returnPressed = pyqtSignal() 
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.init_ui()
+
+    def init_ui(self):
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(4)
+
+        self.edits = [QLineEdit(), QLineEdit(), QLineEdit(), QLineEdit()]
+        lengths = [2, 3, 2, 2]
+        
+        for i, edit in enumerate(self.edits):
+            edit.setMaxLength(lengths[i])
+            edit.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            edit.setFixedWidth(lengths[i] * 12 + 15)
+            edit.textChanged.connect(lambda text, idx=i: self.on_text_changed(text, idx))
+            edit.installEventFilter(self)
+            # Route individual enter presses to the widget's global signal
+            edit.returnPressed.connect(self.returnPressed.emit)
+            layout.addWidget(edit)
+            if i < 3:
+                layout.addWidget(QLabel("-"))
+
+    def on_text_changed(self, text, idx):
+        if len(text) == self.edits[idx].maxLength() and idx < 3:
+            self.edits[idx + 1].setFocus()
+            self.edits[idx + 1].selectAll()
+
+    def eventFilter(self, obj, event):
+        if event.type() == QEvent.Type.KeyPress and obj in self.edits:
+            # 1. Intercept Paste (Ctrl+V) before the text box chops it
+            if event.key() == Qt.Key.Key_V and (event.modifiers() & Qt.KeyboardModifier.ControlModifier):
+                clipboard_text = QApplication.clipboard().text()
+                self.set_code(clipboard_text)
+                return True 
+            
+            # 2. Handle Backspace jumping
+            if event.key() == Qt.Key.Key_Backspace and obj.text() == "":
+                idx = self.edits.index(obj)
+                if idx > 0:
+                    self.edits[idx - 1].setFocus()
+                    return False
+        return super().eventFilter(obj, event)
+
+    def get_code(self):
+        parts = [edit.text().strip() for edit in self.edits]
+        return "".join(parts) 
+
+    def set_code(self, code_str):
+        clean = re.sub(r'[^a-zA-Z0-9]', '', code_str)
+        if len(clean) >= 9:
+            self.edits[0].setText(clean[0:2])
+            self.edits[1].setText(clean[2:5])
+            self.edits[2].setText(clean[5:7])
+            self.edits[3].setText(clean[7:9])
+            # Auto-fire enter when full string pasted
+            self.returnPressed.emit()
+        else:
+            self.edits[0].setText(code_str)
+
+    def clear(self):
+        for edit in self.edits:
+            edit.clear()
+
+class MappingDialog(QDialog):
+    """Dynamic window for mapping required logic fields and selecting additional columns."""
+    def __init__(self, file_path, required_fields, allow_extras=True, parent=None):
+        super().__init__(parent)
+        self.file_path = file_path
+        self.required_fields = required_fields
+        self.allow_extras = allow_extras
+        self.selected_sheet = None
+        self.mappings = {}
+        self.extras = [] 
+        self.is_excel = file_path.endswith(('.xlsx', '.xls'))
+        self.init_ui()
+
+    def init_ui(self):
+        self.setWindowTitle("Map Columns")
+        self.resize(450, 400)
+        layout = QVBoxLayout(self)
+
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        content_widget = QWidget()
+        self.form_layout = QFormLayout(content_widget)
+        scroll.setWidget(content_widget)
+        layout.addWidget(scroll)
+
+        if self.is_excel:
+            xl = pd.ExcelFile(self.file_path)
+            self.sheet_combo = QComboBox()
+            self.sheet_combo.addItems(xl.sheet_names)
+            self.sheet_combo.currentTextChanged.connect(self.load_columns)
+            self.form_layout.addRow("Select Sheet:", self.sheet_combo)
+            self.available_columns = xl.parse(xl.sheet_names[0], nrows=0).columns.tolist()
+        else:
+            df = pd.read_csv(self.file_path, nrows=0)
+            self.available_columns = df.columns.tolist()
+
+        self.form_layout.addRow(QLabel("<b>Required System Fields:</b>"))
+        self.combos = {}
+        for field in self.required_fields:
+            combo = QComboBox()
+            self.combos[field] = combo
+            self.form_layout.addRow(f"Map to '{field}':", combo)
+
+        if self.allow_extras:
+            self.form_layout.addRow(QLabel("<b>Additional Columns to Import:</b>"))
+            self.extra_checkboxes = {}
+
+        self.populate_combos()
+
+        self.btn_submit = QPushButton("Confirm Mapping")
+        self.btn_submit.setObjectName("primaryButton")
+        self.btn_submit.clicked.connect(self.validate_and_accept)
+        layout.addWidget(self.btn_submit)
+
+    def populate_combos(self):
+        for field, combo in self.combos.items():
+            combo.clear()
+            combo.addItems(["-- Select Column --"] + [str(c) for c in self.available_columns])
+            for col in self.available_columns:
+                if field.lower() in str(col).lower() or str(col).lower() in field.lower():
+                    combo.setCurrentText(str(col))
+                    break
+
+        if self.allow_extras:
+            for chk in getattr(self, 'extra_checkboxes', {}).values():
+                chk.setParent(None)
+            self.extra_checkboxes = {}
+            for col in self.available_columns:
+                chk = QCheckBox(str(col))
+                chk.setChecked(True)
+                self.extra_checkboxes[str(col)] = chk
+                self.form_layout.addRow(chk)
+
+    def load_columns(self, sheet_name):
+        xl = pd.ExcelFile(self.file_path)
+        self.available_columns = xl.parse(sheet_name, nrows=0).columns.tolist()
+        self.populate_combos()
+
+    def validate_and_accept(self):
+        self.mappings = {}
+        if self.is_excel:
+            self.selected_sheet = self.sheet_combo.currentText()
+        
+        for field, combo in self.combos.items():
+            val = combo.currentText()
+            if val == "-- Select Column --":
+                QMessageBox.warning(self, "Mapping Error", f"Please select a mapping for: {field}")
+                return
+            self.mappings[field] = val
+
+        if self.allow_extras:
+            used_cols = set(self.mappings.values())
+            self.extras = [col for col, chk in self.extra_checkboxes.items() 
+                           if chk.isChecked() and col not in used_cols]
+            
+        self.accept()
+
+class KlsMasterTab(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.df = None
+        self.default_path = "KLS_All_Products.csv"
+        self.required_fields = ['code', 'description', 'brochures', 'product_url']
+        self.init_ui()
+        self.load_default_master()
+
+    def init_ui(self):
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(4, 4, 4, 4)
+        layout.setSpacing(8)
+
+        search_layout = QHBoxLayout()
+        search_layout.setSpacing(8)
+        search_layout.addWidget(QLabel("Global Search:"))
+        self.txt_global_search = QLineEdit()
+        self.txt_global_search.textChanged.connect(self.apply_filter)
+        search_layout.addWidget(self.txt_global_search)
+
+        search_layout.addWidget(QLabel("Code Search:"))
+        self.code_search = SegmentedCodeEdit()
+        for edit in self.code_search.edits:
+            edit.textChanged.connect(self.apply_filter)
+        search_layout.addWidget(self.code_search)
+
+        self.btn_upload = QPushButton("Upload Master File (Overwrite)")
+        self.btn_upload.clicked.connect(self.upload_new_master)
+        search_layout.addWidget(self.btn_upload)
+        layout.addLayout(search_layout)
+
+        self.table = DynamicTableWidget()
+        self.table.setColumnCount(len(self.required_fields))
+        self.table.setHorizontalHeaderLabels([f.upper() for f in self.required_fields])
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
+        self.table.horizontalHeader().setDefaultSectionSize(200)
+        layout.addWidget(self.table)
+
+    def process_brochures(self, text):
+        if pd.isna(text): return ""
+        text = str(text)
+        text = re.sub(r'\s*\([^)]*http[^)]*\)', '', text)
+        text = re.sub(r'https?://\S+', '', text)
+        # CHANGED: Replaced the regex split with a strict semicolon split
+        parts = [p.strip() for p in text.split(';') if p.strip()] 
+        return "<br>• ".join([""] + parts) if parts else "" # Formatted as HTML bullets
+
+    def load_default_master(self):
+        if os.path.exists(self.default_path):
+            try:
+                self.df = pd.read_csv(self.default_path)
+                self.df.columns = [c.lower().strip() for c in self.df.columns]
+                self.populate_table(self.df)
+            except Exception as e:
+                print(f"Could not load master reference: {e}")
+
+    def upload_new_master(self):
+        file_path, _ = QFileDialog.getOpenFileName(self, "Open Master File", "", "CSV Files (*.csv)")
+        if not file_path:
+            return
+
+        dlg = MappingDialog(file_path, self.required_fields, allow_extras=False, parent=self)
+        if dlg.exec() == QDialog.DialogCode.Accepted:
+            try:
+                raw_df = pd.read_csv(file_path)
+                inverted_map = {v: k for k, v in dlg.mappings.items()}
+                self.df = raw_df[list(dlg.mappings.values())].rename(columns=inverted_map)
+                self.df.to_csv(self.default_path, index=False)
+                self.populate_table(self.df)
+            except Exception as e:
+                QMessageBox.critical(self, "Error", f"Failed processing file: {e}")
+
+    def populate_table(self, dataframe):
+        self.table.setRowCount(0)
+        if dataframe is None or dataframe.empty:
+            return
+        
+        self.table.setRowCount(len(dataframe))
+        for ui_row_idx, (orig_idx, row) in enumerate(dataframe.iterrows()):
+            code = str(row.get('code', ''))
+            desc = str(row.get('description', ''))
+            
+            # Use raw string for table view, use HTML formatter for the side panel
+            raw_brochures = str(row.get('brochures', ''))
+            brochures_text = re.sub(r'\s*\([^)]*http[^)]*\)', '', raw_brochures)
+            brochures_text = re.sub(r'https?://\S+', '', brochures_text).replace(';', '\n')
+            
+            for c_idx, val in enumerate([code, desc, brochures_text]):
+                item = QTableWidgetItem(val)
+                item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
+                self.table.setItem(ui_row_idx, c_idx, item)
+
+            raw_url = str(row.get('product_url', ''))
+            if not pd.isna(raw_url) and raw_url.strip().startswith('http'):
+                url_label = QLabel(f'<a href="{raw_url}">Open Link</a>')
+                url_label.setOpenExternalLinks(True)
+                url_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+                self.table.setCellWidget(ui_row_idx, 3, url_label)
+            else:
+                empty_item = QTableWidgetItem("N/A")
+                empty_item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
+                self.table.setItem(ui_row_idx, 3, empty_item)
+                
+        self.table.resizeRowsToContents()
+
+    def apply_filter(self):
+        if self.df is None or self.df.empty:
+            return
+
+        g_search = self.txt_global_search.text().strip().lower()
+        c_search = self.code_search.get_code().strip().replace('-', '').lower()
+
+        filtered = self.df.copy()
+        if g_search:
+            mask = filtered.astype(str).apply(lambda x: x.str.lower().str.contains(g_search)).any(axis=1)
+            filtered = filtered[mask]
+        if c_search:
+            filtered = filtered[filtered['code'].astype(str).str.replace('-', '').str.lower().str.contains(c_search)]
+
+        self.populate_table(filtered)
+
+class StockTab(QWidget):
+    def __init__(self, master_tab):
+        super().__init__()
+        self.master_tab = master_tab
+        self.df = None
+        self.extras = []
+        self.display_cols = []
+        self.current_file_path = None
+        self.is_modified = False
+        self.init_ui()
+
+    def init_ui(self):
+        main_layout = QVBoxLayout(self)
+        main_layout.setContentsMargins(4, 4, 4, 4)
+        main_layout.setSpacing(8)
+        
+        # TOP CONTROLS (Upload & Saving)
+        top_layout = QHBoxLayout()
+        top_layout.setSpacing(8)
+        self.btn_upload = QPushButton("Upload Stock File")
+        self.btn_upload.clicked.connect(self.upload_stock)
+        top_layout.addWidget(self.btn_upload)
+        
+        self.btn_save = QPushButton("Save Overwrite")
+        self.btn_save.setObjectName("primaryButton")
+        self.btn_save.clicked.connect(self.save_file)
+        self.btn_save.setEnabled(False)
+        top_layout.addWidget(self.btn_save)
+
+        self.btn_save_as = QPushButton("Save As...")
+        self.btn_save_as.clicked.connect(self.save_as_file)
+        self.btn_save_as.setEnabled(False)
+        top_layout.addWidget(self.btn_save_as)
+        
+        main_layout.addLayout(top_layout)
+        
+        # SEARCH CONTROLS
+        search_layout = QHBoxLayout()
+        search_layout.addWidget(QLabel("Global Search:"))
+        self.txt_global_search = QLineEdit()
+        self.txt_global_search.textChanged.connect(self.apply_filter)
+        search_layout.addWidget(self.txt_global_search)
+
+        search_layout.addWidget(QLabel("Code Search:"))
+        self.code_search = SegmentedCodeEdit()
+        for edit in self.code_search.edits:
+            edit.textChanged.connect(self.apply_filter)
+        search_layout.addWidget(self.code_search)
+        main_layout.addLayout(search_layout)
+
+        # MAIN WORKSPACE (Table + Side Panel)
+        workspace_layout = QHBoxLayout()
+        
+        # Grid
+        self.table = DynamicTableWidget()
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
+        self.table.horizontalHeader().setDefaultSectionSize(150)
+        self.table.itemChanged.connect(self.on_item_changed)
+        workspace_layout.addWidget(self.table)
+
+        main_layout.addLayout(workspace_layout)
+
+    def upload_stock(self):
+        if self.is_modified:
+            reply = QMessageBox.question(self, 'Unsaved Changes', 
+                "You have unsaved changes. Discard and upload new?", 
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+            if reply == QMessageBox.StandardButton.No:
+                return
+
+        file_path, _ = QFileDialog.getOpenFileName(self, "Open Stock File", "", "Data Files (*.csv *.xlsx *.xls)")
+        if not file_path: return
+
+        dlg = MappingDialog(file_path, ['code', 'quantity'], allow_extras=True, parent=self)
+        if dlg.exec() == QDialog.DialogCode.Accepted:
+            try:
+                if dlg.is_excel:
+                    raw_df = pd.read_excel(file_path, sheet_name=dlg.selected_sheet)
+                else:
+                    raw_df = pd.read_csv(file_path)
+
+                inverted_map = {v: k for k, v in dlg.mappings.items()}
+                cols_to_keep = list(dlg.mappings.values()) + getattr(dlg, 'extras', [])
+                self.df = raw_df[cols_to_keep].rename(columns=inverted_map)
+                self.extras = getattr(dlg, 'extras', [])
+                self.current_file_path = file_path
+                self.set_modified(False)
+                
+                self.btn_save.setEnabled(True)
+                self.btn_save_as.setEnabled(True)
+                self.populate_table(self.df)
+            except Exception as e:
+                QMessageBox.critical(self, "Error", f"Failed processing file: {e}")
+
+    def populate_table(self, dataframe):
+        self.table.blockSignals(True) # Prevent filling from triggering 'modified'
+        self.table.setRowCount(0)
+        if dataframe is None or dataframe.empty:
+            self.table.blockSignals(False)
+            return
+
+        self.display_cols = ['code', 'quantity'] + self.extras
+        self.table.setColumnCount(len(self.display_cols))
+        self.table.setHorizontalHeaderLabels([c.upper() for c in self.display_cols])
+
+        self.table.setRowCount(len(dataframe))
+        for ui_row_idx, (orig_idx, row) in enumerate(dataframe.iterrows()):
+            for c_idx, col_name in enumerate(self.display_cols):
+                val = str(row.get(col_name, ''))
+                item = QTableWidgetItem(val)
+                # Store original dataframe index safely hidden in the UI element
+                item.setData(Qt.ItemDataRole.UserRole, orig_idx)
+                # Ensure items are editable (default) and selectable
+                item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsEnabled)
+                self.table.setItem(ui_row_idx, c_idx, item)
+
+        self.table.blockSignals(False)
+
+    def on_item_changed(self, item):
+        orig_idx = item.data(Qt.ItemDataRole.UserRole)
+        if orig_idx is not None and self.df is not None:
+            col_name = self.display_cols[item.column()]
+            self.df.at[orig_idx, col_name] = item.text()
+            self.set_modified(True)
+
+    def set_modified(self, state):
+        self.is_modified = state
+        indicator = " *(Unsaved)*" if state else ""
+        self.btn_save.setText(f"Save Overwrite{indicator}")
+
+    def save_file(self):
+        if self.current_file_path:
+            self._execute_save(self.current_file_path)
+        else:
+            self.save_as_file()
+
+    def save_as_file(self):
+        path, _ = QFileDialog.getSaveFileName(self, "Save File As", "", "Excel Files (*.xlsx);;CSV Files (*.csv)")
+        if path:
+            self._execute_save(path)
+
+    def _execute_save(self, path):
+        try:
+            if path.endswith('.csv'):
+                self.df.to_csv(path, index=False)
+            else:
+                self.df.to_excel(path, index=False)
+            self.current_file_path = path
+            self.set_modified(False)
+            QMessageBox.information(self, "Saved", f"File saved successfully:\n{path}")
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Failed to save file:\n{e}")
+
+    def apply_filter(self):
+        if self.df is None or self.df.empty: return
+        g_search = self.txt_global_search.text().strip().lower()
+        c_search = self.code_search.get_code().strip().replace('-', '').lower()
+
+        filtered = self.df.copy()
+        if g_search:
+            mask = filtered.astype(str).apply(lambda x: x.str.lower().str.contains(g_search)).any(axis=1)
+            filtered = filtered[mask]
+        if c_search:
+            filtered = filtered[filtered['code'].astype(str).str.replace('-', '').str.lower().str.contains(c_search)]
+        self.populate_table(filtered)
+
+class InspectionTab(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.df = None 
+        self.extras = []
+        self.display_cols = []
+        self.current_file_path = None
+        self.is_modified = False
+        self.init_ui()
+
+    def init_ui(self):
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(4, 4, 4, 4)
+        layout.setSpacing(8)
+
+        top_layout = QHBoxLayout()
+        top_layout.setSpacing(8)
+        self.btn_upload = QPushButton("Upload Verification Manifest")
+        self.btn_upload.clicked.connect(self.upload_manifest)
+        top_layout.addWidget(self.btn_upload)
+        
+        self.btn_save = QPushButton("Save Overwrite")
+        self.btn_save.clicked.connect(self.save_file)
+        self.btn_save.setEnabled(False)
+        top_layout.addWidget(self.btn_save)
+
+        self.btn_save_as = QPushButton("Save As...")
+        self.btn_save_as.clicked.connect(self.save_as_file)
+        self.btn_save_as.setEnabled(False)
+        top_layout.addWidget(self.btn_save_as)
+        layout.addLayout(top_layout)
+
+        filter_layout = QHBoxLayout()
+        filter_layout.addWidget(QLabel("<b>Global Filter:</b>"))
+        self.txt_global_search = QLineEdit()
+        self.txt_global_search.textChanged.connect(self.apply_filter)
+        filter_layout.addWidget(self.txt_global_search)
+        layout.addLayout(filter_layout)
+
+        # Enhanced Verification Input Row (Includes Quantity Flow)
+        verify_layout = QHBoxLayout()
+        verify_layout.addWidget(QLabel("<b>Code Found:</b>"))
+        self.code_verify_input = SegmentedCodeEdit()
+        
+        # When code is entered, shift focus to the Quantity box
+        self.code_verify_input.returnPressed.connect(self.focus_qty_box)
+        verify_layout.addWidget(self.code_verify_input)
+
+        verify_layout.addWidget(QLabel("<b>Qty:</b>"))
+        self.qty_input = QLineEdit("1")
+        self.qty_input.setValidator(QIntValidator(1, 9999))
+        self.qty_input.setFixedWidth(60)
+        self.qty_input.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        # When Enter is pressed on Qty, execute the batch verification
+        self.qty_input.returnPressed.connect(self.process_verification)
+        verify_layout.addWidget(self.qty_input)
+
+        self.btn_verify = QPushButton("Confirm Batch")
+        self.btn_verify.setObjectName("primaryButton")
+        self.btn_verify.clicked.connect(self.process_verification)
+        verify_layout.addWidget(self.btn_verify)
+        layout.addLayout(verify_layout)
+
+        self.table = DynamicTableWidget()
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
+        self.table.horizontalHeader().setDefaultSectionSize(130)
+        self.table.itemChanged.connect(self.on_item_changed)
+        layout.addWidget(self.table)
+
+    def upload_manifest(self):
+        if self.is_modified:
+            reply = QMessageBox.question(self, 'Unsaved Changes', 
+                "You have unsaved changes. Discard and upload new?", 
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+            if reply == QMessageBox.StandardButton.No: return
+
+        file_path, _ = QFileDialog.getOpenFileName(self, "Open Manifest File", "", "Data Files (*.csv *.xlsx *.xls)")
+        if not file_path: return
+
+        dlg = MappingDialog(file_path, ['code', 'quantity'], allow_extras=True, parent=self)
+        if dlg.exec() == QDialog.DialogCode.Accepted:
+            try:
+                if dlg.is_excel:
+                    raw_df = pd.read_excel(file_path, sheet_name=dlg.selected_sheet)
+                else:
+                    raw_df = pd.read_csv(file_path)
+
+                inverted_map = {v: k for k, v in dlg.mappings.items()}
+                cols_to_keep = list(dlg.mappings.values()) + getattr(dlg, 'extras', [])
+                self.df = raw_df[cols_to_keep].rename(columns=inverted_map)
+                self.extras = getattr(dlg, 'extras', [])
+                self.current_file_path = file_path
+                
+                self.df['quantity'] = pd.to_numeric(self.df['quantity'], errors='coerce').fillna(0).astype(int)
+                if 'inspected' not in self.df.columns:
+                    self.df['inspected'] = 0 
+                if 'status' not in self.df.columns:
+                    self.df['status'] = "PENDING"
+                
+                self.set_modified(False)
+                self.btn_save.setEnabled(True)
+                self.btn_save_as.setEnabled(True)
+                self.populate_table(self.df)
+            except Exception as e:
+                QMessageBox.critical(self, "Error", f"Failed processing manifest: {e}")
+
+    def populate_table(self, dataframe):
+        self.table.blockSignals(True)
+        self.table.setRowCount(0)
+        if dataframe is None or dataframe.empty:
+            self.table.blockSignals(False)
+            return
+
+        self.display_cols = ['code', 'quantity'] + self.extras + ['inspected', 'status']
+        self.table.setColumnCount(len(self.display_cols))
+        self.table.setHorizontalHeaderLabels([c.upper() for c in self.display_cols])
+
+        self.table.setRowCount(len(dataframe))
+        for ui_row_idx, (orig_idx, row) in enumerate(dataframe.iterrows()):
+            status = str(row.get('status', 'PENDING'))
+            
+            for c_idx, col_name in enumerate(self.display_cols):
+                val = str(row.get(col_name, ''))
+                item = QTableWidgetItem(val)
+                item.setData(Qt.ItemDataRole.UserRole, orig_idx)
+                
+                # Make status strictly read-only, others are double-click editable
+                if col_name == 'status':
+                    item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
+                else:
+                    item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsEnabled)
+                
+                if status == "CLEARED":
+                    item.setBackground(QColor("#D4EDDA")) 
+                    item.setForeground(QColor("#155724"))
+                
+                self.table.setItem(ui_row_idx, c_idx, item)
+        self.table.blockSignals(False)
+
+    def on_item_changed(self, item):
+        orig_idx = item.data(Qt.ItemDataRole.UserRole)
+        if orig_idx is not None and self.df is not None:
+            col_name = self.display_cols[item.column()]
+            self.df.at[orig_idx, col_name] = item.text()
+            self.set_modified(True)
+
+            # Auto-update status if manual qty/inspected edits occurred
+            if col_name in ['quantity', 'inspected']:
+                try:
+                    q = int(self.df.at[orig_idx, 'quantity'])
+                    i = int(self.df.at[orig_idx, 'inspected'])
+                    new_status = "CLEARED" if i >= q else "PENDING"
+                    if self.df.at[orig_idx, 'status'] != new_status:
+                        self.df.at[orig_idx, 'status'] = new_status
+                        self.apply_filter() # Refresh table colors
+                except: pass
+
+    def focus_qty_box(self):
+        """Moves cursor to quantity box and highlights text for quick typing"""
+        self.qty_input.setFocus()
+        self.qty_input.selectAll()
+
+    def process_verification(self):
+        if self.df is None or self.df.empty: return
+
+        target_code = self.code_verify_input.get_code().strip().replace('-', '').lower()
+        if not target_code: return
+
+        mask = self.df['code'].astype(str).str.replace('-', '').str.strip().str.lower() == target_code
+        indices = self.df[mask].index
+
+        if len(indices) == 0:
+            QMessageBox.critical(self, "Invalid Match", "Code not found in client manifest.")
+            self.code_verify_input.clear()
+            self.code_verify_input.edits[0].setFocus()
+            return
+
+        idx = indices[0]
+        try:
+            qty_to_add = int(self.qty_input.text())
+        except:
+            qty_to_add = 1
+
+        current_inspected = int(self.df.at[idx, 'inspected'])
+        target_max = int(self.df.at[idx, 'quantity'])
+
+        if current_inspected < target_max:
+            new_inspected = min(current_inspected + qty_to_add, target_max) # Prevent exceeding target via batch
+            self.df.at[idx, 'inspected'] = new_inspected
+            if new_inspected == target_max:
+                self.df.at[idx, 'status'] = "CLEARED"
+            
+            self.set_modified(True)
+            self.apply_filter()
+            
+            # Workflow Reset
+            self.code_verify_input.clear()
+            self.qty_input.setText("1")
+            self.code_verify_input.edits[0].setFocus()
+        else:
+            QMessageBox.warning(self, "Limit Reached", f"Item already hit maximum target limit ({target_max}).")
+            self.code_verify_input.clear()
+            self.code_verify_input.edits[0].setFocus()
+
+    def set_modified(self, state):
+        self.is_modified = state
+        indicator = " *(Unsaved)*" if state else ""
+        self.btn_save.setText(f"Save Overwrite{indicator}")
+
+    def save_file(self):
+        if self.current_file_path:
+            self._execute_save(self.current_file_path)
+        else:
+            self.save_as_file()
+
+    def save_as_file(self):
+        path, _ = QFileDialog.getSaveFileName(self, "Save File As", "", "Excel Files (*.xlsx);;CSV Files (*.csv)")
+        if path:
+            self._execute_save(path)
+
+    def _execute_save(self, path):
+        try:
+            if path.endswith('.csv'):
+                self.df.to_csv(path, index=False)
+            else:
+                self.df.to_excel(path, index=False)
+            self.current_file_path = path
+            self.set_modified(False)
+            QMessageBox.information(self, "Saved", f"File saved successfully:\n{path}")
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Failed to save file:\n{e}")
+
+    def apply_filter(self):
+        if self.df is None or self.df.empty: return
+        g_search = self.txt_global_search.text().strip().lower()
+        filtered = self.df.copy()
+        if g_search:
+            mask = filtered.astype(str).apply(lambda x: x.str.lower().str.contains(g_search)).any(axis=1)
+            filtered = filtered[mask]
+        self.populate_table(filtered)
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Technowave Inventory Control Terminal")
+        self.resize(1300, 820)
+
+        app_font = QFont("Segoe UI", 10)
+        self.setFont(app_font)
+
+        self.kls_master_tab = KlsMasterTab()
+        self.side_panel = ProductSidePanel(self.kls_master_tab)
+        self.offer_tab = OfferTab(self.kls_master_tab)
+        self.stock_tab = StockTab(self.kls_master_tab)
+        self.inspection_tab = InspectionTab()
+
+        self.tabs = QTabWidget()
+        self.tabs.addTab(self.kls_master_tab, "Master")
+        self.tabs.addTab(self.stock_tab, "Stock")
+        self.tabs.addTab(self.inspection_tab, "Inspection")
+        self.tabs.addTab(self.offer_tab, "Offer")
+
+        self.kls_master_tab.table.currentCellChanged.connect(self.handle_cell_click)
+        self.stock_tab.table.currentCellChanged.connect(self.handle_cell_click)
+        self.inspection_tab.table.currentCellChanged.connect(self.handle_cell_click)
+        self.offer_tab.master_table.currentCellChanged.connect(self.handle_cell_click)
+        self.offer_tab.offer_table.currentCellChanged.connect(self.handle_cell_click)
+
+        central_widget = QWidget(self)
+        central_layout = QHBoxLayout(central_widget)
+        central_layout.setContentsMargins(12, 12, 12, 12)
+        central_layout.setSpacing(12)
+        
+        # Add tabs first (Left side)
+        central_layout.addWidget(self.tabs, stretch=3)
+        
+        # Add side panel second (Right side)
+        central_layout.addWidget(self.side_panel, stretch=1)
+        
+        self.setCentralWidget(central_widget)
+
+    def _clear_other_table_selections(self, active_table):
+        tables = [
+            self.kls_master_tab.table,
+            self.stock_tab.table,
+            self.inspection_tab.table,
+            self.offer_tab.master_table,
+            self.offer_tab.offer_table,
+        ]
+        for table in tables:
+            if table is active_table:
+                continue
+            table.clearSelection()
+            table.setCurrentCell(-1, -1)
+
+    def handle_cell_click(self, current_row, current_col, previous_row, previous_col):
+        sender_table = self.sender()
+        if not isinstance(sender_table, QTableWidget):
+            return
+
+        self._clear_other_table_selections(sender_table)
+
+        if current_row < 0:
+            return
+
+        code_col_idx = None
+        for col_idx in range(sender_table.columnCount()):
+            header_text = sender_table.horizontalHeaderItem(col_idx)
+            if header_text is not None and 'code' in header_text.text().lower():
+                code_col_idx = col_idx
+                break
+
+        if code_col_idx is None:
+            return
+
+        code_item = sender_table.item(current_row, code_col_idx)
+        if code_item is None:
+            return
+
+        self.side_panel.update_panel(code_item.text())
+
+    def closeEvent(self, event):
+        """Intercepts the application closing to check for unsaved edits."""
+        tabs_to_check = [
+            (self.stock_tab, "Stock Management"),
+            (self.inspection_tab, "Client Verification")
+        ]
+        
+        for tab_obj, tab_name in tabs_to_check:
+            if tab_obj.is_modified:
+                # Bring the tab with unsaved changes to the front
+                self.tabs.setCurrentWidget(tab_obj)
+                reply = QMessageBox.question(self, 'Unsaved Changes Detected',
+                    f"There are unsaved edits in the '{tab_name}' tab.\nDo you want to save before exiting?",
+                    QMessageBox.StandardButton.Save | QMessageBox.StandardButton.Discard | QMessageBox.StandardButton.Cancel)
+                
+                if reply == QMessageBox.StandardButton.Save:
+                    tab_obj.save_file()
+                elif reply == QMessageBox.StandardButton.Cancel:
+                    event.ignore()
+                    return # Abort application closure entirely
+                    
+        event.accept() # All tabs safe or discarded, allow closure
+
+if __name__ == '__main__':
+    myappid = 'klsmartin.inventory.manager.1.0'
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+    app = QApplication(sys.argv)
+    icon_path = resource_path("icon.ico")
+    app.setWindowIcon(QIcon(icon_path))
+    # RADICAL DARK MODE FIX: Force Fusion style and apply strict light palette
+    app.setStyle(QStyleFactory.create("Fusion"))
+    palette = QPalette()
+    palette.setColor(QPalette.ColorRole.Window, QColor(245, 245, 245))
+    palette.setColor(QPalette.ColorRole.WindowText, Qt.GlobalColor.black)
+    palette.setColor(QPalette.ColorRole.Base, Qt.GlobalColor.white)
+    palette.setColor(QPalette.ColorRole.AlternateBase, QColor(245, 245, 245))
+    palette.setColor(QPalette.ColorRole.ToolTipBase, Qt.GlobalColor.white)
+    palette.setColor(QPalette.ColorRole.ToolTipText, Qt.GlobalColor.black)
+    palette.setColor(QPalette.ColorRole.Text, Qt.GlobalColor.black)
+    palette.setColor(QPalette.ColorRole.Button, QColor(230, 230, 230))
+    palette.setColor(QPalette.ColorRole.ButtonText, Qt.GlobalColor.black)
+    palette.setColor(QPalette.ColorRole.Highlight, QColor(42, 130, 218))
+    palette.setColor(QPalette.ColorRole.HighlightedText, Qt.GlobalColor.white)
+    app.setPalette(palette)
+    app.setStyleSheet(APP_STYLESHEET)
+
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec())
