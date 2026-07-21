@@ -12,6 +12,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Image as RLImage, Spacer
 
+# pyrefly: ignore [missing-import]
 import arabic_reshaper
 from bidi.algorithm import get_display
 
@@ -73,14 +74,18 @@ class OfferListDialog(QDialog):
         self.btn_export_excel.clicked.connect(self.export_excel)
         
         self.btn_export_pdf = QPushButton("Export to PDF")
-        self.btn_export_pdf.setObjectName("primaryButton")
         self.btn_export_pdf.clicked.connect(self.export_pdf)
+        
+        self.btn_export_pptx = QPushButton("Export to PPTX")
+        self.btn_export_pptx.setObjectName("primaryButton")
+        self.btn_export_pptx.clicked.connect(self.export_pptx)
 
         btn_layout.addWidget(self.btn_clear)
         btn_layout.addStretch()
         btn_layout.addWidget(self.btn_bulk_upload)
         btn_layout.addWidget(self.btn_export_excel)
         btn_layout.addWidget(self.btn_export_pdf)
+        btn_layout.addWidget(self.btn_export_pptx)
         layout.addLayout(btn_layout)
 
     def refresh_offer_table(self):
@@ -506,3 +511,280 @@ class OfferListDialog(QDialog):
                 return
                 
         QMessageBox.information(self, "Success", "PDF Generated Successfully.")
+
+    def export_pptx(self):
+        if not self.offer_data:
+            return
+
+        import os
+        import sys
+        
+        # Check if running as a PyInstaller bundled executable
+        if getattr(sys, 'frozen', False):
+            base_path = sys._MEIPASS
+        else:
+            base_path = os.path.abspath(".")
+            
+        template_path = os.path.join(base_path, "template.pptx")
+        
+        if not os.path.exists(template_path):
+            template_path, _ = QFileDialog.getOpenFileName(self, "Select PPTX Template", "", "PowerPoint Files (*.pptx)")
+            if not template_path:
+                return
+
+        save_path, _ = QFileDialog.getSaveFileName(self, "Save PPTX", "Offer_Presentation.pptx", "PowerPoint Files (*.pptx)")
+        if not save_path:
+            return
+
+        with show_loading(self, "Generating Presentation..."):
+            try:
+                from pptx import Presentation
+                from pptx.enum.shapes import PP_PLACEHOLDER
+                import re
+                from core.constants import BROCHURE_HIERARCHY
+
+                prs = Presentation(template_path)
+                
+                if len(prs.slides) == 0:
+                    raise ValueError("Template must contain at least one slide.")
+                    
+                dummy_slide = prs.slides[-1]
+                dummy_rId = prs.slides._sldIdLst[-1].rId
+                dummy_sld_elem = prs.slides._sldIdLst[-1]
+                slide_layout = dummy_slide.slide_layout
+                
+                master_df = self.master_tab.df
+
+                def get_disciplines(brochure_str):
+                    if not brochure_str or pd.isna(brochure_str): return ""
+                    found_disciplines = set()
+                    brocs = [b.strip() for b in str(brochure_str).replace(';', ',').split(',')]
+                    for b in brocs:
+                        for main_cat, sub_list in BROCHURE_HIERARCHY.items():
+                            if b in sub_list or b == main_cat:
+                                found_disciplines.add(main_cat)
+                    return ", ".join(sorted(found_disciplines)) if found_disciplines else "General"
+
+                def get_sizes(desc):
+                    if not desc: return ""
+                    matches = re.findall(r'\b\d+(?:\.\d+)?\s*(?:mm|cm|inch|m)\b', desc, re.IGNORECASE)
+                    return ", ".join(matches) if matches else "Standard"
+                
+                def apply_context(text, context):
+                    for key, val in context.items():
+                        text = text.replace(f"{{{{{key}}}}}", str(val))
+                    return text
+
+                # First, enrich offer data
+                items_to_process = []
+                
+                for data in self.offer_data:
+                    if data.get("is_section", False):
+                        continue
+                        
+                    code = data.get("code", "")
+                    desc = data.get("desc", "")
+                    brochures = ""
+                    disciplines = ""
+                    sizes = ""
+                    
+                    if master_df is not None and not master_df.empty:
+                        mask = master_df['code'].astype(str).str.replace('-', '').str.replace(' ', '').str.lower() == str(code).replace('-', '').replace(' ', '').lower()
+                        match = master_df[mask]
+                        if not match.empty:
+                            master_row = match.iloc[0]
+                            desc = master_row.get("description", desc)
+                            brochures_val = master_row.get("brochures", "")
+                            brochures = brochures_val if pd.notna(brochures_val) else ""
+                            disciplines = get_disciplines(brochures)
+                            sizes = get_sizes(desc)
+                            
+                        # We remove family logic for now
+                                
+                    item = {
+                        "code": code, "desc": desc, "brochures": brochures,
+                        "disciplines": disciplines, "sizes": sizes
+                    }
+                    items_to_process.append(item)
+
+                for item in items_to_process:
+                    context = {
+                        "CODE": item["code"],
+                        "DESCRIPTION": item["desc"],
+                        "BROCHURES": item["brochures"],
+                        "DISCIPLINES": item["disciplines"],
+                        "SIZES": item["sizes"],
+                        "sizes": item["sizes"],
+                        "VARIATIONS": ""
+                    }
+                    
+                    img_path = self._find_image_path(item["code"])
+                    
+                    # Convert comma/semicolon-separated lists into bullet points
+                    for k in ["BROCHURES", "DISCIPLINES", "SIZES", "sizes"]:
+                        if context[k]:
+                            parts = [x.strip() for x in str(context[k]).replace(';', ',').split(',') if x.strip()]
+                            if len(parts) > 1:
+                                context[k] = "\n".join(f"• {p}" for p in parts)
+                    
+                    slide = prs.slides.add_slide(slide_layout)
+                    
+                    import copy
+                    from PIL import Image
+                    
+                    # Copy background if it exists on the dummy slide explicitly
+                    try:
+                        dummy_bg = dummy_slide.element.xpath('./p:cSld/p:bg')
+                        if dummy_bg:
+                            existing_bg = slide.element.xpath('./p:cSld/p:bg')
+                            if existing_bg:
+                                slide.element.xpath('./p:cSld')[0].remove(existing_bg[0])
+                            
+                            new_bg = copy.deepcopy(dummy_bg[0])
+                            
+                            # Map relationships for background if it has a picture fill
+                            for blip in new_bg.xpath('.//a:blip'):
+                                rId = blip.get('{http://schemas.openxmlformats.org/officeDocument/2006/relationships}embed')
+                                if rId:
+                                    try:
+                                        rel = dummy_slide.part.rels[rId]
+                                        target_part = rel.target_part
+                                        new_rId = slide.part.relate_to(target_part, rel.reltype)
+                                        blip.set('{http://schemas.openxmlformats.org/officeDocument/2006/relationships}embed', new_rId)
+                                    except KeyError:
+                                        pass
+                            
+                            slide.element.xpath('./p:cSld')[0].insert(0, new_bg)
+                    except Exception:
+                        pass
+                    
+                    img_box = None
+                    for shape in dummy_slide.shapes:
+                        if shape.is_placeholder:
+                            continue # Placeholders are handled by the layout
+                            
+                        # Check for {{IMAGE}} tag
+                        is_img_tag = False
+                        if shape.has_text_frame:
+                            for paragraph in shape.text_frame.paragraphs:
+                                for run in paragraph.runs:
+                                    if "{{IMAGE}}" in run.text:
+                                        img_box = (shape.left, shape.top, shape.width, shape.height)
+                                        is_img_tag = True
+                                        break
+                                if is_img_tag: break
+                                
+                        if is_img_tag:
+                            continue # Do not copy the {{IMAGE}} text box to the new slide
+                            
+                        el = shape.element
+                        new_el = copy.deepcopy(el)
+                        
+                        # Fix relationships for any images in the copied shape (including inside groups)
+                        for blip in new_el.xpath('.//a:blip'):
+                            rId = blip.get('{http://schemas.openxmlformats.org/officeDocument/2006/relationships}embed')
+                            if rId:
+                                try:
+                                    rel = dummy_slide.part.rels[rId]
+                                    target_part = rel.target_part
+                                    new_rId = slide.part.relate_to(target_part, rel.reltype)
+                                    blip.set('{http://schemas.openxmlformats.org/officeDocument/2006/relationships}embed', new_rId)
+                                except KeyError:
+                                    pass
+                                    
+                        slide.shapes._spTree.append(new_el)
+                    
+                    # 2. Process all shapes on the new slide
+                    for shape in slide.shapes:
+                        if shape.is_placeholder and shape.placeholder_format.type == PP_PLACEHOLDER.PICTURE:
+                            # Keep fallback for Slide Master placeholders
+                            if img_path and not img_box:
+                                try:
+                                    shape.insert_picture(img_path)
+                                except Exception:
+                                    pass
+                        elif shape.has_text_frame:
+                            # Replace text in the shape
+                            for paragraph in shape.text_frame.paragraphs:
+                                for run in paragraph.runs:
+                                    run.text = apply_context(run.text, context)
+                                    
+                    # 3. Insert Custom {{IMAGE}} bounding box
+                    if img_path and img_box:
+                        try:
+                            left, top, width, height = img_box
+                            with Image.open(img_path) as img:
+                                orig_w, orig_h = img.size
+                            
+                            aspect_orig = orig_w / orig_h
+                            aspect_box = width / height
+                            
+                            if aspect_orig > aspect_box:
+                                # Image is wider than box, constrain to width
+                                new_w = width
+                                new_h = width / aspect_orig
+                            else:
+                                # Image is taller than box, constrain to height
+                                new_h = height
+                                new_w = height * aspect_orig
+                                
+                            # Center it in the box
+                            new_left = left + (width - new_w) / 2
+                            new_top = top + (height - new_h) / 2
+                            
+                            slide.shapes.add_picture(img_path, new_left, new_top, new_w, new_h)
+                        except Exception:
+                            pass
+
+                try:
+                    prs.part.drop_rel(dummy_rId)
+                    prs.slides._sldIdLst.remove(dummy_sld_elem)
+                except Exception:
+                    pass
+
+                prs.save(save_path)
+                
+            except Exception as e:
+                QMessageBox.critical(self, "Error", f"PPTX Generation failed: {str(e)}")
+                return
+                
+        # Outside show_loading
+        msgBox = QMessageBox(self)
+        msgBox.setWindowTitle("Success")
+        msgBox.setText("PowerPoint Presentation Generated Successfully.")
+        msgBox.setInformativeText("Would you like to save a PDF copy as well, or just open the PPTX?")
+        
+        pdf_btn = msgBox.addButton("Convert to PDF", QMessageBox.ButtonRole.ActionRole)
+        open_btn = msgBox.addButton("Open PPTX", QMessageBox.ButtonRole.ActionRole)
+        close_btn = msgBox.addButton("Close", QMessageBox.ButtonRole.RejectRole)
+        
+        msgBox.exec()
+        
+        if msgBox.clickedButton() == pdf_btn:
+            pdf_path = save_path.rsplit('.', 1)[0] + ".pdf"
+            with show_loading(self, "Converting PPTX to PDF..."):
+                try:
+                    import comtypes.client
+                    comtypes.CoInitialize()
+                    powerpoint = comtypes.client.CreateObject("Powerpoint.Application")
+                    deck = powerpoint.Presentations.Open(os.path.abspath(save_path), WithWindow=False)
+                    deck.SaveAs(os.path.abspath(pdf_path), 32)
+                    deck.Close()
+                    powerpoint.Quit()
+                except Exception as ex:
+                    try: powerpoint.Quit() 
+                    except: pass
+                    QMessageBox.critical(self, "Error", f"Failed to convert to PDF:\n{str(ex)}")
+                    return
+            
+            QMessageBox.information(self, "Success", f"PDF saved successfully at:\n{pdf_path}")
+            try:
+                os.startfile(os.path.abspath(pdf_path))
+            except Exception:
+                pass
+                
+        elif msgBox.clickedButton() == open_btn:
+            try:
+                os.startfile(os.path.abspath(save_path))
+            except Exception:
+                pass

@@ -12,7 +12,7 @@ A comprehensive inventory control, verification, and AI-powered product mapping 
 - **Search Capabilities**:
   - *Global Search*: Full-text search across all descriptions and data fields.
   - *Smart Segmented Search*: A dynamic composite text field that automatically parses both standard `XX-XXX-XX-XX` codes and shorter dot-separated codes (like `XX.XXX.XX`) natively from copy-pasting.
-- **Offers Manager**: Quickly build, review, and manage lists of items as an "Offer", and easily export/copy them.
+- **Offers Manager**: Quickly build, review, and manage lists of items as an "Offer". Export directly to dynamically generated PowerPoint presentations, with one-click automatic PDF compilation via Microsoft COM integration.
 - **One-Click Updates**: Readily upload new master catalog files (`KLS_All_Products.xlsx`) overwriting the old database instantly.
 
 ### 2. Intelligent AI Mapper 
