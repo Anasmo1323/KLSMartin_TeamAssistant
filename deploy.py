@@ -18,6 +18,7 @@ def build_exe():
         "--name=KLSMartin Team Assistant",
         "--icon=icon.ico",
         "--add-data=icon.ico;.",
+        "--add-data=template.pptx;.",
         "main.py",
         "-y"
     ]
