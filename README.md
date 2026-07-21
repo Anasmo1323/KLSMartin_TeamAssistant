@@ -7,9 +7,11 @@ A comprehensive inventory control, verification, and AI-powered product mapping 
 ### 1. KLS Master Catalog 
 - **Dynamic Product Browsing**: Fast, responsive data tables to navigate massive product lists seamlessly.
 - **Advanced Filtering**: Filter products by multiple specific Categories or Brochures.
+  - *Hierarchical Brochures*: Brochures are intelligently grouped into a collapsible tree structure, mapped logically with dynamic bundling for uncategorized items.
+- **Crash-Proof Debouncing**: All search inputs and checkbox filters are heavily debounced (300ms) to ensure smooth performance even when rapidly interacting with massive datasets.
 - **Search Capabilities**:
   - *Global Search*: Full-text search across all descriptions and data fields.
-  - *Segmented Code Search*: Smartly parse and locate precise product codes.
+  - *Smart Segmented Search*: A dynamic composite text field that automatically parses both standard `XX-XXX-XX-XX` codes and shorter dot-separated codes (like `XX.XXX.XX`) natively from copy-pasting.
 - **Offers Manager**: Quickly build, review, and manage lists of items as an "Offer", and easily export/copy them.
 - **One-Click Updates**: Readily upload new master catalog files (`KLS_All_Products.xlsx`) overwriting the old database instantly.
 
@@ -23,7 +25,7 @@ A comprehensive inventory control, verification, and AI-powered product mapping 
 - **Manifest Verification**: Upload delivery manifests to systematically verify incoming stock against expectations.
 - **Batch Processing**: Type in a product code and quantity, and hit "Confirm Batch" to instantly verify received line-items.
 - **Error Checking**: Filter views to quickly spot "Code Not Found" or "No Image" errors in the manifest.
-- **Safe Saves**: "Save Overwrite" and "Save As..." functions ensure your verification progress is always securely logged.
+- **Non-Destructive Saves**: Replaces standard overwrites with surgical `openpyxl` modifications. When saving, the app opens the original Excel file natively, paints un-cleared codes yellow, calculates missing quantities on the far right, and saves it seamlessly without stripping existing graphs, macros, or formatting.
 
 ### 4. Stock Management 
 - **Stock Tracking**: Dedicated workspace to load, filter, and inspect internal stock files (`stock_data.csv`).
@@ -34,7 +36,7 @@ A comprehensive inventory control, verification, and AI-powered product mapping 
 
 ## 🛠️ Technology Stack
 - **GUI Framework**: PyQt6
-- **Data Processing**: Pandas, NumPy
+- **Data Processing**: Pandas, NumPy, OpenPyXL
 - **Machine Learning**: PyTorch, Sentence-Transformers, Llama.cpp (via `llama_cpp_python`)
 - **Database**: SQLite3
 

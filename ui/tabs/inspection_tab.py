@@ -19,6 +19,11 @@ class InspectionTab(QWidget):
         self.display_cols = []
         self.current_file_path = None
         self.is_modified = False
+        
+        self.mapped_header_row = 0
+        self.mapped_sheet_name = None
+        self.mapped_code_col = None
+        
         self.init_ui()
 
     def init_ui(self):
@@ -32,15 +37,10 @@ class InspectionTab(QWidget):
         self.btn_upload.clicked.connect(self.upload_manifest)
         top_layout.addWidget(self.btn_upload)
         
-        self.btn_save = QPushButton("Save Overwrite")
-        self.btn_save.clicked.connect(self.save_file)
-        self.btn_save.setEnabled(False)
-        top_layout.addWidget(self.btn_save)
-
-        self.btn_save_as = QPushButton("Save As...")
-        self.btn_save_as.clicked.connect(self.save_as_file)
-        self.btn_save_as.setEnabled(False)
-        top_layout.addWidget(self.btn_save_as)
+        self.btn_export_results = QPushButton("Save Inspection Results")
+        self.btn_export_results.clicked.connect(self.save_inspection_results)
+        self.btn_export_results.setEnabled(False)
+        top_layout.addWidget(self.btn_export_results)
         layout.addLayout(top_layout)
 
         filter_layout = QHBoxLayout()
@@ -119,6 +119,10 @@ class InspectionTab(QWidget):
                     self.extras = getattr(dlg, 'extras', [])
                     self.current_file_path = file_path
                     
+                    self.mapped_header_row = dlg.header_row
+                    self.mapped_sheet_name = getattr(dlg, 'selected_sheet', None)
+                    self.mapped_code_col = dlg.mappings['code']
+                    
                     self.df['quantity'] = pd.to_numeric(self.df['quantity'], errors='coerce').fillna(0).astype(int)
                     if 'inspected' not in self.df.columns:
                         self.df['inspected'] = 0 
@@ -126,8 +130,7 @@ class InspectionTab(QWidget):
                         self.df['status'] = "PENDING"
                     
                     self.set_modified(False)
-                    self.btn_save.setEnabled(True)
-                    self.btn_save_as.setEnabled(True)
+                    self.btn_export_results.setEnabled(True)
                     self.populate_table(self.df)
                 except Exception as e:
                     QMessageBox.critical(self, "Error", f"Failed processing manifest: {e}")
@@ -173,7 +176,16 @@ class InspectionTab(QWidget):
         orig_idx = item.data(Qt.ItemDataRole.UserRole)
         if orig_idx is not None and self.df is not None:
             col_name = self.display_cols[item.column()]
-            self.df.at[orig_idx, col_name] = item.text()
+            val = item.text()
+            
+            # Prevent Pandas crash: Cast to int if editing a numeric column
+            if col_name in ['quantity', 'inspected']:
+                try:
+                    val = int(val)
+                except ValueError:
+                    val = 0
+                    
+            self.df.at[orig_idx, col_name] = val
             self.set_modified(True)
 
             # Auto-update status if manual qty/inspected edits occurred
@@ -237,30 +249,57 @@ class InspectionTab(QWidget):
     def set_modified(self, state):
         self.is_modified = state
         indicator = " *(Unsaved)*" if state else ""
-        self.btn_save.setText(f"Save Overwrite{indicator}")
+        self.btn_export_results.setText(f"Save Inspection Results{indicator}")
 
-    def save_file(self):
-        if self.current_file_path:
-            self._execute_save(self.current_file_path)
-        else:
-            self.save_as_file()
-
-    def save_as_file(self):
-        path, _ = QFileDialog.getSaveFileName(self, "Save File As", "", "Excel Files (*.xlsx);;CSV Files (*.csv)")
-        if path:
-            self._execute_save(path)
-
-    def _execute_save(self, path):
+    def save_inspection_results(self):
+        if not self.current_file_path: return
+        
         try:
-            if path.endswith('.csv'):
-                self.df.to_csv(path, index=False)
+            if self.current_file_path.endswith('.csv'):
+                export_df = self.df.copy()
+                # Restore original column names for CSV export
+                original_col_names = {v: k for k, v in self.mapped_dict.items()} if hasattr(self, 'mapped_dict') else {}
+                # Add Missing Qty
+                export_df['Missing Qty'] = export_df.apply(
+                    lambda r: max(0, int(r['quantity']) - int(r['inspected'])) if r['status'] != 'CLEARED' else 0, axis=1)
+                export_df.to_csv(self.current_file_path, index=False)
+                self.set_modified(False)
+                QMessageBox.information(self, "Saved", "Results appended to CSV file.")
             else:
-                self.df.to_excel(path, index=False)
-            self.current_file_path = path
-            self.set_modified(False)
-            QMessageBox.information(self, "Saved", f"File saved successfully:\n{path}")
+                import openpyxl
+                from openpyxl.styles import PatternFill
+                
+                with show_loading(self, "Applying Highlights to Excel..."):
+                    wb = openpyxl.load_workbook(self.current_file_path)
+                    ws = wb[self.mapped_sheet_name] if self.mapped_sheet_name else wb.active
+                    
+                    header_row_excel = self.mapped_header_row + 1
+                    code_col_idx = 1
+                    max_col = ws.max_column
+                    
+                    for col in range(1, max_col + 1):
+                        cell_val = ws.cell(row=header_row_excel, column=col).value
+                        if str(cell_val).strip() == str(self.mapped_code_col).strip():
+                            code_col_idx = col
+                            break
+                            
+                    missing_col_idx = max_col + 1
+                    ws.cell(row=header_row_excel, column=missing_col_idx, value="Missing Qty")
+                    yellow_fill = PatternFill(start_color="FFFFFF00", end_color="FFFFFF00", fill_type="solid")
+                    
+                    for df_idx, (orig_idx, row) in enumerate(self.df.iterrows()):
+                        excel_row = header_row_excel + 1 + df_idx
+                        if row['status'] != "CLEARED":
+                            missing = max(0, int(row['quantity']) - int(row['inspected']))
+                            ws.cell(row=excel_row, column=missing_col_idx, value=missing)
+                            ws.cell(row=excel_row, column=code_col_idx).fill = yellow_fill
+                            
+                    wb.save(self.current_file_path)
+                    self.set_modified(False)
+                    QMessageBox.information(self, "Saved", "Highlights and missing quantities saved to original Excel file!")
+                    
         except Exception as e:
-            QMessageBox.critical(self, "Error", f"Failed to save file:\n{e}")
+            QMessageBox.critical(self, "Error", f"Failed to save inspection results:\n{e}")
 
     def apply_filter(self):
         if self.df is None or self.df.empty: return

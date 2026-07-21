@@ -73,15 +73,19 @@ class SegmentedCodeEdit(QWidget):
 
     def set_code(self, code_str):
         clean = re.sub(r'[^a-zA-Z0-9]', '', code_str)
-        if len(clean) >= 9:
-            self.edits[0].setText(clean[0:2])
-            self.edits[1].setText(clean[2:5])
-            self.edits[2].setText(clean[5:7])
-            self.edits[3].setText(clean[7:9])
-            # Auto-fire enter when full string pasted
+        self.clear()
+        
+        for edit in self.edits:
+            max_l = edit.maxLength()
+            chunk = clean[:max_l]
+            clean = clean[max_l:]
+            edit.setText(chunk)
+            if not clean:
+                break
+                
+        # Auto-fire enter when full string pasted (if it looks like a complete code)
+        if len(re.sub(r'[^a-zA-Z0-9]', '', code_str)) >= 7:
             self.returnPressed.emit()
-        else:
-            self.edits[0].setText(code_str)
 
     def clear(self):
         for edit in self.edits:

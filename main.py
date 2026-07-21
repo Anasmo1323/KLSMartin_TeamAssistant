@@ -28,7 +28,7 @@ if __name__ == '__main__':
             color: #282829;
         }
         
-        QLineEdit, QListWidget, QTableWidget {
+        QLineEdit, QListWidget, QTableWidget, QTreeWidget {
             background-color: #FFFFFF;
             color: #282829;
             border: 1px solid #CCCCCC;
@@ -44,12 +44,12 @@ if __name__ == '__main__':
             font-weight: bold;
         }
         
-        QTableWidget::item:hover, QListWidget::item:hover {
+        QTableWidget::item:hover, QListWidget::item:hover, QTreeWidget::item:hover {
             background-color: #F1F5F9;
             color: #282829;
         }
         
-        QTableWidget::item:selected, QListWidget::item:selected {
+        QTableWidget::item:selected, QListWidget::item:selected, QTreeWidget::item:selected {
             background-color: #E2E8F0;
             color: #282829;
         }
@@ -131,7 +131,7 @@ if __name__ == '__main__':
             height: 0px;
         }
         
-        QListWidget::indicator {
+        QListWidget::indicator, QTreeWidget::indicator {
             width: 14px;
             height: 14px;
             border: 1px solid #777777;
@@ -139,7 +139,7 @@ if __name__ == '__main__':
             background: #FFFFFF;
         }
         
-        QListWidget::indicator:checked {
+        QListWidget::indicator:checked, QTreeWidget::indicator:checked {
             background-color: #E20303;
             border: 1px solid #E20303;
         }

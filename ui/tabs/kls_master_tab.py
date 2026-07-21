@@ -8,8 +8,8 @@ from ui.widgets.segmented_edit import SegmentedCodeEdit
 from ui.widgets.dynamic_table import DynamicTableWidget
 from ui.dialogs.mapping_dialog import MappingDialog
 from ui.dialogs.offer_dialog import OfferListDialog
-from ui.widgets.checkable_list import CheckableListWidget
-from core.constants import CATEGORY_MAPPING
+from ui.widgets.checkable_list import CheckableListWidget, CheckableTreeWidget
+from core.constants import CATEGORY_MAPPING, BROCHURE_HIERARCHY
 from core.utils import show_loading, resource_path
 from PyQt6.QtWidgets import QStackedWidget
 from PyQt6.QtGui import QPixmap
@@ -21,8 +21,16 @@ class KlsMasterTab(QWidget):
         self.offer_data = []
         self.default_path = "KLS_All_Products.xlsx"
         self.required_fields = ['code', 'description', 'brochures', 'product_url']
+        
+        self.filter_timer = QTimer()
+        self.filter_timer.setSingleShot(True)
+        self.filter_timer.timeout.connect(self.apply_filter)
+        
         self.init_ui()
         QTimer.singleShot(100, self.load_default_master)
+        
+    def queue_filter(self):
+        self.filter_timer.start(300)
 
     def init_ui(self):
         main_layout = QHBoxLayout(self)
@@ -41,7 +49,7 @@ class KlsMasterTab(QWidget):
         cat_layout.setSpacing(8)
         cat_layout.addWidget(QLabel("<b>Categories</b>"))
         self.category_list = CheckableListWidget(items=list(CATEGORY_MAPPING.values()))
-        self.category_list.selectionChanged.connect(self.apply_filter)
+        self.category_list.selectionChanged.connect(self.queue_filter)
         self.category_list.setMinimumWidth(250)
         cat_layout.addWidget(self.category_list)
         left_splitter.addWidget(cat_widget)
@@ -51,8 +59,9 @@ class KlsMasterTab(QWidget):
         bro_layout.setContentsMargins(0, 0, 0, 0)
         bro_layout.setSpacing(8)
         bro_layout.addWidget(QLabel("<b>Brochures</b>"))
-        self.brochure_list = CheckableListWidget()
-        self.brochure_list.selectionChanged.connect(self.apply_filter)
+        # self.brochure_list = CheckableListWidget()
+        self.brochure_list = CheckableTreeWidget(hierarchy=BROCHURE_HIERARCHY)
+        self.brochure_list.selectionChanged.connect(self.queue_filter)
         self.brochure_list.setMinimumWidth(250)
         bro_layout.addWidget(self.brochure_list)
         left_splitter.addWidget(bro_widget)
@@ -71,18 +80,18 @@ class KlsMasterTab(QWidget):
         self.txt_global_search.setPlaceholderText("Global Search...")
         self.txt_global_search.setMinimumWidth(150)
         self.txt_global_search.setMaximumWidth(300)
-        self.txt_global_search.returnPressed.connect(self.apply_filter)
+        self.txt_global_search.returnPressed.connect(self.queue_filter)
         search_layout.addWidget(self.txt_global_search)
 
         self.code_search = SegmentedCodeEdit()
-        self.code_search.returnPressed.connect(self.apply_filter)
+        self.code_search.returnPressed.connect(self.queue_filter)
         search_layout.addWidget(self.code_search)
 
         self.btn_search = QPushButton("🔍")
         self.btn_search.setMinimumWidth(50)
         self.btn_search.setMaximumWidth(70)
         self.btn_search.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.btn_search.clicked.connect(self.apply_filter)
+        self.btn_search.clicked.connect(self.queue_filter)
         search_layout.addWidget(self.btn_search)
 
         self.btn_manage_offer = QPushButton("📝")
