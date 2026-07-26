@@ -53,13 +53,7 @@ class DynamicTableWidget(QTableWidget):
         min_col = min([r.leftColumn() for r in selection])
         max_col = max([r.rightColumn() for r in selection])
 
-        headers = []
-        for col in range(min_col, max_col + 1):
-            if not self.isColumnHidden(col):
-                header_item = self.horizontalHeaderItem(col)
-                headers.append(header_item.text() if header_item else f"Col{col}")
-        
-        tsv = "\t".join(headers) + "\n"
+        tsv = ""
 
         for row in range(min_row, max_row + 1):
             row_data = []
