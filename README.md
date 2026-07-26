@@ -6,13 +6,19 @@ A comprehensive inventory control, verification, and AI-powered product mapping 
 
 ### 1. KLS Master Catalog 
 - **Dynamic Product Browsing**: Fast, responsive data tables to navigate massive product lists seamlessly.
-- **Advanced Filtering**: Filter products by multiple specific Categories or Brochures.
-  - *Hierarchical Brochures*: Brochures are intelligently grouped into a collapsible tree structure, mapped logically with dynamic bundling for uncategorized items.
+- **Responsive Design**: Fluid UI layout without hardcoded constraints, allowing dynamic window resizing in all directions.
+- **Advanced Filtering (Accordion UI)**: Filter products efficiently using a custom-built, auto-expanding Accordion Sidebar containing inline search bars for:
+  - *Categories*
+  - *Brochures*: Intelligently grouped into a collapsible tree structure, mapped logically with dynamic bundling.
+  - *Instrument Sets*: Parses `ALMA_Sets_Export.xlsx` to instantly filter the master table down to the exact SKUs making up a specific instrument set.
+- **State Toggling**: A unified dropdown to instantly filter the global catalog by Product State (All / Active / Inactive), with dynamic color-coding in the data grid.
 - **Crash-Proof Debouncing**: All search inputs and checkbox filters are heavily debounced (300ms) to ensure smooth performance even when rapidly interacting with massive datasets.
 - **Search Capabilities**:
   - *Global Search*: Full-text search across all descriptions and data fields.
   - *Smart Segmented Search*: A dynamic composite text field that automatically parses both standard `XX-XXX-XX-XX` codes and shorter dot-separated codes (like `XX.XXX.XX`) natively from copy-pasting.
 - **Offers Manager**: Quickly build, review, and manage lists of items as an "Offer". Export directly to dynamically generated PowerPoint presentations, with one-click automatic PDF compilation via Microsoft COM integration.
+  - *Set Loading*: Features a dedicated dialog to search and instantly inject all constituent SKUs of a specific Instrument Set directly into the Offer List with correct quantities.
+  - *Rapid Entry*: Keyboard shortcuts ('Enter' key) inside the Master Grid seamlessly trigger the quantity entry prompt.
 - **One-Click Updates**: Readily upload new master catalog files (`KLS_All_Products.xlsx`) overwriting the old database instantly.
 
 ### 2. Intelligent AI Mapper 
@@ -32,7 +38,8 @@ A comprehensive inventory control, verification, and AI-powered product mapping 
 - **Unified Search**: Uses the same powerful global and code-segmented search tools to hunt down inventory in stock.
 
 ### 5. Web Scraping & Data Collection
-- **Internal Scripts**: Integrated Python scrapers to collect missing catalog data, download product images, and assemble product portfolios automatically from supplier websites.
+- **Internal Scripts**: Integrated Python scrapers (`alma_scrap.py`) to collect missing catalog data, download product images, and assemble product portfolios automatically from authenticated portals (e.g. ALMA).
+- **Resilient Image Scraping**: Features intelligent resumable extraction logic, dynamically bypassing already downloaded images to gracefully handle timeouts and network disconnects.
 
 ## 🛠️ Technology Stack
 - **GUI Framework**: PyQt6

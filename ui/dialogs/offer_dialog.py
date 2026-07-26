@@ -31,6 +31,7 @@ from PyQt6.QtGui import QColor, QFont
 from ui.widgets.dynamic_table import DynamicTableWidget
 from ui.dialogs.mapping_dialog import MappingDialog
 from ui.dialogs.pdf_dialog import PdfSettingsDialog
+from ui.dialogs.set_selection_dialog import SetSelectionDialog
 from core.utils import show_loading
 
 class OfferListDialog(QDialog):
@@ -70,6 +71,9 @@ class OfferListDialog(QDialog):
         self.btn_bulk_upload = QPushButton("Bulk Upload (Excel/CSV)")
         self.btn_bulk_upload.clicked.connect(self.bulk_upload_offer)
 
+        self.btn_load_set = QPushButton("Load Set")
+        self.btn_load_set.clicked.connect(self.load_set_offer)
+
         self.btn_export_excel = QPushButton("Export to Excel")
         self.btn_export_excel.clicked.connect(self.export_excel)
         
@@ -81,8 +85,9 @@ class OfferListDialog(QDialog):
         self.btn_export_pptx.clicked.connect(self.export_pptx)
 
         btn_layout.addWidget(self.btn_clear)
-        btn_layout.addStretch()
         btn_layout.addWidget(self.btn_bulk_upload)
+        btn_layout.addWidget(self.btn_load_set)
+        btn_layout.addStretch()
         btn_layout.addWidget(self.btn_export_excel)
         btn_layout.addWidget(self.btn_export_pdf)
         btn_layout.addWidget(self.btn_export_pptx)
@@ -91,10 +96,11 @@ class OfferListDialog(QDialog):
     def refresh_offer_table(self):
         self.offer_table.blockSignals(True)
         self.offer_table.clearSpans()
-        self.offer_table.setColumnCount(4 + len(self.extra_columns))
-        self.offer_table.setHorizontalHeaderLabels(["", "CODE", "DESCRIPTION", "QTY"] + [c.upper() for c in self.extra_columns])
+        self.offer_table.setColumnCount(5 + len(self.extra_columns))
+        self.offer_table.setHorizontalHeaderLabels(["", "#", "CODE", "DESCRIPTION", "QTY"] + [c.upper() for c in self.extra_columns])
         self.offer_table.setRowCount(len(self.offer_data))
         
+        serial_counter = 1
         for i, data in enumerate(self.offer_data):
             btn = QPushButton("−")
             btn.setObjectName("removeButton")
@@ -119,24 +125,31 @@ class OfferListDialog(QDialog):
                 item_desc.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                 
                 self.offer_table.setItem(i, 1, item_desc)
-                self.offer_table.setSpan(i, 1, 1, 3 + len(self.extra_columns)) 
+                self.offer_table.setSpan(i, 1, 1, 4 + len(self.extra_columns)) 
             else:
+                item_sr = QTableWidgetItem(str(serial_counter))
+                item_sr.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsEnabled)
+                item_sr.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                self.offer_table.setItem(i, 1, item_sr)
+                
                 item_code = QTableWidgetItem(data["code"])
                 item_code.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsEnabled)
-                self.offer_table.setItem(i, 1, item_code)
+                self.offer_table.setItem(i, 2, item_code)
 
                 item_desc = QTableWidgetItem(data["desc"])
                 item_desc.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsEnabled)
-                self.offer_table.setItem(i, 2, item_desc)
+                self.offer_table.setItem(i, 3, item_desc)
 
                 item_qty = QTableWidgetItem(str(data["qty"]))
                 item_qty.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsEnabled)
-                self.offer_table.setItem(i, 3, item_qty)
+                self.offer_table.setItem(i, 4, item_qty)
 
                 for idx, col_name in enumerate(self.extra_columns):
                     item_extra = QTableWidgetItem(str(data.get(col_name, "")))
                     item_extra.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsEnabled)
-                    self.offer_table.setItem(i, 4 + idx, item_extra)
+                    self.offer_table.setItem(i, 5 + idx, item_extra)
+                    
+                serial_counter += 1
 
         self.offer_table.blockSignals(False)
 
@@ -190,6 +203,68 @@ class OfferListDialog(QDialog):
         self.offer_data.clear()
         self.refresh_offer_table()
 
+    def load_set_offer(self):
+        master_df = self.master_tab.df
+        if master_df is None or master_df.empty:
+            QMessageBox.warning(self, "No Master Data", "Please load the master catalogue before loading sets.")
+            return
+            
+        dlg = SetSelectionDialog(self.master_tab, parent=self)
+        if dlg.exec() != QDialog.DialogCode.Accepted:
+            return
+            
+        set_items = dlg.get_selected_items()
+        if set_items is None or set_items.empty:
+            QMessageBox.information(self, "No Items", "The selected set has no items.")
+            return
+
+        with show_loading(self, "Merging Set Data..."):
+            master_copy = master_df.copy()
+            master_copy['join_key'] = master_copy['code'].astype(str).str.replace('-', '').str.strip().str.lower()
+            
+            set_items_copy = set_items.copy()
+            set_items_copy['join_key'] = set_items_copy['Item_SKU'].astype(str).str.replace('-', '').str.strip().str.lower()
+            
+            # Relational JOIN operation using Pandas
+            merged_df = pd.merge(set_items_copy, master_copy, on='join_key', how='left')
+            
+            set_name_series = dlg.unique_sets_df[dlg.unique_sets_df['Set_Code'].astype(str) == dlg.selected_set_code]['Set_Name']
+            set_name = set_name_series.iloc[0] if not set_name_series.empty else dlg.selected_set_code
+            self.offer_data.append({"is_section": True, "desc": f"Set: {set_name} ({dlg.selected_set_code})"})
+            
+            skipped = []
+            for _, row in merged_df.iterrows():
+                code = str(row.get('Item_SKU', ''))
+                if not code or code.lower() == 'nan':
+                    continue
+                    
+                qty = row.get('Quantity', 1)
+                try:
+                    qty = int(float(qty))
+                except (ValueError, TypeError):
+                    qty = 1
+                
+                desc = row.get('description', None)
+                if pd.isna(desc) or not str(desc).strip():
+                    desc = str(row.get('Item_Name', ''))
+                    skipped.append(code)
+                else:
+                    desc = str(desc)
+                    
+                self.offer_data.append({
+                    "code": code,
+                    "desc": desc,
+                    "qty": qty
+                })
+        
+        self.refresh_offer_table()
+        if skipped:
+            QMessageBox.warning(
+                self,
+                "Missing Master Data",
+                f"{len(skipped)} items from the set were not found in the master catalogue. They have been added using their default names from the sets export."
+            )
+
     def bulk_upload_offer(self):
         file_path, _ = QFileDialog.getOpenFileName(
             self,
@@ -199,8 +274,7 @@ class OfferListDialog(QDialog):
         )
         if not file_path:
             return
-
-        dlg = MappingDialog(file_path, ['code', 'description', 'quantity'], allow_extras=True, parent=self)
+        dlg = MappingDialog(file_path, required_fields=['code'], optional_fields=['description', 'quantity'], allow_extras=True, parent=self)
         if dlg.exec() != QDialog.DialogCode.Accepted:
             return
 
@@ -214,13 +288,13 @@ class OfferListDialog(QDialog):
                 rename_map = {'code': 'code', 'description': 'desc', 'quantity': 'qty'}
                 mapped_cols = {}
                 for source_col, target_key in rename_map.items():
-                    if source_col in dlg.mappings:
+                    if source_col in dlg.mappings and dlg.mappings[source_col]:
                         mapped_cols[source_col] = dlg.mappings[source_col]
                     else:
                         mapped_cols[source_col] = None
 
-                if mapped_cols['code'] is None or mapped_cols['description'] is None or mapped_cols['quantity'] is None:
-                    QMessageBox.warning(self, "Invalid Mapping", "Please map 'code', 'description', and 'quantity' columns.")
+                if mapped_cols['code'] is None:
+                    QMessageBox.warning(self, "Invalid Mapping", "Please map at least the 'code' column.")
                     return
 
                 new_extras = getattr(dlg, 'extras', [])
@@ -228,13 +302,19 @@ class OfferListDialog(QDialog):
                     if ext not in self.extra_columns:
                         self.extra_columns.append(ext)
 
-                upload_df = raw_df.rename(columns={
-                    mapped_cols['code']: 'code',
-                    mapped_cols['description']: 'desc',
-                    mapped_cols['quantity']: 'qty'
-                })
+                rename_dict = {mapped_cols['code']: 'code'}
+                if mapped_cols['description']: rename_dict[mapped_cols['description']] = 'desc'
+                if mapped_cols['quantity']: rename_dict[mapped_cols['quantity']] = 'qty'
+
+                upload_df = raw_df.rename(columns=rename_dict)
                 
-                upload_df['qty'] = pd.to_numeric(upload_df['qty'], errors='coerce').fillna(0).astype(int)
+                if 'qty' not in upload_df.columns:
+                    upload_df['qty'] = 1
+                else:
+                    upload_df['qty'] = pd.to_numeric(upload_df['qty'], errors='coerce').fillna(1).astype(int)
+
+                if 'desc' not in upload_df.columns:
+                    upload_df['desc'] = ""
 
                 master_df = self.master_tab.df
                 if master_df is None or master_df.empty:
@@ -242,12 +322,21 @@ class OfferListDialog(QDialog):
                     return
 
                 master_codes = set(master_df['code'].astype(str).str.replace('-', '').str.strip().str.lower())
+                
+                # Pre-build a fast lookup dictionary for descriptions from master_df
+                # This is much faster than boolean masking inside the loop
+                master_desc_lookup = {}
+                for _, m_row in master_df.iterrows():
+                    m_code_clean = str(m_row.get('code', '')).replace('-', '').strip().lower()
+                    if m_code_clean:
+                        master_desc_lookup[m_code_clean] = str(m_row.get('description', ''))
+
                 valid_rows = []
                 skipped_codes = []
 
                 for _, row in upload_df.iterrows():
-                    code_val = str(row['code']).strip() if pd.notna(row['code']) else ""
-                    desc_val = str(row['desc']).strip() if pd.notna(row['desc']) else ""
+                    code_val = str(row.get('code', '')).strip() if pd.notna(row.get('code')) else ""
+                    desc_val = str(row.get('desc', '')).strip() if pd.notna(row.get('desc')) else ""
 
                     if (not code_val or code_val.lower() == 'nan') and desc_val and desc_val.lower() != 'nan':
                         sec_data = {"code": "", "desc": desc_val, "qty": "", "is_section": True}
@@ -260,10 +349,15 @@ class OfferListDialog(QDialog):
                     if not code_val or code_val.lower() == 'nan':
                         continue
 
-                    normalized_code = code_val.replace('-', '').strip().lower()
-                    if normalized_code not in master_codes:
+                    code_clean = code_val.replace('-', '').lower()
+
+                    if code_clean not in master_codes:
                         skipped_codes.append(code_val)
                         continue
+                        
+                    # If description is missing, pull from master file
+                    if not desc_val:
+                        desc_val = master_desc_lookup.get(code_clean, "")
 
                     qty_val = int(row['qty']) if pd.notna(row['qty']) else 1
                     row_data = {"code": code_val, "desc": desc_val, "qty": qty_val, "is_section": False}
@@ -295,10 +389,11 @@ class OfferListDialog(QDialog):
                 QMessageBox.critical(self, "Bulk Upload Error", f"Failed to process uploaded file: {e}")
 
     def get_logical_col_key(self, logical_col):
-        if logical_col == 1: return "CODE", "code"
-        elif logical_col == 2: return "DESCRIPTION", "desc"
-        elif logical_col == 3: return "QTY", "qty"
-        elif logical_col >= 4: return self.extra_columns[logical_col - 4].upper(), self.extra_columns[logical_col - 4]
+        if logical_col == 1: return "#", "sr_no"
+        elif logical_col == 2: return "CODE", "code"
+        elif logical_col == 3: return "DESCRIPTION", "desc"
+        elif logical_col == 4: return "QTY", "qty"
+        elif logical_col >= 5: return self.extra_columns[logical_col - 5].upper(), self.extra_columns[logical_col - 5]
         return None, None
 
     def export_excel(self):
@@ -311,6 +406,7 @@ class OfferListDialog(QDialog):
                 visual_cols = [header.logicalIndex(v) for v in range(1, self.offer_table.columnCount())]
                 
                 export_list = []
+                serial_counter = 1
                 for data in self.offer_data:
                     export_dict = {}
                     for log_col in visual_cols:
@@ -319,7 +415,12 @@ class OfferListDialog(QDialog):
                             if data.get("is_section", False):
                                 export_dict[header_name] = data["desc"] if dict_key == "desc" else ""
                             else:
-                                export_dict[header_name] = data.get(dict_key, "")
+                                if dict_key == "sr_no":
+                                    export_dict[header_name] = str(serial_counter)
+                                else:
+                                    export_dict[header_name] = data.get(dict_key, "")
+                    if not data.get("is_section", False):
+                        serial_counter += 1
                     export_list.append(export_dict)
 
                 df = pd.DataFrame(export_list)

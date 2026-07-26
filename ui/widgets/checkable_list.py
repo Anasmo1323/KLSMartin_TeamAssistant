@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QListWidget, QListWidgetItem, QWidget, QVBoxLayout, QPushButton, QHBoxLayout, QTreeWidget, QTreeWidgetItem
+from PyQt6.QtWidgets import QListWidget, QListWidgetItem, QWidget, QVBoxLayout, QPushButton, QHBoxLayout, QTreeWidget, QTreeWidgetItem, QLineEdit
 from PyQt6.QtCore import Qt, pyqtSignal
 
 class CheckableListWidget(QWidget):
@@ -11,6 +11,11 @@ class CheckableListWidget(QWidget):
         
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
+        
+        self.search_bar = QLineEdit()
+        self.search_bar.setPlaceholderText("Search...")
+        self.search_bar.textChanged.connect(self.filter_list)
+        layout.addWidget(self.search_bar)
         
         btn_layout = QHBoxLayout()
         self.btn_all = QPushButton("Select All")
@@ -37,6 +42,12 @@ class CheckableListWidget(QWidget):
             self.list_widget.addItem(item)
         self.list_widget.blockSignals(False)
         
+    def filter_list(self, text):
+        search_text = text.lower()
+        for i in range(self.list_widget.count()):
+            item = self.list_widget.item(i)
+            item.setHidden(search_text not in item.text().lower())
+
     def _on_item_changed(self, item):
         self.selectionChanged.emit()
         
@@ -74,6 +85,11 @@ class CheckableTreeWidget(QWidget):
         
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
+        
+        self.search_bar = QLineEdit()
+        self.search_bar.setPlaceholderText("Search...")
+        self.search_bar.textChanged.connect(self.filter_tree)
+        layout.addWidget(self.search_bar)
         
         btn_layout = QHBoxLayout()
         self.btn_all = QPushButton("Select All")
@@ -133,6 +149,24 @@ class CheckableTreeWidget(QWidget):
 
         self.tree_widget.blockSignals(False)
         
+    def filter_tree(self, text):
+        search_text = text.lower()
+        root = self.tree_widget.invisibleRootItem()
+        for i in range(root.childCount()):
+            parent = root.child(i)
+            parent_match = search_text in parent.text(0).lower()
+            any_child_match = False
+            for j in range(parent.childCount()):
+                child = parent.child(j)
+                child_match = search_text in child.text(0).lower()
+                child.setHidden(not (parent_match or child_match))
+                if child_match:
+                    any_child_match = True
+            
+            parent.setHidden(not (parent_match or any_child_match))
+            if text and any_child_match:
+                parent.setExpanded(True)
+
     def _on_item_changed(self, item, column):
         self.selectionChanged.emit()
         

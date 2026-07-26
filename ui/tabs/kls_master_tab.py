@@ -2,17 +2,18 @@ import os
 import re
 import pandas as pd
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QHeaderView, QFileDialog, QDialog, QMessageBox, QTableWidgetItem, QInputDialog, QSplitter
-from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtCore import Qt, QTimer, QEvent
 
 from ui.widgets.segmented_edit import SegmentedCodeEdit
 from ui.widgets.dynamic_table import DynamicTableWidget
 from ui.dialogs.mapping_dialog import MappingDialog
 from ui.dialogs.offer_dialog import OfferListDialog
 from ui.widgets.checkable_list import CheckableListWidget, CheckableTreeWidget
+from ui.widgets.collapsible_box import CollapsibleBox
 from core.constants import CATEGORY_MAPPING, BROCHURE_HIERARCHY
 from core.utils import show_loading, resource_path
-from PyQt6.QtWidgets import QStackedWidget
-from PyQt6.QtGui import QPixmap
+from PyQt6.QtWidgets import QStackedWidget, QListWidgetItem, QComboBox
+from PyQt6.QtGui import QPixmap, QColor
 
 class KlsMasterTab(QWidget):
     def __init__(self):
@@ -20,7 +21,7 @@ class KlsMasterTab(QWidget):
         self.df = None
         self.offer_data = []
         self.default_path = "KLS_All_Products.xlsx"
-        self.required_fields = ['code', 'description', 'brochures', 'product_url']
+        self.required_fields = ['code', 'description', 'brochures', 'state']
         
         self.filter_timer = QTimer()
         self.filter_timer.setSingleShot(True)
@@ -40,33 +41,47 @@ class KlsMasterTab(QWidget):
         main_splitter = QSplitter(Qt.Orientation.Horizontal)
         main_layout.addWidget(main_splitter)
 
-        # Left Panel (Filters - Vertical Splitter)
-        left_splitter = QSplitter(Qt.Orientation.Vertical)
+        # Left Panel (Filters - Accordion)
+        left_panel_widget = QWidget()
+        left_layout = QVBoxLayout(left_panel_widget)
+        left_layout.setContentsMargins(0, 0, 0, 0)
+        left_layout.setSpacing(4)
         
-        cat_widget = QWidget()
-        cat_layout = QVBoxLayout(cat_widget)
-        cat_layout.setContentsMargins(0, 0, 0, 0)
-        cat_layout.setSpacing(8)
-        cat_layout.addWidget(QLabel("<b>Categories</b>"))
+        # Categories Box
+        self.cat_box = CollapsibleBox("Categories")
+        cat_inner = QVBoxLayout()
+        cat_inner.setContentsMargins(4, 4, 4, 4)
         self.category_list = CheckableListWidget(items=list(CATEGORY_MAPPING.values()))
         self.category_list.selectionChanged.connect(self.queue_filter)
-        self.category_list.setMinimumWidth(250)
-        cat_layout.addWidget(self.category_list)
-        left_splitter.addWidget(cat_widget)
+        self.category_list.selectionChanged.connect(self._update_cat_highlight)
+        cat_inner.addWidget(self.category_list)
+        self.cat_box.setContentLayout(cat_inner)
+        left_layout.addWidget(self.cat_box)
         
-        bro_widget = QWidget()
-        bro_layout = QVBoxLayout(bro_widget)
-        bro_layout.setContentsMargins(0, 0, 0, 0)
-        bro_layout.setSpacing(8)
-        bro_layout.addWidget(QLabel("<b>Brochures</b>"))
-        # self.brochure_list = CheckableListWidget()
+        # Brochures Box
+        self.bro_box = CollapsibleBox("Brochures")
+        bro_inner = QVBoxLayout()
+        bro_inner.setContentsMargins(4, 4, 4, 4)
         self.brochure_list = CheckableTreeWidget(hierarchy=BROCHURE_HIERARCHY)
         self.brochure_list.selectionChanged.connect(self.queue_filter)
-        self.brochure_list.setMinimumWidth(250)
-        bro_layout.addWidget(self.brochure_list)
-        left_splitter.addWidget(bro_widget)
+        self.brochure_list.selectionChanged.connect(self._update_bro_highlight)
+        bro_inner.addWidget(self.brochure_list)
+        self.bro_box.setContentLayout(bro_inner)
+        left_layout.addWidget(self.bro_box)
+
+        # Sets Box
+        self.set_box = CollapsibleBox("Instrument Sets")
+        set_inner = QVBoxLayout()
+        set_inner.setContentsMargins(4, 4, 4, 4)
+        self.sets_list = CheckableListWidget(items=[])
+        self.sets_list.selectionChanged.connect(self.queue_filter)
+        self.sets_list.selectionChanged.connect(self._update_set_highlight)
+        set_inner.addWidget(self.sets_list)
+        self.set_box.setContentLayout(set_inner)
+        left_layout.addWidget(self.set_box)
         
-        main_splitter.addWidget(left_splitter)
+        left_layout.addStretch()
+        main_splitter.addWidget(left_panel_widget)
 
         # Right Panel (Search & Content)
         right_widget = QWidget()
@@ -82,6 +97,11 @@ class KlsMasterTab(QWidget):
         self.txt_global_search.setMaximumWidth(300)
         self.txt_global_search.returnPressed.connect(self.queue_filter)
         search_layout.addWidget(self.txt_global_search)
+        
+        self.state_filter = QComboBox()
+        self.state_filter.addItems(["All", "Active", "Inactive"])
+        self.state_filter.currentIndexChanged.connect(self.queue_filter)
+        search_layout.addWidget(self.state_filter)
 
         self.code_search = SegmentedCodeEdit()
         self.code_search.returnPressed.connect(self.queue_filter)
@@ -132,6 +152,7 @@ class KlsMasterTab(QWidget):
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
         self.table.horizontalHeader().setDefaultSectionSize(200)
         self.table.setColumnWidth(0, 54)
+        self.table.installEventFilter(self)
         
         self.stacked_widget.addWidget(self.placeholder_label)
         self.stacked_widget.addWidget(self.table)
@@ -142,6 +163,18 @@ class KlsMasterTab(QWidget):
         
         # Set standard initial ratios for Master Tab
         main_splitter.setSizes([300, 900])
+
+    def eventFilter(self, source, event):
+        if source == self.table and event.type() == QEvent.Type.KeyPress:
+            if event.key() == Qt.Key.Key_Return or event.key() == Qt.Key.Key_Enter:
+                current_row = self.table.currentRow()
+                if current_row >= 0:
+                    code_item = self.table.item(current_row, 1)
+                    desc_item = self.table.item(current_row, 2)
+                    if code_item and desc_item:
+                        self.add_to_offer(code_item.text(), desc_item.text())
+                return True
+        return super().eventFilter(source, event)
 
     def _update_brochures_list(self):
         if self.df is None or self.df.empty or 'brochures' not in self.df.columns:
@@ -164,6 +197,15 @@ class KlsMasterTab(QWidget):
         parts = [p.strip() for p in text.split(';') if p.strip()] 
         return "<br>• ".join([""] + parts) if parts else "" # Formatted as HTML bullets
 
+    def _update_cat_highlight(self):
+        self.cat_box.set_highlight(bool(self.category_list.get_checked_items()))
+        
+    def _update_bro_highlight(self):
+        self.bro_box.set_highlight(bool(self.brochure_list.get_checked_items()))
+        
+    def _update_set_highlight(self):
+        self.set_box.set_highlight(bool(self.sets_list.get_checked_items()))
+
     def load_default_master(self):
         if os.path.exists(self.default_path):
             with show_loading(self, "Loading Master Database..."):
@@ -171,6 +213,25 @@ class KlsMasterTab(QWidget):
                     self.df = pd.read_excel(self.default_path)
                     self.df.columns = [c.lower().strip() for c in self.df.columns]
                     self._update_brochures_list()
+                    
+                    # Load Sets
+                    self.sets_df = None
+                    self.set_skus_map = {}
+                    if os.path.exists("ALMA_Sets_Export.xlsx"):
+                        self.sets_df = pd.read_excel("ALMA_Sets_Export.xlsx")
+                        unique_sets = self.sets_df['Set_Name'].dropna().unique().tolist()
+                        self.sets_list.list_widget.clear()
+                        for s in sorted(unique_sets):
+                            item = QListWidgetItem(str(s))
+                            item.setFlags(item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
+                            item.setCheckState(Qt.CheckState.Unchecked)
+                            self.sets_list.list_widget.addItem(item)
+                            
+                        # Pre-build sku map
+                        for s in unique_sets:
+                            skus = self.sets_df[self.sets_df['Set_Name'] == s]['Item_SKU'].dropna().astype(str).str.replace('-', '').str.lower().tolist()
+                            self.set_skus_map[s] = skus
+                            
                     self.apply_filter()
                 except Exception as e:
                     print(f"Could not load master reference: {e}")
@@ -240,16 +301,15 @@ class KlsMasterTab(QWidget):
                 item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
                 self.table.setItem(ui_row_idx, c_idx + 1, item)
 
-            raw_url = str(row.get('product_url', ''))
-            if not pd.isna(raw_url) and raw_url.strip().startswith('http'):
-                url_label = QLabel(f'<a href="{raw_url}">Open Link</a>')
-                url_label.setOpenExternalLinks(True)
-                url_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-                self.table.setCellWidget(ui_row_idx, 4, url_label)
-            else:
-                empty_item = QTableWidgetItem("N/A")
-                empty_item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
-                self.table.setItem(ui_row_idx, 4, empty_item)
+            state_val = str(row.get('state', ''))
+            state_item = QTableWidgetItem(state_val)
+            state_item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
+            state_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            if state_val.lower() == 'active':
+                state_item.setForeground(QColor("green"))
+            elif state_val.lower() == 'inactive':
+                state_item.setForeground(QColor("red"))
+            self.table.setItem(ui_row_idx, 4, state_item)
         self.table.resizeRowsToContents()
         
         if self.table.rowCount() > 0:
@@ -266,13 +326,24 @@ class KlsMasterTab(QWidget):
         active_code = any(s != "" for s in code_segs)
         active_cats = self.category_list.get_checked_items()
         active_bros = self.brochure_list.get_checked_items()
+        active_sets = self.sets_list.get_checked_items()
+        state_val = self.state_filter.currentText()
 
-        if not glob_text and not active_code and not active_cats and not active_bros:
+        if not glob_text and not active_code and not active_cats and not active_bros and not active_sets and state_val == "All":
             self.stacked_widget.setCurrentIndex(0)
             return
             
         self.stacked_widget.setCurrentIndex(1)
         filtered = self.df
+        
+        if state_val != "All":
+            filtered = filtered[filtered['state'].astype(str).str.strip().str.lower() == state_val.lower()]
+
+        if active_sets and hasattr(self, 'set_skus_map'):
+            valid_skus = set()
+            for s in active_sets:
+                valid_skus.update(self.set_skus_map.get(s, []))
+            filtered = filtered[filtered['code'].astype(str).str.replace('-', '').str.lower().isin(valid_skus)]
 
         if glob_text:
             or_groups = [g.strip() for g in glob_text.split('//') if g.strip()]
