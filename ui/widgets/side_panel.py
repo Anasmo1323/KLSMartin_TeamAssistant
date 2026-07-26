@@ -11,8 +11,6 @@ class ProductSidePanel(QFrame):
     def __init__(self, master_tab, parent=None):
         super().__init__(parent)
         self.master_tab = master_tab
-        self.setMinimumWidth(350)
-        self.setMaximumWidth(450)
         self.setObjectName("productSidePanel")
         self.init_ui()
 

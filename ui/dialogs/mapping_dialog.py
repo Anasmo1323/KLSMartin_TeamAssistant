@@ -3,10 +3,11 @@ from PyQt6.QtWidgets import QDialog, QVBoxLayout, QScrollArea, QWidget, QFormLay
 
 class MappingDialog(QDialog):
     """Dynamic window for mapping required logic fields and selecting additional columns."""
-    def __init__(self, file_path, required_fields, allow_extras=True, parent=None):
+    def __init__(self, file_path, required_fields, optional_fields=None, allow_extras=True, parent=None):
         super().__init__(parent)
         self.file_path = file_path
         self.required_fields = required_fields
+        self.optional_fields = optional_fields or []
         self.allow_extras = allow_extras
         self.selected_sheet = None
         self.mappings = {}
@@ -49,6 +50,13 @@ class MappingDialog(QDialog):
             combo = QComboBox()
             self.combos[field] = combo
             self.form_layout.addRow(f"Map to '{field}':", combo)
+            
+        if self.optional_fields:
+            self.form_layout.addRow(QLabel("<b>Optional Fields:</b>"))
+            for field in self.optional_fields:
+                combo = QComboBox()
+                self.combos[field] = combo
+                self.form_layout.addRow(f"Map to '{field}':", combo)
 
         if self.allow_extras:
             self.form_layout.addRow(QLabel("<b>Additional Columns to Import:</b>"))
@@ -106,9 +114,13 @@ class MappingDialog(QDialog):
         for field, combo in self.combos.items():
             val = combo.currentText()
             if val == "-- Select Column --":
-                QMessageBox.warning(self, "Mapping Error", f"Please select a mapping for: {field}")
-                return
-            self.mappings[field] = val
+                if field in self.required_fields:
+                    QMessageBox.warning(self, "Mapping Error", f"Please select a mapping for: {field}")
+                    return
+                else:
+                    self.mappings[field] = None
+            else:
+                self.mappings[field] = val
 
         if self.allow_extras:
             used_cols = set(self.mappings.values())

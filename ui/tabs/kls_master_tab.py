@@ -9,7 +9,7 @@ from ui.widgets.dynamic_table import DynamicTableWidget
 from ui.dialogs.mapping_dialog import MappingDialog
 from ui.dialogs.offer_dialog import OfferListDialog
 from ui.widgets.checkable_list import CheckableListWidget, CheckableTreeWidget
-from ui.widgets.side_panel import SidePanel
+from ui.widgets.side_panel import ProductSidePanel
 from ui.widgets.collapsible_box import CollapsibleBox
 from core.constants import CATEGORY_MAPPING, BROCHURE_HIERARCHY
 from core.utils import show_loading, resource_path
@@ -162,7 +162,7 @@ class KlsMasterTab(QWidget):
         right_panel.addWidget(self.stacked_widget)
         main_splitter.addWidget(right_widget)
         
-        self.side_panel = SidePanel(master_tab=self)
+        self.side_panel = ProductSidePanel(master_tab=self)
         main_splitter.addWidget(self.side_panel)
         
         self.table.itemSelectionChanged.connect(self._on_table_selection_changed)
