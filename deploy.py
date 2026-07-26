@@ -73,7 +73,13 @@ if __name__ == "__main__":
     if proceed.lower() != 'y':
         sys.exit(0)
         
-    notes = input("Enter release notes for this version (or leave blank): ")
+    notes_file = "deploy_notes.md"
+    if os.path.exists(notes_file):
+        with open(notes_file, "r", encoding="utf-8") as f:
+            notes = f.read().strip()
+        print(f"--> Loaded release notes automatically from {notes_file}")
+    else:
+        notes = input("Enter release notes for this version (or leave blank): ")
     
     # Check for token in env, or ask for it
     token = os.environ.get("GITHUB_TOKEN")
