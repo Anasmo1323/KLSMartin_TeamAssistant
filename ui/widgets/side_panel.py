@@ -65,6 +65,8 @@ class ProductSidePanel(QFrame):
 
         row = match.iloc[0]
 
+        description = row.get('description', '')
+
         description_arabic = row.get('description_arabic', '')
         if pd.isna(description_arabic) or str(description_arabic).strip() == "":
             arb_text = "الترجمة غير متوفرة"
@@ -73,7 +75,14 @@ class ProductSidePanel(QFrame):
 
         # 2. Update Image
         local_image_path = row.get('local_image_path', '')
-        if pd.isna(local_image_path) or str(local_image_path).strip() in {"", "No Image", "Download Failed", "HTTP Error"}:
+        
+        if pd.isna(description) or str(description).strip() in {"", "No equivalent KLS Martin product available"}:
+            x_path = resource_path("images/x.png")
+            if os.path.exists(x_path):
+                self.image_label.set_image(QPixmap(x_path), x_path)
+            else:
+                self.image_label.clear_image("No Description")
+        elif pd.isna(local_image_path) or str(local_image_path).strip() in {"", "No Image", "Download Failed", "HTTP Error"}:
             missing_path = resource_path("images/missing.png")
             if os.path.exists(missing_path):
                 self.image_label.set_image(QPixmap(missing_path), missing_path)
