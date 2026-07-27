@@ -1,0 +1,4033 @@
+Potential_Modifier | Frequency
+----------------------------------------
+straight | 1322
+curved | 1033
+sterile | 1005
+str. | 842
+ti | 715
+cvd. | 663
+length 18 cm | 510
+blunt | 472
+2.0 | 443
+detachable | 436
+right | 415
+left | 409
+0 | 390
+demo | 375
+5mm | 373
+length 20 cm | 371
+long | 367
+5 cm | 364
+length 23 cm | 359
+atrauma | 359
+titanium | 352
+1 | 338
+5 mm | 336
+18 cm | 330
+with ejector | 317
+0mm | 299
+stroke 10 mm | 295
+short | 294
+length 17.5 cm | 290
+sharp | 287
+length 16 cm | 283
+angled | 272
+length 15 cm | 263
+solidblack | 257
+cut | 251
+caspar | 248
+2mm | 244
+0 mm | 243
+18cm | 235
+1.5 | 228
+20 cm | 215
+0.6mm | 214
+figure 1 | 211
+figure 2 | 207
+length 17 cm | 201
+90° | 197
+8mm | 196
+st | 195
+perm. | 191
+15 cm | 191
+4-h | 191
+stand. | 188
+le | 186
+ri | 186
+l-shape | 185
+3 mm | 184
+pointed | 183
+length 14.5 cm | 183
+23 cm | 183
+5cm | 182
+4 | 180
+3 | 176
+length 18.5 cm | 175
+length 19 cm | 174
+marsafe | 173
+40° | 172
+4-hole | 171
+acc. to de bakey | 170
+length 14 cm | 169
+ste | 166
+double-ended | 165
+16 cm | 163
+cvd | 163
+acc. to caspar | 162
+medium | 161
+perf. | 160
+figure 3 | 160
+3mm | 159
+plate profile 0.6 mm | 155
+4mm | 154
+2.0 mm | 154
+fine | 151
+4 mm | 150
+1 x 2 teeth | 145
+7 mm | 144
+malleable | 143
+4-holes | 143
+length 20.5 cm | 141
+small | 140
+length 21 cm | 138
+length 24 cm | 137
+14 cm | 134
+pack of 5 | 133
+complete | 132
+25 cm | 130
+1.5 mm | 129
+length 12 cm | 129
+round | 128
+6mm | 128
+blue | 127
+length 16.5 cm | 125
+6-holes | 124
+ø 8 mm | 123
+green | 123
+j-notch | 122
+7mm | 121
+15cm | 120
+plate profile 1.0 mm | 119
+bayonet | 119
+2 mm | 119
+slim | 115
+ang. | 114
+8 mm | 114
+steel | 113
+ø 2.0 mm | 113
+ø 3.0 mm | 112
+standard | 111
+dittel | 111
+12 cm | 110
+length 28 cm | 110
+red | 109
+6 mm | 109
+l | 109
+length 15.5 cm | 108
+length 21.5 cm | 105
+length 13 cm | 105
+17 cm | 103
+13 cm | 103
+100dg | 103
+grey | 100
+length 25 cm | 99
+figure 4 | 99
+acc. to obwegeser | 99
+45° | 99
+m | 98
+mini plate | 98
+10 cm | 97
+large | 97
+20cm | 97
+22 cm | 97
+bayon. | 97
+thin plate | 96
+mouth width 4 mm | 94
+oval | 94
+25cm | 93
+length 22 cm | 93
+10mm | 93
+micro plate | 91
+6-h | 90
+orange | 90
+length 24.5 cm | 90
+length 26 cm | 89
+19 cm | 89
+21 cm | 89
+length 30 cm | 88
+acc. to metzenbaum | 88
+9mm | 88
+bay. | 87
+length 13.5 cm | 87
+mini | 86
+screw | 86
+6-hole | 86
+2 | 86
+str | 86
+23cm | 85
+acc. to cooley | 84
+5 | 83
+length 22.5 cm | 83
+26 cm | 82
+downw. | 82
+container | 81
+ø 6 mm | 81
+hollow handle | 81
+double | 81
+s | 80
+standard screw | 80
+mouth width 3 mm | 79
+sh/sh | 78
+tub | 78
+mouth width 5 mm | 78
+sieve/sieve | 78
+100° | 77
+30 cm | 77
+mouth width 2 mm | 76
+20mm | 75
+acland | 75
+ster | 75
+window/window | 75
+lipo | 74
+12mm | 73
+24 cm | 73
+length 11 cm | 72
+10 mm | 72
+sh. | 72
+length 19.5 cm | 71
+m3 | 71
+l-shaped | 71
+22cm | 71
+m2 | 70
+flat | 69
+with hollow handle | 69
+l.grey | 68
+bl. | 68
+width 6 mm | 67
+acc. to tessier | 67
+handle | 67
+l-sh | 67
+14.5 cm | 67
+closed tube | 67
+length 27 cm | 66
+1.0 | 66
+angled downwards | 66
+solid handle | 66
+temp. | 66
+acc. to kocher | 65
+lumbar | 65
+ã¸ 1.5 mm | 65
+plate | 65
+cont. ms. | 65
+5-h | 64
+1x2 t. | 64
+solid handle ø 6 mm | 64
+cylindr. | 63
+ti/ster | 63
+material stainless steel | 62
+bile duct | 62
+serrated | 62
+acc. to hegar | 62
+with ratchet | 62
+length 12.5 cm | 61
+1/2 circle | 61
+english pattern | 61
+figure 5 | 60
+no. 3 | 60
+ø 1.5 mm | 60
+no. 1 | 60
+length 11.5 cm | 60
+40° upward cutting | 60
+w/t | 60
+11mm | 60
+acc. to volkmann | 60
+30cm | 59
+upw. | 59
+closed | 58
+upper jaw | 58
+ø 4.0 mm | 58
+70 mm | 58
+mouth width 1 mm | 58
+60° | 57
+1.0 mm | 57
+only | 57
+ø 2.5 mm | 57
+black | 56
+t-shape | 56
+no. 2 | 56
+diamond-coated | 56
+length 26.5 cm | 56
+1mm | 56
+14 mm | 56
+width 4 mm | 56
+safety-wave | 55
+8-holes | 55
+30mm | 54
+can/sd/ti | 54
+width 5 mm | 54
+11 cm | 54
+silicone coated handle | 54
+sieve/window | 53
+can. | 53
+w/o lock | 53
+perforated | 53
+width 10 mm | 53
+acc. to sims | 53
+90° upward cutting | 53
+24cm | 52
+can/ti/sterile | 52
+24.5 cm | 52
+ø 10 mm | 52
+18.5 cm | 52
+21cm | 52
+handle grey | 52
+25 mm | 51
+acc. to yasargil | 51
+blunt/blunt | 51
+9 mm | 51
+5-holes | 50
+acc. to metzenbaum-fino | 50
+ø 3.5 mm | 50
+ã¸ 2.0 mm | 50
+flexible | 49
+width 7 mm | 49
+su = 12 pack | 49
+20 mm | 49
+15mm | 49
+cannulated | 49
+width 8 mm | 49
+rigid | 48
+ø 1.2 mm | 48
+5-hole | 48
+v | 48
+ø 12 mm | 48
+16cm | 48
+multidirectional locking screw | 48
+lexer | 47
+lower jaw | 47
+length 32 cm | 47
+11 | 47
+upward cutting 40° | 47
+ø 1.0 mm | 46
+quick release fastener | 46
+fen. 5mm | 46
+shaft length 8 cm | 46
+strongly curved | 46
+mouth width 6 mm | 46
+1 mm | 46
+28 cm | 46
+upward cutting 90° | 46
+flat end | 45
+ø 5 mm | 45
+cutting edge length 10 mm | 45
+bl/bl | 45
+ø shaft 5 mm | 45
+4hole | 44
+10 pc | 44
+plate profile 0.8 mm | 44
+round end | 44
+figure 6 | 44
+double pointed | 44
+ø 2.3 mm | 43
+acc. to cottle | 43
+13mm | 43
+double ended | 43
+s-shape | 43
+total length 16 cm | 43
+15 mm | 43
+6 | 43
+pointed/pointed | 42
+14 | 42
+length 10 cm | 42
+length 10.5 cm | 41
+2.3 | 41
+18 | 41
+delicate | 41
+med. | 41
+bayonet-shaped | 41
+pair | 41
+mayo | 41
+luer-lock | 40
+dental | 40
+0x0 | 40
+11.5 cm | 40
+16.5 cm | 40
+19cm | 40
+wide | 40
+9 cm | 40
+ø 4 mm | 40
+nitinol | 40
+15.5 cm | 40
+11 mm | 40
+single | 40
+28cm | 39
+w. text | 39
+12.5 cm | 39
+xl | 39
+handle l.grey | 39
+total length 18 cm | 39
+17 mm | 39
+without ratchet | 39
+no. 4 | 38
+ø 9 mm | 38
+3/8 circle | 38
+w.lock | 38
+peek | 38
+length 31 cm | 38
+25° | 38
+8-hole | 38
+figure 0 | 38
+a | 38
+ø 11 mm | 38
+acc. to rhoton | 38
+with ratchet lock | 37
+ø 3 mm | 37
+length 9 cm | 37
+rectangular | 37
+w/o text | 37
+retractor | 37
+bkw. | 37
+cervical | 37
+dbl-y-shape | 37
+acc. to ehricke | 37
+22mm | 37
+acc. to lexer | 36
+acc. to de bakey baby | 36
+fenestrated | 36
+metzenbaum | 36
+acc. to recamier | 36
+ã¸ 2.3 mm | 36
+acc. to fukushima | 36
+debakey | 36
+ø 2 mm | 36
+ø 13 mm | 36
+active electrode with ø 4 mm | 36
+smooth | 36
+ws | 35
+plate profile 1.5 mm | 35
+partial | 35
+de bakey | 35
+angled upwards | 35
+set | 35
+titan | 35
+kelly | 35
+downward cutting | 35
+27 cm | 35
+40mm | 35
+3 x 4 teeth | 35
+0/2 | 34
+acc. to adson | 34
+60x30x11cm | 34
+length 7 mm | 34
+2.0/2.3 mm | 34
+30x30x21cm | 34
+60x30x16cm | 34
+ø 1 | 34
+60x30x14cm | 34
+30x30x11cm | 34
+30x30x16cm | 34
+borchardt | 34
+60x30x21cm | 34
+30x30x14cm | 34
+width 12 mm | 34
+pa | 34
+acc. to kristeller | 33
+30x30x27cm | 33
+60x30x27cm | 33
+14mm | 33
+width 15 mm | 33
+47x30x16cm | 33
+47x30x11cm | 33
+47x30x14cm | 33
+14cm | 33
+fig. 1 | 33
+gr4 | 33
+dissecting scissors | 33
+length 25.5 cm | 33
+8 cm | 33
+length 36 cm | 33
+cpl. | 33
+flexible shaft | 32
+f. ms2 | 32
+180mm | 32
+single foot | 32
+plate profile 2.0 mm | 32
+16mm | 32
+length 50 mm | 32
+12 mm | 32
+drill-free screw | 32
+0.3mm | 32
+locking screw | 32
+total length 15 cm | 32
+acc. to doyen | 32
+emergency screw | 32
+fig. 2 | 32
+length 9 mm | 32
+10.5 cm | 31
+length 29 cm | 31
+28mm | 31
+length 23.5 cm | 31
+15 | 31
+narrow | 31
+acc. to martin | 31
+sh/bl | 31
+tip width 2.0 mm | 31
+ll | 31
+t-sh | 31
+acc. to lambotte | 31
+34.5cm | 31
+20 | 31
+insulated | 31
+ø 2 | 31
+bowman | 31
+20.5 cm | 30
+part. thr | 30
+length 5 mm | 30
+18mm | 30
+dietrich | 30
+26mm | 30
+tube 38mm | 30
+33.5 cm | 30
+long thread | 30
+figure 7 | 30
+24 | 30
+fergusson | 30
+12 | 30
+125° | 29
+acc. to langenbeck | 29
+17 | 29
+solid | 29
+double foot | 29
+17.5 cm | 29
+ø 3 | 29
+width 3 mm | 29
+length 13 mm | 29
+micro | 29
+4 holes | 29
+24mm | 29
+t=2.8 | 28
+yellow | 28
+flex. | 28
+200mm | 28
+acc. to mayo | 28
+width 0.6 mm | 28
+round handle | 28
+acc. to stille | 28
+no. 5 | 28
+adson | 28
+ø 5.0 mm | 28
+profile 25x10 mm | 28
+without ratchet lock | 28
+figure 8 | 28
+10cm | 28
+for adults | 28
+acc. to tew | 27
+h-shape | 27
+blade | 27
+steril | 27
+m1 | 27
+ø 4.5 mm | 27
+standard pattern | 27
+wagner | 27
+7 cm | 27
+shaft length 24 cm | 27
+7 | 27
+width 25 mm | 27
+acc. to kelly | 27
+monoport | 27
+22.5 cm | 27
+aluminium | 27
+ø 7 mm | 26
+hdl. green | 26
+length 4 mm | 26
+doyen | 26
+figure 9 | 26
+ø 25 mm | 26
+serr. | 26
+handle orange | 26
+hdl. orange | 26
+handle blue | 26
+hdl. blue | 26
+universal | 26
+16-holes | 26
+handle red | 26
+handle green | 26
+hdl. l.grey | 26
+long. | 26
+2 prongs | 26
+25mm | 26
+down | 26
+y-shape | 26
+6 holes | 26
+height-adjustable | 26
+hdl. red | 26
+acc. to hartmann | 25
+plate profile 1.2 mm | 25
+width 16 mm | 25
+10 | 25
+4 prongs | 25
+acc. to barbara | 25
+shaft 18 cm | 25
+slight cvd. | 25
+acc. to iglhaut | 25
+double curved | 25
+1x2t | 25
+50 mm | 25
+hartmann | 25
+acc. to fergusson | 25
+t=1.0 | 25
+17mm | 25
+l-form | 25
+acc. to hibbs | 25
+plastic | 25
+atr. | 25
+figure 10 | 25
+spherical | 24
+rhodium-plated | 24
+stainless steel | 24
+acc. to mosquito | 24
+26cm | 24
+acc. to pean | 24
+width 9 mm | 24
+t-shaped | 24
+tray | 24
+length 20 mm | 24
+stevens | 24
+graduated | 24
+st. | 24
+tip width 0.3 mm | 24
+dismant. | 24
+36mm | 24
+width 0.5 mm | 24
+w/frame | 24
+34mm | 24
+160mm | 24
+mouth length 15 mm | 24
+16-hole | 23
+30x30x14 cm | 23
+30x30x16 cm | 23
+185mm | 23
+ã¸ 2.7 mm | 23
+40 mm | 23
+w. lid | 23
+for molars | 23
+for roots | 23
+acc. to bein | 23
+thread size 4-0 - 6-0 | 23
+alu | 23
+acc. to joseph | 23
+12cm | 23
+single/sterilp | 23
+5mm diam | 23
+r. | 23
+zeitlin | 23
+2-hole | 23
+47x30x16 cm | 23
+60x30x16 cm | 23
+47x30x14 cm | 23
+t=1.5 | 23
+48cm | 23
+47x30x11 cm | 23
+k.storz | 23
+length 9.5 cm | 23
+1 prong | 23
+thread size 5-0 - 8-0 | 23
+ø 4 | 22
+length 11 mm | 22
+df | 22
+ø 6.0 mm | 22
+width 19 mm | 22
+l-sh. | 22
+acc. to mayo-stille | 22
+17cm | 22
+pointed/blunt | 22
+38mm | 22
+length 18 mm | 22
+figure 12 | 22
+two mounting points | 22
+16 mm | 22
+length 6 mm | 22
+orbita | 22
+lateral | 22
+medial | 22
+acc. to mini-glover | 22
+w. lock | 22
+32mm | 22
+stroke 16 mm | 22
+long stroke | 22
+long str. | 22
+135° | 22
+16 | 22
+60x30x11 cm | 22
+30x30x27 cm | 22
+60x30x14 cm | 22
+acc. to bruns | 22
+lo | 22
+60x30x21 cm | 22
+60x30x27 cm | 22
+30x30x21 cm | 22
+30x30x11 cm | 22
+acc. to deschamps | 21
+l. | 21
+length 41 cm | 21
+27cm | 21
+micro-profile | 21
+35 cm | 21
+10-h | 21
+roundhole | 21
+pack of 10 | 21
+acc. to buck | 21
+length 15 mm | 21
+width 2 mm | 21
+acc. to partsch | 21
+longitudinal | 21
+19 | 21
+acc. to  guyon | 21
+18 mm | 21
+low profile | 21
+50mm | 21
+13cm | 21
+soft | 21
+d2 | 21
+total length 19 cm | 21
+single/sterilepack. | 21
+total length 20 cm | 21
+13.5 cm | 21
+mayo-stille | 21
+36 cm | 21
+neutral | 21
+rd | 21
+single/sterilp. | 21
+up | 21
+mall. | 21
+13 mm | 21
+american pattern | 21
+21 | 20
+yasargil | 20
+lumbal | 20
+stro. cvd. | 20
+condyle | 20
+y-sh | 20
+for children | 20
+total length 23 cm | 20
+length 30.5 cm | 20
+pack of 2 | 20
+total length 21 cm | 20
+acc. to rosen | 20
+200 mm | 20
+width 3.0 mm | 20
+triport | 20
+ec+es | 20
+acc. to brunner | 20
+fen. 3.5mm | 20
+acc. to mcgee | 20
+length 30 mm | 20
+length 5 cm | 20
+acc. to potts-smith | 20
+slightly curved | 20
+acc. to fomon | 20
+lock | 20
+cylindrical | 20
+ã¸ 1.0 mm | 20
+acc. to redon | 20
+5 holes | 20
+acc. to dietrich-potts | 19
+acc. to castaã±eda | 19
+1x2t. | 19
+shaft length 9 cm | 19
+cutting edge length 7 mm | 19
+acc. to cushing | 19
+tube 25mm | 19
+micro mesh | 19
+ã¸ 1.2 mm | 19
+110 mm | 19
+ã¸ 1.8 mm | 19
+7-hole | 19
+es | 19
+35mm | 19
+29 cm | 19
+90 mm | 19
+d 2 | 19
+5pc | 19
+width 20 mm | 19
+st-flex | 19
+figure 11 | 19
+12-holes | 19
+tip width 1.0 mm | 19
+thread size 6-0 - 4-0 | 19
+1.5mm | 19
+sd/st | 19
+10° | 19
+shaft length 17 cm | 19
+fullthread | 19
+shaft length 29 cm | 19
+length 12 mm | 19
+length 17 mm | 18
+b | 18
+40x0.5 mm | 18
+figure 00 | 18
+volkmann | 18
+plateau | 18
+width 1.2 mm | 18
+length 8 cm | 18
+bruns | 18
+kls martin syn electrode with plastic insulation | 18
+8 | 18
+2.3 mm | 18
+21.5 cm | 18
+150° | 18
+cooley | 18
+5 pc | 18
+acc. to mikaeel | 18
+acc. to breisky | 18
+90° angled | 18
+fracture plate | 18
+pack of 25 | 18
+width 14 mm | 18
+40cm | 18
+ø 0.5 mm | 18
+martin | 18
+non sterile | 18
+0.8 mm | 18
+shaft 23 cm | 18
+length 27.5 cm | 18
+qty.of2 | 18
+bent upwards | 18
+length 24cm | 18
+compl. | 17
+made of natural bristles | 17
+length 19 mm | 17
+0x1 | 17
+19mm | 17
+spatula | 17
+23.5 cm | 17
+japan vers. | 17
+70mm | 17
+self-cutting | 17
+length 40 mm | 17
+trocar | 17
+7-holes | 17
+ø 22 mm | 17
+metric thread | 17
+130 mm | 17
+30° | 17
+acc. to castroviejo | 17
+7-h | 17
+11cm | 17
+pe | 17
+fine dissecting scissors | 17
+total length 22 cm | 17
+sh | 17
+13 | 17
+reynolds | 17
+total length 17 cm | 17
+acc. to kocher-langenbeck | 17
+nadjmi | 17
+90° down | 17
+olivecr. | 17
+total length 18.5 cm | 17
+width 13 mm | 17
+medial-lateral | 16
+thread size 5-0 - 7-0 | 16
+ø 1.7 mm | 16
+l 140 mm | 16
+34 cm | 16
+ø1 | 16
+upwards curved | 16
+figure 13 | 16
+0.6 mm | 16
+acc. to potts | 16
+farrior | 16
+40° upw. | 16
+blade length 4 mm | 16
+acc. to overholt | 16
+acc. to mathieu | 16
+shaft width 0.8 mm | 16
+acc. to wagner | 16
+thread size 6-0 - 8-0 | 16
+ø 0.80 mm | 16
+cyl. | 16
+length 31.5 cm | 16
+bottom alone | 16
+75 mm | 16
+ri. | 16
+tessier | 16
+acc. to deaver | 16
+thread size 2-0 - 4-0 | 16
+y-shaped | 16
+cottle | 16
+4 x 4 teeth | 16
+titanium-coated | 16
+length 8 mm | 16
+single/sterilep. | 16
+90° upw. | 16
+w. feet | 16
+no. 0 | 16
+luer-cone | 16
+5/2 | 16
+wire mesh | 16
+3 cm | 16
+full | 16
+width 2.0 mm | 16
+mini profile | 16
+alone | 16
+ns | 16
+0.35mm | 16
+18.5cm | 16
+total length 22.5 cm | 15
+accessories for sternum retractor margate | 15
+width 11 mm | 15
+miniset | 15
+ms ii | 15
+width 1.5 mm | 15
+fixed handle | 15
+acc. to samii | 15
+acc. to steinhã¤user | 15
+us-type | 15
+180 mm | 15
+length 14 mm | 15
+mueller | 15
+acc. to cloward | 15
+acc. to glover | 15
+gerald | 15
+w/o lid | 15
+acc. to mini-lambotte | 15
+ster. | 15
+ao attachment | 15
+champy plate | 15
+27 | 15
+acc. to ivory | 15
+marcore® | 15
+isol. | 15
+full thr. | 15
+pediatric | 15
+luer-lock conn. | 15
+single-action | 15
+ø 1.8 mm | 15
+moh | 15
+3 prongs | 15
+19.5 cm | 15
+micro screw | 15
+trocar/trocar | 15
+3x4 t. | 15
+acc. to  van buren | 15
+32 cm | 15
+unperforated | 15
+acc. to simon | 15
+cobb | 15
+2018 | 15
+hoffer | 15
+44m | 15
+tip width 1.2 mm | 15
+t=0.6 | 15
+acc. to collin | 15
+lister | 15
+material painted steel | 15
+midcab | 15
+1.0mm | 15
+25 | 14
+ø 0 | 14
+metzenb.-nelson | 14
+40 cm | 14
+with bar | 14
+155mm | 14
+3/2 | 14
+conical | 14
+identif. label alu | 14
+shaft length 14 cm | 14
+acc. to kirschner | 14
+60mm | 14
+tapered | 14
+no. 6 | 14
+very fine | 14
+fig. 4 | 14
+m10   90dg | 14
+ø 0.6 mm | 14
+in case | 14
+150 mm | 14
+acc. to williger | 14
+supercut | 14
+window/sieve | 14
+pack of 4 | 14
+ø 0.3 mm | 14
+2 x 3 teeth | 14
+length 100 mm | 14
+horizontal swivel | 14
+hooklet | 14
+acc. to frazier | 14
+knee-bent | 14
+width 4.5 mm | 14
+3-pin plug | 14
+2.5 mm | 14
+zoellner | 14
+140 mm | 14
+semish. | 14
+with fixed handle | 14
+length 33 cm | 14
+length 10 mm | 14
+acc. to wullstein | 14
+8-h | 14
+length 115 mm | 14
+acc. to alexander | 14
+mt | 14
+acc. to stevens | 14
+w. handle | 14
+45 mm | 14
+iris scissors | 14
+width 3.2 mm | 14
+acc. to miller-colburn | 14
+plate profile 0.3 mm | 14
+12 pieces | 14
+dzemeshkevich | 14
+one cutting edge serrated | 14
+10-holes | 14
+ø2 | 14
+40° up | 14
+tc gold | 14
+length 28.5 cm | 14
+cvd. up | 14
+fig. 3 | 13
+acc. to mcintosh | 13
+tip width 0.6 mm | 13
+gracey | 13
+ø 2.7 mm | 13
+neuro | 13
+acc. to cobb | 13
+allis | 13
+cross-shape | 13
+10-hole | 13
+with thread fixation | 13
+acc. to weil-blakesley | 13
+lane | 13
+fig.1 | 13
+ø 5 | 13
+joseph | 13
+ø 1.6 mm | 13
+acc. to taylor | 13
+length 29.5 cm | 13
+angl. | 13
+33 cm | 13
+after five | 13
+miller | 13
+z-sh. | 13
+plate profile 3.0 mm | 13
+langenbeck | 13
+35 mm | 13
+r. handle | 13
+acc. to finochietto | 13
+total length 19.5 cm | 13
+length 45 mm | 13
+24-holes | 13
+4 cm | 13
+2-holes | 13
+ø 1.0 mm x 0.5 mm | 13
+m15   90dg | 13
+perfor. | 13
+total length 17.5 cm | 13
+luer | 13
+2x3 t. | 13
+acc. to beckmann | 13
+30x30 cm | 13
+90° up | 13
+obwegeser | 13
+acc. to scoville | 13
+length 16 mm | 13
+acc. to bakes | 13
+figure 15 | 13
+rb 1.0mm | 13
+pointed/sharp | 12
+width 30 mm | 12
+acc. to weitlaner | 12
+button | 12
+cb. | 12
+1 pc | 12
+5x20mm | 12
+acc. to johns-hopkins | 12
+6 cm | 12
+counterb. | 12
+length 60 mm | 12
+mouth length 8 mm | 12
+width 4.0 mm | 12
+ø shaft 3.5 mm | 12
+75mm | 12
+100/80dg | 12
+no. 00 | 12
+for 24-502-00-01 | 12
+flat handle | 12
+semi-sharp | 12
+26.5 cm | 12
+normal profile | 12
+for the right hand | 12
+for babies | 12
+acc. to freer | 12
+width 2.5 mm | 12
+acc. to doyen-baby | 12
+single-ended | 12
+2 holes | 12
+ø 0.4 mm | 12
+keith | 12
+smooth shaft | 12
+height 800 mm | 12
+width 3.5 mm | 12
+y-form | 12
+shark | 12
+3x10 mm | 12
+acc. to smith-petersen | 12
+working length 110 mm | 12
+60 mm | 12
+8 holes | 12
+geb. | 12
+ø 16 mm | 12
+with lid | 12
+for sonicweld rx® | 12
+med | 12
+230mm | 12
+rigid blue plate | 12
+33cm | 12
+triangular | 12
+plester | 12
+ø2mm | 12
+total length 16.5 cm | 12
+davis | 12
+2.7 mm | 12
+4x14mm | 12
+without handle | 12
+acc. to hargis | 12
+w/o handle | 12
+knife shape | 12
+ti kls plan | 12
+length 22 mm | 12
+for veins | 12
+0/1 | 12
+acc. to martin fino | 12
+acc. to maltz | 12
+luerlock | 12
+21mm | 12
+diamond coated | 12
+s=23 cm | 12
+20-hole | 12
+s=18 cm | 12
+acc. to martin ergo | 11
+60x30 cm | 11
+primary reconstruction plate | 11
+le. | 11
+forward angled / straight | 11
+forward angled / curved | 11
+graefe | 11
+acc. to kã¶rner-westermann | 11
+width 1.8 mm | 11
+spiral | 11
+width 5.0 mm | 11
+sims | 11
+w. indicator | 11
+square | 11
+malleable shaft | 11
+angled backwards / straight | 11
+stainless steel hook | 11
+31 cm | 11
+3.5 mm | 11
+height 1000 mm | 11
+sho | 11
+f. catheter tube | 11
+str. ti | 11
+mannerfelt | 11
+23 mm | 11
+toothed | 11
+working end width 16 mm | 11
+figure 16 | 11
+8/2 | 11
+5m | 11
+without blades | 11
+malleab. | 11
+incl.compr.sterile | 11
+9 | 11
+morris | 11
+170mm | 11
+cable length 5 m | 11
+wall mounting | 11
+figure 14 | 11
+ø 1 mm | 11
+bipolar scissors | 11
+toennis | 11
+tungsten | 11
+width 1.0 mm | 11
+menghini | 11
+kirschner | 11
+angled backwards / curved | 11
+acc. to mayo-hegar | 11
+serrated jaws | 11
+8 t. | 11
+acc. to kaye | 11
+6mm; 0 | 11
+fig.2 | 11
+angled 45° | 11
+ø 8.0 mm | 11
+ø 2.0 mm x 1.0 mm | 11
+f. container | 11
+castroviejo | 11
+dbl-y-sh | 11
+hardy | 11
+400mm | 11
+microstop | 11
+ø 0.9 mm | 11
+ø 38 mm | 11
+dental att. | 11
+ramus | 11
+5x17mm | 11
+total length 15.5 cm | 11
+fino | 11
+with handle | 11
+for the left hand | 11
+length 50 cm | 11
+acc. to apical | 11
+4x0.6 mm | 11
+35cm | 11
+length 65 mm | 11
+l/l | 11
+acc. to foregger | 11
+wertheim | 11
+frazier | 11
+total length 24 cm | 11
+1000 pcs. | 11
+din | 10
+acc. to pittsburgh | 10
+5x14mm | 10
+mini-lexer | 10
+finoline | 10
+cutting edge length 15 mm | 10
+acc. to dietrich-hegemann | 10
+acc. to kilner | 10
+4-ho | 10
+one toothed cutting edge | 10
+5x13mm | 10
+acc. to martini | 10
+fl | 10
+80-110° | 10
+42 cm | 10
+dr. iglhaut | 10
+length 34 cm | 10
+length 7 cm | 10
+for 23-130-00-04 | 10
+acc. to mini-lexer | 10
+logistic frame | 10
+sciss. | 10
+silicone handle | 10
+for screws with ã¸ 1.5 mm | 10
+0° | 10
+acc. to heaney | 10
+4 x 0.8 mm | 10
+micro-singleclip | 10
+bay.sl. | 10
+40° cutting upward | 10
+thudichum | 10
+bmi | 10
+stop 7 mm | 10
+40° curved upward | 10
+denis-browne | 10
+40° curved leftwards | 10
+4x10 mm | 10
+40° curved rightwards | 10
+acc. to spencer-wells | 10
+length 35 mm | 10
+acc. to winter | 10
+meyerding | 10
+acc. to hohmann | 10
+ang.45° | 10
+0  mm | 10
+width 23 mm | 10
+width 2.7 mm | 10
+for arteries | 10
+color-tag | 10
+acc. to cusco | 10
+6/1 | 10
+36 mm | 10
+mini screw | 10
+65 mm | 10
+strong model | 10
+medium wide | 10
+mesh | 10
+7 m | 10
+44mm | 10
+acc. to gerald | 10
+spoon shape | 10
+acc. to dunn-dautrey | 10
+dotize | 10
+for toothed lower jaws | 10
+width 6.5 mm | 10
+stand.perm.7mm | 10
+23mm | 10
+w. hole | 10
+cvd. ti | 10
+acc. to hudson | 10
+acc. to dardik | 10
+coding label | 10
+acc. to fã¶rster | 10
+5/20mmlong | 10
+acc. to ulrich | 10
+1/2 | 10
+42mm | 10
+figure 000 | 10
+ø 0.8 mm | 10
+payr | 10
+with metal handle | 10
+curv. | 10
+0cm | 10
+ø 14 mm | 10
+55 mm | 10
+collin | 10
+5 x 6 teeth | 10
+5x0 | 10
+silver | 10
+height 1200 mm | 10
+with screw thread | 10
+5 t. | 10
+module 2 | 10
+threaded end | 10
+acc. to ballenger | 10
+lateral for 15-814-10-07 | 10
+swivelling | 10
+length 33.5 cm | 10
+politzer | 10
+length 17cm | 10
+80 mm | 10
+breisky | 10
+hibbs | 10
+45° angled | 10
+14 ch | 10
+170 mm | 10
+10 ch | 10
+acc. to allis | 10
+molars | 10
+length 80 mm | 9
+80/100dg | 9
+working length 165 mm | 9
+freeman | 9
+smillie | 9
+violet | 9
+110-145° | 9
+4 x 5 teeth | 9
+45mm | 9
+3m | 9
+12 ch | 9
+5x10mm | 9
+working length 140 mm | 9
+working length 115 mm | 9
+length 24 mm | 9
+total length 14 cm | 9
+19 mm | 9
+4.0 mm | 9
+cloward | 9
+stee | 9
+acc. to friedman | 9
+ã¸ 1 | 9
+for toothed upper jaws | 9
+geuder | 9
+width 18 mm | 9
+figure 17 | 9
+instrument | 9
+cvd. down | 9
+angled 90° | 9
+crossw. | 9
+width 2.2 mm | 9
+acc. to cryer | 9
+f. 36-794-00 | 9
+stry. f.sonicweld | 9
+10 ml | 9
+cable length 3 m | 9
+heifetz | 9
+2x10 mm | 9
+acc. to liston | 9
+4 x 0.9 mm | 9
+fig. 0 | 9
+acc. to richter | 9
+one tooth cutting edge serrated | 9
+without activator | 9
+screwdriver blade | 9
+20° | 9
+premolars | 9
+ø 24 mm | 9
+müller | 9
+acc. to plester | 9
+interch. | 9
+360° | 9
+lucae | 9
+length 55 mm | 9
+acc. to schrã¶der | 9
+ø 20 mm | 9
+one mounting point | 9
+spread. | 9
+grid | 9
+ø 12.0 mm | 9
+le fort i | 9
+5/50mmlong | 9
+total length 13 cm | 9
+5 teeth | 9
+95° | 9
+140mm | 9
+love | 9
+47x30 cm | 9
+9-hole | 9
+perf./wire mesh | 9
+acc. to dolwick | 9
+shaft length 8.5 cm | 9
+acc. to luer | 9
+gew. | 9
+ø 6 | 9
+30 mm | 9
+kristeller | 9
+acc. to debakey | 9
+width 24 mm | 9
+2 x double arm | 9
+3/4 | 9
+smooth jaw | 9
+ii | 9
+rosen | 9
+7 holes | 9
+1 x 1 teeth | 9
+7cm | 9
+acc. to house | 9
+acc. to vollmar | 9
+8 teeth | 9
+acc. to semb | 9
+9cm | 9
+working length 100 mm | 9
+d17mm | 9
+double angled | 9
+shape bo (sup/b) | 9
+for third molars | 9
+0mm screws | 9
+ziegler | 9
+d12mm | 9
+acc. to scherbak | 9
+9.5 cm | 9
+acc. to spratt | 9
+23 | 9
+randall | 9
+ms1 | 9
+ø 15 mm | 9
+2-pr. | 9
+acc. to heidebrink | 9
+3x12mm | 9
+wire | 9
+lempert | 9
+conv. | 9
+12-h | 9
+st. clair-thompson | 9
+70x0 | 8
+length 300 mm | 8
+blade width 1.8 mm | 8
+filiform | 8
+22 holes | 8
+cloverleaf design | 8
+metal handle | 8
+upw.bayon. | 8
+50 cm | 8
+high | 8
+acc. to rowe | 8
+acc. to gil-vernet | 8
+wound retractor | 8
+acc. to de bakey-pean | 8
+wullstein | 8
+stand.perm.11mm | 8
+str.bayon. | 8
+pl. | 8
+mounting on console rail | 8
+total length 20.5 cm | 8
+big | 8
+desjardins | 8
+5x22mm | 8
+tissue | 8
+6.0 mm x 0.4 mm | 8
+width 0.7 mm | 8
+acc. to mixter | 8
+ha | 8
+medial for 15-814-10-07 | 8
+acc. to marchac | 8
+fig.3 | 8
+5 m | 8
+46mm | 8
+smooth jaws | 8
+i | 8
+length 8.5 cm | 8
+acc. to bengolea | 8
+preformed | 8
+29cm | 8
+balfour | 8
+6holes | 8
+acc. to rogers | 8
+williams | 8
+2.0mm | 8
+5/30mmlong | 8
+acc. to bellucci | 8
+dahmen | 8
+15mm left | 8
+220mm | 8
+4 t. | 8
+w/o hole | 8
+killian | 8
+mmb | 8
+acc. to babcock | 8
+3 holes | 8
+strong cvd. | 8
+width 21 mm | 8
+length 160 mm | 8
+acc. to mayo-robson | 8
+obweg. | 8
+acc. to milkulicz | 8
+acc. to house-dieter | 8
+length 75 mm | 8
+ø 0.40 mm | 8
+length 34.5 cm | 8
+thorlakson | 8
+ep | 8
+9-h | 8
+plastic hook | 8
+working end ø 5 mm | 8
+ms2 | 8
+w. socket | 8
+1 ml | 8
+100 mm | 8
+ang.dn. | 8
+ø 1.3 mm | 8
+38 mm | 8
+width 2.8 mm | 8
+5x19mm | 8
+30° angled | 8
+acc. to dubost | 8
+gold | 8
+4 teeth | 8
+reconstruction plate | 8
+0.2mm | 8
+2 ml | 8
+acc. to lempert | 8
+width 5.5 mm | 8
+length 3.5 mm | 8
+acc. to jaboma | 8
+for incisors and cuspids | 8
+rec. | 8
+working length 130 mm | 8
+sidew. ang. | 8
+length 310 mm | 8
+bos-d f.sonicweld | 8
+cur | 8
+length 46 mm | 8
+adjustable | 8
+ø 3.2 mm | 8
+3-h | 8
+up 130° | 8
+oblique ended | 8
+acc. to walter | 8
+with cold light | 8
+lancet tip | 8
+diam. | 8
+acc. to peck-joseph | 8
+fig. 5 | 8
+acc. to reynolds | 8
+24 mm | 8
+acc. to zurich | 8
+hess | 8
+acc. to diethrich | 8
+acc. to jansen | 8
+thread size 0-6 - 4-0 | 8
+conc. | 8
+heavy pattern | 8
+cutting edge length 20 mm | 8
+35 | 8
+clamping force 180 g | 8
+fl. | 8
+acc. to luer-kã¶rte | 8
+7/demo | 8
+incl. 80-633-12-04 | 8
+width 32 mm | 8
+27.5 cm | 8
+total length 23.5 cm | 8
+8x68 mm | 8
+0 cm | 8
+angled upwards 50° | 8
+clamp length 14 mm | 8
+rim lock | 8
+t=0 | 8
+tags | 8
+mounting on multifunctional rack ø 38 mm | 8
+used str. | 8
+5x30mm | 8
+figure 23 | 8
+6 hole | 8
+figure 18 | 8
+thr. | 8
+4-l | 8
+5/60mmlong | 8
+48mm | 8
+angled downwards 50° | 8
+acc. to martin-langenbeck | 8
+active electrode ø 2.4 mm | 8
+t=1 | 8
+distraction length 30 mm | 8
+80mm | 8
+5/40mmlong | 8
+lower | 8
+two pushbuttons | 8
+acc. to de bakey-diethrich | 8
+stroke 1.5 mm | 8
+3holes | 8
+90mm | 8
+2 x 2 teeth | 8
+thread size 8-0 - 9-0 | 8
+cylin | 8
+40x0.7 mm | 8
+metzenb.-fino | 8
+end-driven | 8
+downwards curved | 8
+acc. to jannetta | 8
+palmar | 8
+12/22-2/24 | 8
+24.5cm | 8
+hollow | 8
+acc. to de bakey-satinsky | 8
+ochsner-martin | 8
+50 ml | 8
+marchac | 7
+with round end | 7
+ø 30 mm | 7
+8cm | 7
+child | 7
+coarse | 7
+25-holes | 7
+2 x single arm | 7
+jaw width 3.5 mm | 7
+acc. to lucae | 7
+olive-shaped | 7
+alan-parks | 7
+tube length 1.2 m | 7
+schwenkb. | 7
+5x3 | 7
+mesh for orbital floor | 7
+length 25 mm | 7
+acc. to brã¼nings | 7
+plate profile 0.2 mm | 7
+for 18-545-00-01 | 7
+acc. to crile | 7
+elevator | 7
+pc | 7
+width 2.3 mm | 7
+ø 3.3 mm | 7
+5x12mm | 7
+pb | 7
+5x15mm | 7
+5x18mm | 7
+length 3.6 cm | 7
+width 4.8 mm | 7
+electrode handle | 7
+ø 18 mm | 7
+ball electrode nstc | 7
+cordes | 7
+working end ø 3 mm | 7
+230 mm | 7
+vesa 75/100 monitor mount | 7
+pd | 7
+nonstick flush | 7
+double-tipped | 7
+acc. to hank | 7
+f. level one rack | 7
+acc. to magill | 7
+3x3 t. | 7
+mayo-hegar | 7
+acc. to schede | 7
+luer-koerte | 7
+no. 000 | 7
+roux | 7
+3-holes | 7
+acc. to roux | 7
+purple | 7
+acc. to wagener | 7
+acc. to klein | 7
+arruga | 7
+kalt | 7
+for incisors and roots | 7
+total length 24.5 cm | 7
+0.4mm | 7
+landolt | 7
+aiach | 7
+acc. to lister | 7
+sypert | 7
+fibula guide | 7
+bent downwards | 7
+for 16-250-00-01 | 7
+3hol | 7
+cushing | 7
+acc. to gemini | 7
+fisch | 7
+ø 50 mm | 7
+terry | 7
+5/4 | 7
+acc. to balfour | 7
+2.5mm | 7
+bonn | 7
+plastic handle | 7
+quinke | 7
+acc. to killian | 7
+white | 7
+acc. to wolff | 7
+round cutter knife | 7
+maxdrive | 7
+working end 2 mm | 7
+95mm l.shank-d2 | 7
+acc. to epker | 7
+links | 7
+acc. to dautrey-munro | 7
+acc. to heifetz | 7
+acc. to key | 7
+heermann | 7
+190 mm | 7
+co-cr/ti/pe/ster | 7
+210mm | 7
+thin | 7
+width 9.5 mm | 7
+length 70 mm | 7
+length 120 mm | 7
+8x28 mm | 7
+10ch | 7
+65mm | 7
+1m | 7
+semisharp | 7
+4; 10 pcs. | 7
+tc-gold | 7
+crile-wood | 7
+acc. to gorney | 7
+clamp length 55 mm | 7
+for screws with ã¸ 2.0 mm | 7
+0.5 mm | 7
+rapid action | 7
+2/1 | 7
+guyon | 7
+upper | 7
+without implants | 7
+adult | 7
+5/18mmlong | 7
+plate profile 0.35 mm | 7
+acc. to barraquer | 7
+length 150 mm | 7
+ultraone plate | 7
+36cm | 7
+5x28mm | 7
+width 450 mm | 7
+5x26mm | 7
+standard profile | 7
+d = 1 | 7
+10 holes | 7
+delic. | 7
+acc. to salyer | 7
+lid with knob | 7
+distraction length 15 mm | 7
+brown | 7
+mitral | 7
+usa model | 7
+5/16mmlong | 7
+5/14mmlong | 7
+tricuspid | 7
+kantrowitz | 7
+passow | 7
+perfor./wire mesh | 7
+130mm | 7
+fig.00 | 7
+ang. ti | 7
+acc. to lindorf | 7
+5-3 | 7
+lid alone | 7
+32 mm | 7
+p4 wave | 7
+made of stainless steel | 7
+zenker | 7
+st. cvd. | 7
+fenst.3 | 7
+t=2.5mm | 7
+made of nitinol | 7
+deaver | 7
+martray | 7
+acc. to satinsky | 7
+120mm | 7
+plate profile 2.5 mm | 7
+0.3 mm | 7
+vs | 7
+baby | 7
+distraction length 20 mm | 7
+with anti-relapse ratchet | 7
+5-hol | 7
+28 mm | 7
+potts-smith | 7
+8x46 mm | 7
+8x44 mm | 7
+8x42 mm | 7
+acc. to nagata | 7
+8x40 mm | 7
+length 90 mm | 7
+8x38 mm | 7
+orbital | 7
+stop 5 mm | 7
+acc. to seldin | 7
+acc. to keyes | 7
+8x36 mm | 7
+qty.of8 | 7
+qty.of4 | 7
+8x30 mm | 7
+8x34 mm | 7
+ray | 7
+8x32 mm | 7
+2-h | 7
+mios | 7
+cmf | 7
+4holes | 7
+8x50 mm | 7
+rectal | 7
+mandible | 7
+20-holes | 7
+ã¸ 1.6 mm | 7
+le/ri | 7
+4-hol | 7
+8x26 mm | 7
+jurasz | 7
+for 38-212-00-07 | 6
+155 mm | 6
+working length 200 mm | 6
+working length 160 mm | 6
+grad. | 6
+acc. to dingmann | 6
+25.5 cm | 6
+length 3 mm | 6
+strong | 6
+interchangeable | 6
+acc. to felt | 6
+1 frame | 6
+fenestrated blade for suction | 6
+acc. to ross | 6
+cont. 30x30x14 cm | 6
+strong mod. | 6
+5x16mm | 6
+silicone | 6
+consisting of 3 pairs of blades | 6
+5/70mmlong | 6
+acc. to borowski | 6
+cont. 30x30x11 cm | 6
+bengolea | 6
+5/80mmlong | 6
+simon | 6
+25° angled | 6
+acc. to sauerbruch | 6
+5x11mm | 6
+shaft 15 cm | 6
+scoville | 6
+10x300 mm | 6
+cont. 30x30x16 cm | 6
+ball electrode | 6
+cont. 60x30x11 cm | 6
+ø 75 mm | 6
+cont. 60x30x14 cm | 6
+cont. 60x30x16 cm | 6
+6/2 | 6
+acc. to fritsch | 6
+cont. 60x30x21 cm | 6
+0x13 mm | 6
+3d reconstruction plate | 6
+cont. 60x30x27 cm | 6
+rund | 6
+bent | 6
+acc. to middeldorpf | 6
+sales unit 10 pieces | 6
+moynihan | 6
+infiltration | 6
+acc. to hã¶sel | 6
+ped. | 6
+305 mm | 6
+double y-shaped | 6
+acc. to richardson | 6
+buck | 6
+2/2 | 6
+4/1 | 6
+cont. 47x30x16 cm | 6
+27mm | 6
+29mm | 6
+regular | 6
+acc. to gigli | 6
+multidirectional locking pin | 6
+cont. 30x30x21 cm | 6
+mercedes | 6
+cont. 30x30x27 cm | 6
+cont. 47x30x11 cm | 6
+grave | 6
+acc. to kallmorgen | 6
+with perforated screw tip | 6
+ø5mm | 6
+wire length 16 cm | 6
+28 | 6
+cont. 47x30x14 cm | 6
+19.5cm | 6
+dental cpl. | 6
+4-fold | 6
+17.5cm | 6
+pratt | 6
+0x15 mm | 6
+clamp length 9 mm | 6
+tray miniset | 6
+concave | 6
+fig. 7 | 6
+diamond | 6
+acc. to young | 6
+acc. to millin | 6
+yeoman | 6
+t=0.6mm | 6
+width 4.1 mm | 6
+seidl | 6
+mesh version | 6
+vaginal | 6
+mandibular distraction | 6
+5 mm screws | 6
+preshap | 6
+text es | 6
+rh | 6
+hard-coated surface | 6
+deep-gripping | 6
+acc. to william | 6
+symph. | 6
+for biscuspids | 6
+groove | 6
+zielke | 6
+15ch | 6
+classic | 6
+dent. f.sonicweld | 6
+nylon | 6
+acc. to metzenbaum-nelson | 6
+acc. to coleman | 6
+width 100 mm | 6
+acc. to iris | 6
+sales unit: 12 pieces | 6
+215mm | 6
+hoffmann | 6
+profile thickness 1.5 mm | 6
+face-lift scissors | 6
+22 mm | 6
+8mm medium | 6
+kls pl | 6
+5.5 cm | 6
+end-dr. | 6
+humerus | 6
+width 440 mm | 6
+no. 7 | 6
+c-shaped | 6
+acc. to landolt | 6
+1 x 4 mm | 6
+acc. to fox | 6
+ã¸ 1.4 mm | 6
+ã¸ 2.5 mm | 6
+presh. | 6
+smart shape plate | 6
+acc. to knapp | 6
+9ch | 6
+fig.0 | 6
+t=0.5 | 6
+width 1.4 mm | 6
+acc. to farabeuf | 6
+compact | 6
+gray | 6
+very soft | 6
+stand.perm.5mm | 6
+60x30 | 6
+ferris-smith | 6
+width 40 mm | 6
+fig 1 | 6
+total length 21.5 cm | 6
+ø 7.0 mm | 6
+fig.000 | 6
+width 7.5 mm | 6
+modified | 6
+160 mm | 6
+mm & inch | 6
+width 27 mm | 6
+fo | 6
+135 mm | 6
+acc. to aufricht | 6
+21.5cm | 6
+distal | 6
+acc. to gracey | 6
+95mm | 6
+8ch | 6
+re | 6
+length 26 mm | 6
+length 28 mm | 6
+double beveled | 6
+fig. 6 | 6
+23.5cm | 6
+dorsal | 6
+3 x 3 teeth | 6
+30-holes | 6
+acc. to alan-parks | 6
+2 pieces | 6
+width 53 mm | 6
+broad | 6
+for children and adults | 6
+15.5cm | 6
+33mm | 6
+3x13 mm | 6
+without contents | 6
+spring elem. | 6
+arm length 140 mm | 6
+15x2-hole | 6
+sl. cvd. | 6
+6+20-hole | 6
+acc. to ryder vascular | 6
+toynbee | 6
+microvascular | 6
+headstrap | 6
+5 mm x 0.3 mm | 6
+young | 6
+c 128 | 6
+6m | 6
+6 mm x 0.3 mm | 6
+acc. to guyon | 6
+8holes | 6
+6.0 mm x 0.7 mm | 6
+dierks | 6
+single arm | 6
+length 7.5 cm | 6
+acc. to o€™shaugnessy | 6
+acc. to zenker | 6
+55mm | 6
+chin plate | 6
+6.0 mm x 0.8 mm | 6
+micro forceps | 6
+6 mm x 0.4 mm | 6
+20 pieces | 6
+for graft harvesting from ilium and tibia | 6
+mouth length 12 mm | 6
+clamp length 30 mm | 6
+ht | 6
+240mm | 6
+acc. to ryder-martin | 6
+mouth length 7 mm | 6
+4-pr. | 6
+5/26mmlong | 6
+2m | 6
+ratchet | 6
+r88 | 6
+acc. to kowalski | 6
+t-fo | 6
+barraquer | 6
+acc. to gross-maier | 6
+acc. to castroviejo-fino | 6
+length 42 mm | 6
+5/12mmlong | 6
+8-hol | 6
+5/10mmlong | 6
+5/ 8mmlong | 6
+5x80mm | 6
+american scale | 6
+aachen | 6
+mouth length 11 mm | 6
+acc. to backhaus | 6
+double-action | 6
+standard model | 6
+working part 3mm | 6
+length 38.5 mm | 6
+s-form | 6
+5mm; 25 pcs. | 6
+w. rad. | 6
+8x72 mm | 6
+handle incl. axis | 6
+used cvd. | 6
+holding unit | 6
+hexagon. | 6
+ang.le. | 6
+narrow tip | 6
+8x65 mm | 6
+8x64 mm | 6
+parallel grip | 6
+ã¸ 1.9 mm | 6
+30° curved | 6
+100-240v | 6
+8x60 mm | 6
+8x58 mm | 6
+sidew. cvd. | 6
+8x48 mm | 6
+spring | 6
+grid plate | 6
+8x56 mm | 6
+8x55 mm | 6
+8x54 mm | 6
+clamp length 23 mm | 6
+8x52 mm | 6
+figure 5/6 | 6
+bay.shaft | 6
+w/o indicator | 6
+acc. to dieffenbach | 6
+stop 9 mm | 6
+acc. to kocher-nippon | 6
+acc. to pean-nippon | 6
+width 300 mm | 6
+usa | 6
+acc. to gregory | 6
+for 4-mm electrodes | 6
+5x24mm | 6
+p. | 6
+ass.w/o.hdl. | 6
+2012 | 6
+1x2 t | 6
+o-shaft | 6
+daniel gubisch | 6
+ø 10.0 mm | 6
+120 mm | 6
+f. l1 sm | 6
+8x80 mm | 6
+8x76 mm | 6
+lightweight | 6
+2:3 teeth | 6
+downwards cutting | 6
+2x12mm | 6
+acc. to desmarres | 6
+ø vessel 1 | 6
+hohmann | 6
+s-shaped | 6
+acc. to meyerding | 6
+inside ø 4 mm | 6
+outside ø 5 mm | 6
+5/45mmlong | 6
+spreading width 85 mm | 6
+8 ch | 6
+shape uo (sup/u) | 6
+bores | 6
+verhoeven | 6
+5/38mmlong | 6
+ø 1.4 mm | 6
+molt | 6
+guedel-negus | 6
+heymann | 6
+16 ch | 6
+acc. to heidemann | 6
+curved downwards | 6
+18 ch | 6
+instrument tip length 10 mm | 6
+acc. to rubin | 6
+acc. to semken | 6
+working end 20 mm | 6
+1/1 | 6
+d = 0 | 6
+resano | 6
+28.5 cm | 6
+shaft length 18 cm | 6
+for women | 6
+5/34mmlong | 6
+5/36mmlong | 6
+kocher | 6
+acc. to ferris-smith-kerrison | 6
+27 mm | 6
+5/32mmlong | 6
+16.5cm | 6
+ombredanne | 6
+2x7mm | 6
+0x5 | 6
+bruenings | 6
+locking | 6
+acc. to oehler | 6
+acc. to molt | 6
+fluted | 6
+bunnell | 6
+width 0.8 mm | 6
+5 ml | 6
+1:1 | 6
+6 prongs | 6
+arm length 76 mm | 6
+for partially toothed lower jaws | 6
+ger. | 6
+70x1 | 6
+instrument tip length 5 mm | 6
+tonsil | 5
+30 | 5
+si. | 5
+6 x 5 mm | 5
+4 hole | 5
+smith-pet. | 5
+compression | 5
+t-sh. | 5
+5x9mm | 5
+length 40 cm | 5
+24ch | 5
+ø 2.2 mm | 5
+bier | 5
+stille | 5
+12 holes | 5
+serr | 5
+9 holes | 5
+4x0.8 mm | 5
+11ch | 5
+width 3.1 mm | 5
+rust | 5
+ø 9.0 mm | 5
+45° upwards curved | 5
+tübingen | 5
+ø 7.5 mm | 5
+acc. to subramanian | 5
+sonicweld | 5
+225mm | 5
+catlin | 5
+tini | 5
+lloyd-davis | 5
+for 18-526-00-01 | 5
+ø3.5mm | 5
+aufricht | 5
+43mm | 5
+h-shaped | 5
+0.1mm | 5
+1mm plat.sep.arm | 5
+metz. | 5
+total length 25.5 cm | 5
+7-hol | 5
+acc. to penfield | 5
+t8 | 5
+acc. to bowman | 5
+sharp/blunt | 5
+mohr | 5
+clamp length 50 mm | 5
+3x8 mm | 5
+upcut | 5
+size 4 | 5
+ri/le | 5
+rhodium mirror | 5
+absolutely distortion-free mirror image | 5
+walton | 5
+acc. to coupland | 5
+crile | 5
+acc. to zoellner | 5
+luer lock connection | 5
+ø 2.6 mm | 5
+category 0 | 5
+6x13mm | 5
+smart3d | 5
+115mm | 5
+acc. to hoke | 5
+wire length 31 cm | 5
+ã¸ 2.1 mm | 5
+3x2-hole | 5
+clamp length 13 mm | 5
+frame | 5
+qty.of1 | 5
+7/3 | 5
+length 21 mm | 5
+arm length 250 mm | 5
+height 160 mm | 5
+wala | 5
+3x3t | 5
+orthodontic plate | 5
+18/22 mm | 5
+lancet-shaped | 5
+2/4-holes | 5
+baj. | 5
+length 530 mm | 5
+22ch | 5
+height 40 mm | 5
+acc. to verhoeven | 5
+6mm/0 | 5
+hegar | 5
+p4 | 5
+plate profile 2.2 mm | 5
+demo pool | 5
+acc. to vannas | 5
+120° | 5
+french | 5
+20 holes | 5
+thread size 6-0 - 12-0 | 5
+mini-profile | 5
+artery | 5
+12-hole | 5
+ø 26 mm | 5
+button ended | 5
+mosquito | 5
+gebogen | 5
+vascular | 5
+three rings | 5
+metz.-fino | 5
+250mm | 5
+acc. to jamieson | 5
+14.5cm | 5
+curved left | 5
+left cvd. | 5
+5x460mm | 5
+working end length 50 mm | 5
+accu | 5
+0.8mm | 5
+acc. to kilner-doughty | 5
+acc. to mcivor | 5
+6-ho | 5
+6ho | 5
+acc. to oringer | 5
+1.2 mm | 5
+3x3mm | 5
+self-retaining | 5
+fig 2 | 5
+right cvd. | 5
+lambotte | 5
+175 mm | 5
+5/3 | 5
+ob | 5
+og | 5
+total length 25 cm | 5
+150x95x13 mm | 5
+extra long | 5
+richardson | 5
+40°up.180mm | 5
+obesity | 5
+145mm | 5
+z-shaped | 5
+maingot | 5
+185 mm | 5
+intestine blade | 5
+watson-cheyne | 5
+scherbak | 5
+maxilla | 5
+ø3 | 5
+clamp length 60 mm | 5
+height 50 mm | 5
+90° upwards curved | 5
+5x6 | 5
+3 units | 5
+3.0 mm | 5
+12ch | 5
+13ch | 5
+14ch | 5
+mm & inches | 5
+width 4.6 mm | 5
+17ch | 5
+l=26.5 mm | 5
+18ch | 5
+jefferson | 5
+19ch | 5
+autoclavable | 5
+#1-3 | 5
+acc. to terry | 5
+acc. to payr | 5
+ryder-vascular | 5
+stand.perm.9mm | 5
+length 44 mm | 5
+ø 100 mm | 5
+martin-alu | 5
+c1 256 | 5
+acc. to coakley | 5
+shaft length 12 cm | 5
+h:30mm | 5
+heavy cvd. | 5
+3d | 5
+22 | 5
+length 35 cm | 5
+lid w. button | 5
+full. st. | 5
+w.ejector | 5
+li | 5
+steg 10mm | 5
+width 1 | 5
+2 cm | 5
+salyer | 5
+graduated inside | 5
+kilner-ragnell | 5
+21ch | 5
+105mm | 5
+brush length 65 mm | 5
+smart orbital floor plate | 5
+width 3.4 mm | 5
+biegsam | 5
+form bu (inf/b) | 5
+acc. to rumel | 5
+0.7 mm | 5
+tibia | 5
+5x50mm | 5
+longitudinal serration | 5
+with irrigation on one side | 5
+distraction length 25 mm | 5
+hach | 5
+width 0.4 mm | 5
+acc. to lahey | 5
+helvoston | 5
+205mm | 5
+no. 16 | 5
+47 mm | 5
+5/24mmlong | 5
+acc. to wertheim | 5
+acc. to overholt-martin | 5
+4m | 5
+working end 30 mm | 5
+acc. to converse | 5
+acc. to sarot | 5
+femur | 5
+7/32mm | 5
+acc. to overholt-fino | 5
+0x17 mm | 5
+5/22mmlong | 5
+acc. to hemingway | 5
+geb | 5
+ø 3mm | 5
+angled 25° | 5
+acc. to st. marks | 5
+length 14 | 5
+acc. to bozemann | 5
+curved upwards | 5
+0x12 mm | 5
+angled down | 5
+plate profile 1.4 mm | 5
+arm length 300 mm | 5
+8.5 cm | 5
+for screws with ã¸ 2.0/2.3 mm | 5
+0x14mm | 5
+acc. to lane | 5
+left curved | 5
+keyboard shelf | 5
+width 17 mm | 5
+11x300 mm | 5
+nicola | 5
+stop 15 mm | 5
+acc. to toennis-adson | 5
+0x11 mm | 5
+5/65mmlong | 5
+downward-bent | 5
+340 mm | 5
+c/d | 5
+tip "pierse" | 5
+5/55mmlong | 5
+width 8.2 mm | 5
+figure 22 | 5
+width 6.6 mm | 5
+0x8 mm | 5
+0x12mm | 5
+working part 6mm | 5
+working part 9mm | 5
+55x70mm | 5
+working end ø 4 mm | 5
+precon | 5
+ext base | 5
+17-h | 5
+large coax plug and permanent cord of 4 m | 5
+5mm 35cm | 5
+l-shape 0 | 5
+shape bu (inf/b) | 5
+jansen | 5
+acc. to cinelli | 5
+acc. to biemer-mueller | 5
+26-hole | 5
+width 35 mm | 5
+8x100 mm | 5
+loop electrode | 5
+acc. to steinberg | 5
+double end | 5
+length 38 mm | 5
+back action | 5
+205 mm | 5
+graduation 1-2-3-5-7-8-9-10 | 5
+w/o ratchet | 5
+working end width 8 mm | 5
+straight t=2.8 | 5
+acc. to jacobson | 5
+length 2.3 m | 5
+3x17 mm | 5
+delicate serration | 5
+with blade | 5
+6+20+6-hole | 5
+isolated | 5
+7/22mm | 5
+3x15 mm | 5
+ø 5.5 mm | 5
+0.9 mm | 5
+acc. to adlerkreutz | 5
+acc. to biemer | 5
+dougthy | 5
+4-pin plug | 5
+acc. to london college | 5
+acc. to harrington | 5
+c-shape 0 | 5
+figure 3a | 5
+5/28mmlong | 5
+very delicate serration | 5
+3x11 mm | 5
+5/7 | 5
+self-centering | 5
+length 27cm | 5
+r | 5
+acc. to duval | 5
+acc. to gillies | 5
+5d | 5
+figure 1/2 | 5
+acc. to martin-cushing | 5
+tray 3/4 | 4
+standard version | 4
+acc. to wangensteen | 4
+6/0 | 4
+atraum. | 4
+luer-lock connection | 4
+acc. to hajek | 4
+3x7 mm | 4
+with dissector end | 4
+cross-shaped | 4
+hollow handle ø 8mm | 4
+20 ml | 4
+dubois | 4
+working end 25 mm | 4
+38 cm | 4
+0 x 7 | 4
+5-ho | 4
+systrunk | 4
+bevelled | 4
+working end 10 mm | 4
+90° angled upward | 4
+sinus | 4
+tray 1/2 | 4
+angular stable condylar fracture plate | 4
+gorney | 4
+t=0.8 | 4
+f. tray h=94mm | 4
+trelat | 4
+6 prong | 4
+debakey-rummel | 4
+l-sha | 4
+acc. to israel | 4
+working length 80 mm | 4
+40 mm x 40 mm | 4
+retrograde | 4
+acc. to krenkel | 4
+bev. | 4
+1t | 4
+ger.olive n.w. | 4
+spencer | 4
+slim version | 4
+working length 150 mm | 4
+lexer-fino | 4
+taylor | 4
+t=2.8mm | 4
+7/30mm | 4
+heiss | 4
+9mm/can/ao/ster | 4
+sailer | 4
+acc. to verbrugge | 4
+32-h | 4
+lowman | 4
+draeger | 4
+working end 4 mm | 4
+130° | 4
+0x10 mm | 4
+charrière | 4
+chamf. | 4
+concave working end for sinus floor elevation | 4
+graduated 7 - 10 - 11 - 13 - 15 mm | 4
+charriere | 4
+blades have to be ordered separately | 4
+acc. to morris-de bakey | 4
+consisting of outer and inner tube | 4
+blade electrode nstc | 4
+160° | 4
+10x420 mm | 4
+nstc blade | 4
+made of horsehair bristles | 4
+4 volt | 4
+6 volt | 4
+12.5cm | 4
+7/20mm | 4
+0x16 mm | 4
+pencil holster included | 4
+gruenwald | 4
+binocular | 4
+8x50mm | 4
+light blue | 4
+tungsten micro dissection needle | 4
+0x14 mm | 4
+gourdet | 4
+7/24mm | 4
+5x08mm | 4
+midsize | 4
+5x20 mm | 4
+7/26mm | 4
+7/28mm | 4
+gallaher | 4
+30.5 cm | 4
+slight cvd | 4
+peck-joseph | 4
+metzenb. | 4
+2.5x310 mm | 4
+acc. to acc. to yasargil | 4
+2 buttons | 4
+harken | 4
+sheehan | 4
+125mm | 4
+ø 8 | 4
+with guide | 4
+5/75mmlong | 4
+10x360 mm | 4
+acc. to goldstein | 4
+length 23 mm | 4
+acc. to lucas-martin | 4
+fomon | 4
+cross | 4
+370 mm long | 4
+1.2x310 mm | 4
+1.0x310 mm | 4
+module 4 | 4
+incl. 80-630-58-04 | 4
+acc. to fanous | 4
+ø4.0mm | 4
+acc. to krayenbuehl | 4
+37cm | 4
+5/1 | 4
+i=3 | 4
+0.6 mm/ster | 4
+0x7 mm | 4
+neg. | 4
+80-633-13-04 | 4
+gynecological scissors | 4
+5/85mmlong | 4
+15/18 mm | 4
+11/13 mm | 4
+7/34mm | 4
+acc. to poppen | 4
+working length 18 cm | 4
+ramus retractor | 4
+long ratchet | 4
+ø 0.7 mm | 4
+7/9 mm | 4
+7/36mm | 4
+with probe | 4
+russian-type | 4
+45° downwards curved | 4
+curved sidewards | 4
+lipo-suction | 4
+8x95 mm | 4
+8x90 mm | 4
+5x46mm | 4
+1.3 mm | 4
+mbb | 4
+5x40mm | 4
+acc. to rochester-carmalt | 4
+cable length 2.5 m | 4
+8x85 mm | 4
+for graft harvesting from calva | 4
+perthes | 4
+8x70 mm | 4
+5x38mm | 4
+5x34mm | 4
+1:2 teeth | 4
+free storage | 4
+belluci | 4
+3.5 x 0.7 mm | 4
+3.5 x 0.5 mm | 4
+height 35 mm | 4
+l 6 | 4
+gett | 4
+l=38.5 mm | 4
+martin model | 4
+length 32 mm | 4
+4 m | 4
+acc. to kã¶nig | 4
+del | 4
+halle | 4
+acc. to michel | 4
+3 m | 4
+m. thread | 4
+length 400 mm | 4
+clamp length 25 mm | 4
+right curved | 4
+acc. to fisch | 4
+l=32 mm | 4
+5x48mm | 4
+shambaugh | 4
+acc. to mini-gemini | 4
+for footplate | 4
+single-use | 4
+45° curved | 4
+w.lid | 4
+ø 16.0 mm | 4
+3.5x0.5 mm | 4
+tenuous | 4
+width 13.5 mm | 4
+width 43 mm | 4
+5mm/2 | 4
+gerade | 4
+l=19.5 mm | 4
+incl. main filter (item no. 80-060-01-04) and connection kit for major electrosurgery units | 4
+fig. 5/6 | 4
+length 4.5 cm | 4
+2/5-holes | 4
+angl. ll | 4
+5x32mm | 4
+250 gr | 4
+cross cut | 4
+threadlock ts | 4
+ã¸ 1.1 mm | 4
+cvd.up | 4
+clamp length 65 mm | 4
+for hf trolley 80-070-00-04 | 4
+5  mm | 4
+h=30mm | 4
+l=18 mm | 4
+width bottom 4.5 mm | 4
+turn. | 4
+width 22 mm | 4
+4x0.9 mm | 4
+acc. to de bakey-mosquito | 4
+4 x 0.6 mm | 4
+8x45 mm | 4
+3.5 x 0.6 mm | 4
+acc. to lovelace | 4
+mcgee | 4
+acc. to dale | 4
+münster | 4
+electrode handle with two pushbuttons | 4
+acc. to leriche | 4
+5+12-holes | 4
+5+ 8-holes | 4
+l=24.5 mm | 4
+10.5cm | 4
+8x35 mm | 4
+with lock | 4
+8x25 mm | 4
+module size 2/3 | 4
+medium curved | 4
+carpentier | 4
+1.0x120 mm | 4
+z-shape | 4
+for 24-189-00-07 | 4
+module 1 | 4
+0/3 | 4
+meyerhöfer | 4
+kabierske | 4
+acc. to durante | 4
+compr. | 4
+6 units | 4
+16-h | 4
+110°turned | 4
+acc. to mikro-adson | 4
+80°turned | 4
+guthoff | 4
+10m | 4
+rotat. | 4
+shape c1/2r | 4
+no. 9 | 4
+neutr. | 4
+r108 | 4
+m 8   90dg | 4
+5x80 mm | 4
+17-hole | 4
+width 0.3 mm | 4
+3; 10 pcs. | 4
+janet | 4
+100 ml | 4
+t=2.0 | 4
+11x380 mm | 4
+0.9mm | 4
+cur. | 4
+240 mm | 4
+11x340 mm | 4
+miller-baby | 4
+5; 10 pcs. | 4
+acc. to mini-langenbeck | 4
+12x300 mm | 4
+width 12.5 mm | 4
+tray din | 4
+muehling | 4
+for adolescents | 4
+figure 19 | 4
+for men | 4
+tray 1/1 | 4
+0mm; 25 pcs. | 4
+mmf screw | 4
+str.long | 4
+0 / 150 mm | 4
+acc. to hegar-vascular | 4
+angular ground | 4
+length 52 mm | 4
+beales | 4
+without marking | 4
+kirschner threaded tip | 4
+15° curved | 4
+scissors | 4
+ultra-light | 4
+flat ground | 4
+600mm long | 4
+tube | 4
+34cm | 4
+l95mm | 4
+identific. label f. trays | 4
+r 50mm | 4
+l 95mm | 4
+ryder | 4
+length 6.5 cm | 4
+l=31 mm | 4
+cross drive | 4
+16 holes | 4
+drill hole cover plate | 4
+mand. guide | 4
+slim model | 4
+lefort i | 4
+offset | 4
+acc. to barraquer-troutman | 4
+w.catch | 4
+nach bainbridge | 4
+jacobson | 4
+length 36 mm | 4
+acc. to webster | 4
+2020 | 4
+ochsner-kocher | 4
+acc. to crile-wood | 4
+8 l | 4
+10x380 mm | 4
+10x340 mm | 4
+ochsner | 4
+jaw width 3 mm | 4
+maxdrive® | 4
+acc. to olsen-hegar | 4
+ø 5mm | 4
+acc. to meiãÿ | 4
+0-2 | 4
+7/18mm | 4
+10x15mm | 4
+25ch | 4
+shank 2 | 4
+130° down | 4
+23ch | 4
+pape gerlach recon plate | 4
+w. gap | 4
+width 6.7 mm | 4
+width 7.6 mm | 4
+20ch | 4
+18-holes | 4
+19-h | 4
+60x0.5 mm | 4
+16ch | 4
+holding arm | 4
+43 mm | 4
+for incisors and biscuspids | 4
+acc. to orban | 4
+width 11.2 mm | 4
+7/12mm | 4
+26ch | 4
+acc. to zã¼rich | 4
+mikulicz | 4
+drawing cut | 4
+51 x 51 mm | 4
+4x5 t. | 4
+mathieu | 4
+incisors | 4
+0x26mm | 4
+20.5cm | 4
+31 | 4
+figure 24 | 4
+braun | 4
+11-hole | 4
+center-driven | 4
+acc. to jackson | 4
+bladder | 4
+ø 7 | 4
+53mm | 4
+steri | 4
+10x15-hole | 4
+7/0 | 4
+fig 3 | 4
+60x0.7 mm | 4
+millin | 4
+6 x 6 teeth | 4
+100x0.7 mm | 4
+acc. to bauer | 4
+alongs. | 4
+richter | 4
+straight curved | 4
+acc. to daubenspeck | 4
+dolwick | 4
+double y-shape | 4
+czerny | 4
+h:54mm | 4
+total length 12.5 cm | 4
+1.0 mm/ster | 4
+pp | 4
+0 mm 300 mm | 4
+stop frame | 4
+13-hole | 4
+acc. to stille-liston | 4
+arm length 195 mm | 4
+w. thread | 4
+acc. to ochsenbein | 4
+0mm 35cm | 4
+acc. to lexer-baby | 4
+partsch | 4
+acc. to alm | 4
+width 4.2 mm | 4
+blade holder | 4
+ø 28 mm | 4
+arm length 100 mm | 4
+spreading width 150 mm | 4
+figure 0000 | 4
+2x2-hole | 4
+bangerter | 4
+3 x 22 mm | 4
+acc. to finsen | 4
+schnidt | 4
+right demo | 4
+2x2 hole | 4
+virchow | 4
+48 mm | 4
+1x1 t. | 4
+350 mm | 4
+bergmann | 4
+acc. to beckman-adson | 4
+mounting on multifunctional rack ø 25 mm | 4
+standard temporary | 4
+t-shape 0 | 4
+32-hole | 4
+mg | 4
+24x70 mm | 4
+with pin | 4
+12-hol | 4
+no.1 | 4
+fr | 4
+ø 21 mm | 4
+spreading width 160 mm | 4
+24x35 mm | 4
+3x18 mm | 4
+14-hole | 4
+acc. to randall | 4
+74x65 mm | 4
+double arm | 4
+acc. to w. f. barry | 4
+acc. to hylin | 4
+b-tcp | 4
+y-plate | 4
+no. 8 | 4
+0-5 | 4
+ø 27 mm | 4
+acc. to olivercrona | 4
+length 38 cm | 4
+8x5mm | 4
+morgan | 4
+60x40 mm | 4
+size 2 | 4
+rhodium-coated | 4
+spreading width 100 mm | 4
+ø 34 mm | 4
+xs | 4
+high pressure | 4
+size 5 | 4
+6-1 | 4
+spreading width 140 mm | 4
+plane | 4
+material aluminum | 4
+ø vessel 2 | 4
+walb | 4
+2 each | 4
+schumacher | 4
+1 x 5 mm | 4
+0x16mm | 4
+figure 2 a | 4
+semi | 4
+kleinert-kutz | 4
+sl | 4
+end-dr | 4
+bonney | 4
+birkett | 4
+width 4.3 mm | 4
+jannetta | 4
+ad. | 4
+symphysis plate | 4
+smith-petersen | 4
+figure 20 | 4
+cone | 4
+russel-davis | 4
+arm length 300+300 mm | 4
+tilley | 4
+3 threadlock ts | 4
+width 38 mm | 4
+ear | 4
+symphysis | 4
+stop 6 mm | 4
+stop 8 mm | 4
+no. 11 | 4
+length 85 mm | 4
+figure 1 a | 4
+no. 10 | 4
+acc. to flagg | 4
+1 x 9 mm | 4
+mesh plate | 4
+cup | 4
+1.2mm | 4
+no. 12 | 4
+mid-dr. | 4
+acc. to cooley-derra | 4
+upw.cvd. | 4
+no. 13 | 4
+with activator | 4
+le.cvd | 4
+ri.cvd | 4
+d3 | 4
+42 mm | 4
+acc. to de bakey-bahnson | 4
+for removal of granulomatous tissue from supra- and infrabone pockets | 4
+f. 16-248-00 | 4
+length 32.5 cm | 4
+55x60mm | 4
+p2 | 4
+stegmann | 4
+lid only | 4
+courved | 4
+laforce | 4
+acc. to ruskin | 4
+padding set | 4
+t=2.0mm | 4
+up ang. | 4
+acc. to cleveland | 4
+incl.compr.demo | 4
+case | 4
+acc. to deaver-grip | 4
+down ang. | 4
+farell | 4
+1.5 midface | 4
+with fixed suction tube | 4
+hauenstein | 4
+hardtop | 4
+softtop | 4
+fig.6 | 4
+landolt-reulen | 4
+0x80mm | 4
+20x40 mm | 4
+fully bent tip | 4
+90° cvd. | 4
+ø 14.0 mm | 4
+working end width front 9.5 mm | 4
+hirschmann | 4
+fig.5 | 4
+0/16mmlong | 4
+0/18mmlong | 4
+dissecting | 4
+fig.4 | 4
+0/14mmlong | 4
+55x65mm | 4
+145 mm | 4
+2x5mm | 4
+t=1.2 | 4
+left demo | 4
+40-holes | 4
+52 mm | 4
+total length 14.5 cm | 4
+4.5 mm | 4
+5mm screws | 4
+total length 13.5 cm | 4
+9x300 mm | 4
+mouth width 1.5 mm | 4
+9x420 mm | 4
+made of natural bristles with wool fibers | 4
+jennings | 4
+angled upwards 30° | 4
+st.cvd. ti | 4
+lid | 4
+suct. | 4
+cable length 4.5 m | 4
+5x350mm | 4
+wood | 4
+aquila-design | 4
+acc. to halle | 4
+bayonett | 4
+4x4 t. | 4
+7/14mm | 4
+7/16mm | 4
+0/10mmlong | 4
+kerrison | 4
+acc. to beebee | 4
+0x9 mm | 4
+a=4 | 4
+osteotome | 4
+implants | 4
+hauenstein att. | 4
+length 17 | 4
+a=3 | 4
+24-hole | 4
+182 mm | 4
+8-pr. | 4
+detach. | 4
+22.5cm | 4
+curved version | 4
+3x9 mm | 4
+caries | 4
+100 x 25 mm | 4
+acc. to heymann | 4
+9x360 mm | 4
+0/20mmlong | 4
+5x14 mm | 4
+0/12mmlong | 4
+tip width 0.5 mm | 4
+dvd | 4
+double-sided | 4
+curved right | 4
+deep | 4
+t-form | 4
+for pull application | 4
+d4 | 4
+l-fo | 4
+mouth length 10 mm | 3
+6 x 150mm | 3
+length 53 mm | 3
+width 1.3 mm | 3
+acc. to desjardins | 3
+figure 1/1 | 3
+nouvag | 3
+l 110 mm | 3
+acc. to blake | 3
+clamp length 35 mm | 3
+f. 23-970-17 | 3
+75x20mm | 3
+nose scissors | 3
+3:3 teeth | 3
+trial implants | 3
+70x20mm | 3
+farabeuf | 3
+0x200mm | 3
+width 2 | 3
+d 3 | 3
+65x20mm | 3
+125° curved | 3
+26 | 3
+acc. to echlin | 3
+dean | 3
+bishop-harmon | 3
+235 mm | 3
+acc. to price-thomas | 3
+blade depth 40 mm x blade width 100 mm | 3
+5cm cvd bayon | 3
+acc. to de bakey-derra | 3
+rotating | 3
+figure 0/0 | 3
+acc. to reynolds-jameson | 3
+1.8x140 mm | 3
+l 200 mm | 3
+8x24 mm | 3
+acc. to cuzzi | 3
+5x09mm | 3
+mini-alif | 3
+stone-watt | 3
+acc. to mead | 3
+acc. to de martel-wolfson | 3
+1x lock long | 3
+midface | 3
+bushe | 3
+l 24 cm | 3
+acc. to husfeldt | 3
+8x22 mm | 3
+0x17mm | 3
+2x lock short | 3
+backside serrated | 3
+70° curved | 3
+acc. to ragnell-kilner | 3
+width 2.9 mm | 3
+3cm | 3
+3x6mm | 3
+width top 5.0 mm | 3
+0 x 4 | 3
+acc. to scheibe | 3
+langenb. | 3
+oval/oval | 3
+t6 | 3
+zanger | 3
+7/1 | 3
+mittel | 3
+zirm | 3
+acc. to castrovieojo | 3
+set consisting of 3 pieces of one length | 3
+acc. to wylie | 3
+60x20mm | 3
+acc. to greene | 3
+forward angled / downward curved | 3
+50x20mm | 3
+5x195mm | 3
+13-holes | 3
+figure 0/1 | 3
+0x19mm | 3
+5x44mm | 3
+harrington | 3
+elsaesser | 3
+acc. to beyer | 3
+novak | 3
+acc. to blount | 3
+3.6 cm | 3
+55x20mm | 3
+acc. to boehler | 3
+45x20mm | 3
+conic | 3
+clamp length 40 mm | 3
+40x20mm | 3
+35x20mm | 3
+5x100mm | 3
+250 g | 3
+260 mm | 3
+5x6 t. | 3
+m.-stille | 3
+angled backwards / bent downwards | 3
+right angled | 3
+gigli | 3
+8x20 mm | 3
+blatt | 3
+elliot | 3
+sl cvd. | 3
+acc. to museux | 3
+lck. | 3
+geb. n. biemer | 3
+blade depth 45 mm x blade width 36 mm | 3
+acc. to weber | 3
+krischner length 400mm | 3
+12 french | 3
+barnhill | 3
+8x300 mm | 3
+mcivor | 3
+hough | 3
+fenst.5mm | 3
+14 french | 3
+filigran | 3
+nar.extralong | 3
+2.0x160 mm | 3
+inside ø 2 mm | 3
+for 24-188-01-07 | 3
+1.5x160 mm | 3
+outside ø 7 mm | 3
+2.0x60 mm | 3
+gerieft | 3
+1.0x60 mm | 3
+keratoplasty | 3
+round/oval | 3
+ø 6.5 mm | 3
+acc. to derra | 3
+0 / 200 mm | 3
+williams microl. | 3
+inside ø 6 mm | 3
+1.2x60 mm | 3
+1.8x60 mm | 3
+upcvd. | 3
+1.4x60 mm | 3
+biemer | 3
+fen.5mm | 3
+1.5x60 mm | 3
+1.6x60 mm | 3
+yasarg. | 3
+46 mm | 3
+1.4x160 mm | 3
+trocar pointed | 3
+1.0x140 mm | 3
+acc. to akiyama | 3
+2.0x120 mm | 3
+0 / 170 mm | 3
+blade depth 62 mm x blade width 62 mm | 3
+jaw sm. 220 mm | 3
+0mm/ao | 3
+5/22mm | 3
+1.2x140 mm | 3
+11x360 mm | 3
+1.4x140 mm | 3
+1.5x140 mm | 3
+standard collar + | 3
+5/20mm | 3
+for cross-bar (24-186-06-07) | 3
+5 ch | 3
+6 ch | 3
+1.8x120 mm | 3
+1.6x120 mm | 3
+blade depth 47 mm x blade width 62 mm | 3
+1.5x120 mm | 3
+working end rounded | 3
+12x340 mm | 3
+triangle shaft | 3
+medium angled | 3
+strongly angled | 3
+stand.perm.12mm | 3
+removal of bone/cement | 3
+wylie | 3
+collar length 4 mm | 3
+acc. to burford | 3
+11x420 mm | 3
+2.0x140 mm | 3
+to 15-815-30-07 | 3
+1.4x120 mm | 3
+acc. to martin-hoen | 3
+12x380 mm | 3
+bajonett | 3
+acc. to brand | 3
+70x14mm | 3
+ceramic head | 3
+magill | 3
+1.8x310 mm | 3
+boehler | 3
+special edition | 3
+33 | 3
+vickers | 3
+1.6x310 mm | 3
+100 x 35 mm | 3
+microstop1 | 3
+6cm | 3
+microstop2 | 3
+5/16mm | 3
+90°cvd. | 3
+length 34 mm | 3
+blade depth 40 mm x blade width 36 mm | 3
+acc. to braun | 3
+2.2x310 mm | 3
+stapelbar | 3
+1.6x140 mm | 3
+robb | 3
+acc. to grave | 3
+mall.shaft | 3
+1 pair | 3
+rt | 3
+acc. to schubert | 3
+teardrop | 3
+blade depth 30 mm x blade width 100 mm | 3
+demel | 3
+for level one rack | 3
+acc. to lees | 3
+acc. to pederson | 3
+f.level one rack | 3
+suture forceps tc | 3
+acc. to kã¶rner/westermann | 3
+5/24mm | 3
+bainbridge | 3
+width 2.6 mm | 3
+geschlitzt | 3
+self-ret. | 3
+n. self-ret | 3
+f. 24-191-00 | 3
+bunge | 3
+neon. | 3
+rounded working end | 3
+150mm | 3
+20g/0 | 3
+l1 reconguide | 3
+ceramic | 3
+arm length 60 mm | 3
+arm length 80 mm | 3
+la force | 3
+krischner 150mm long | 3
+figure 27 | 3
+drill guide | 3
+5/0 | 3
+178 mm | 3
+ang.lat. | 3
+silicone-coated handle | 3
+length 95 mm | 3
+outside ø 2.6 mm | 3
+figure 28 | 3
+both cutting edges serrated | 3
+c8096711 | 3
+demo iliac | 3
+module 3 | 3
+12-ho/le | 3
+acc. to leland-jones | 3
+ima | 3
+size 1 | 3
+acc. to bircher-ganske | 3
+no. 0/1 | 3
+pittsb. | 3
+wl 110 mm | 3
+gardener | 3
+acc. to kader | 3
+complete set | 3
+t 1 | 3
+middle | 3
+acc. to gorney-freeman | 3
+acc.to gorney-freeman | 3
+acc. to toennis | 3
+5/90mmlong | 3
+acc. to metzenbaum-thorek | 3
+plate profile 2.8 mm | 3
+acc. to mayo-lexer | 3
+potts-de martell | 3
+acc. to spencer | 3
+for cleft palate | 3
+1 x 7 mm | 3
+str. 18 cm | 3
+brush length 130 mm | 3
+1.5 micro | 3
+acc. to jabaley | 3
+rotatable | 3
+size m | 3
+length 215 mm | 3
+acc. to mcindoe | 3
+5/48mmlong | 3
+acc. to dean | 3
+stop | 3
+acc. to ragnell | 3
+rumed | 3
+centre-drive® | 3
+counter balance | 3
+olsen-hegar | 3
+5/50mm cut | 3
+drainage | 3
+ã¸ 17 mm | 3
+plate holding instrument | 3
+d 17mm | 3
+co2 | 3
+9-hol | 3
+jeweler | 3
+70x4 | 3
+compression plate | 3
+com | 3
+f.1 | 3
+hexagon socket | 3
+for screws with ã¸ 2.7 mm | 3
+acc. to waugh | 3
+sweden model | 3
+brophy | 3
+acc. to bonney | 3
+extra wide | 3
+brush length 70 mm | 3
+with button | 3
+two-stage | 3
+dw | 3
+scalpel handle no. 3 | 3
+rigid activator | 3
+0mm alveolar ridge distrac. 15mm | 3
+miaspas | 3
+champy magdeburg condylar fracture plate | 3
+5-pack | 3
+right/left | 3
+acc. to virchow | 3
+arced blade | 3
+ø vessel 0 | 3
+18-hole | 3
+6h | 3
+4x4 | 3
+120 ccm | 3
+2x60mm | 3
+2-t. | 3
+ulrich | 3
+h-form | 3
+marpor | 3
+fall grip | 3
+210 mm | 3
+slender pattern | 3
+no. 19 | 3
+0/22mmlong | 3
+clover | 3
+angled 60° | 3
+one-stage | 3
+0/24mmlong | 3
+acc. to jameson | 3
+0/26mmlong | 3
+one blade with knife edge | 3
+0/28mmlong | 3
+0/30mmlong | 3
+acc. to hohenfellner | 3
+hohenfellner | 3
+mayo-lexer | 3
+hard metal pin | 3
+3mm 4-holes compresion | 3
+acc. to kã¼bler | 3
+acc. to mayo-harrington | 3
+0/50mmlong | 3
+15-holes | 3
+figure 21 | 3
+1 pc. | 3
+mandib.end-driven | 3
+1 turn = 0.3 mm distraction length | 3
+0.4 mm | 3
+lazar | 3
+single use | 3
+for partially toothed upper jaws | 3
+shape fo (sup/f) | 3
+for upper functional impressions | 3
+16 mm x 5 mm | 3
+for edentulous upper jaws | 3
+shape pu (inf/p) | 3
+for edentulous lower jaws | 3
+desmarres | 3
+unperf. | 3
+fig. | 3
+form pu (inf/p) | 3
+shape c1/2l | 3
+acc. to rasse | 3
+ti. | 3
+with safety guard | 3
+acc. to schwarz | 3
+35 mm x 10 mm | 3
+fine serration | 3
+small model | 3
+large model | 3
+length 5.5 cm | 3
+acc. to faure | 3
+chrom.plated | 3
+shape po (sup/p) | 3
+length 4 m | 3
+figure 0 = for children | 3
+6/for 7mm screw | 3
+5x55mm | 3
+ideal for retrograde fillings with mta or super eba | 3
+shaft length 370 mm | 3
+200 mm long | 3
+figure 1s | 3
+2x9mm | 3
+super slim version | 3
+40 mm x 11 mm | 3
+acc. to hollenback | 3
+working end ø 10 mm | 3
+ball/spatula combination | 3
+ball | 3
+8x25-872-05 | 3
+length 21 | 3
+4 prong | 3
+solid handle ø 6mm | 3
+acc. to klapp | 3
+3 x 18 mm | 3
+acc. to tofflemire | 3
+working end width 11 mm | 3
+slightly cvd. | 3
+0-40 mm | 3
+acc. to feilchenfeld | 3
+7x14mm | 3
+7x18mm | 3
+7x20mm | 3
+7x22mm | 3
+7x24mm | 3
+7x26mm | 3
+7x28mm | 3
+7x30mm | 3
+length 3.5 cm | 3
+100 v | 110 v | 120 v | 127 v | 3
+clamp length 20 mm | 3
+stop 21 mm | 3
+t | 3
+5/14mm cut | 3
+dental att | 3
+6mm stop | 3
+centre drive | 3
+12mm stop | 3
+ralk | 3
+unperf.blade | 3
+220-240 v | 3
+uni | 3
+7x16mm | 3
+7x12mm | 3
+29 | 3
+7x10mm | 3
+30 mm x 13.5 mm | 3
+luc | 3
+acc. to heiss | 3
+acc. to dandy | 3
+3-pin plug and permanent cord of 4 m | 3
+cross serrated jaw | 3
+working end width 9 mm | 3
+acc. to halsted-mosquito | 3
+acc. to baby-adson | 3
+acc. to mixter-baby | 3
+acc. to pennington | 3
+triangle jaw | 3
+cushing-landolt | 3
+blank | 3
+length 105 mm | 3
+1x2 teeth | 3
+cheek / lip retractor | 3
+sm | 3
+maxium® smart eq | 3
+350 gr | 3
+olive b | 3
+2.1 mm | 3
+qty.of 1 | 3
+225 mm | 3
+incl. 3 clips | 3
+trapezoid | 3
+boettcher | 3
+5x11 | 3
+18holes | 3
+22-holes | 3
+6mm;  0 | 3
+pt. w. ball | 3
+0x10 | 3
+0x7 | 3
+ø 4-6 mm | 3
+fixation elem.1 | 3
+upwards cvd. | 3
+ø 8-10 mm | 3
+5x12 | 3
+0xø3 | 3
+shaft f. rigid scopes | 3
+4ho | 3
+5 kg | 3
+10ho | 3
+5kg 5-pole | 3
+5kg 3-pole | 3
+rot.stop | 3
+gr#31 | 3
+kocher-langenb. | 3
+potts-de martel | 3
+toennis-adson | 3
+1x2xt. | 3
+7x2 cm | 3
+1 unit | 3
+mcindoe | 3
+gillies | 3
+satterlee | 3
+dbl cut | 3
+liston | 3
+pederson | 3
+4-hole with bar | 3
+26.5cm | 3
+curette | 3
+530 x 250 x 60 mm | 3
+4 pcs. | 3
+cvd. bl. | 3
+sims-siebold | 3
+knapp | 3
+walter | 3
+51 mm | 3
+rd. | 3
+44 mm | 3
+8ho | 3
+240x240x50 mm | 3
+vertical | 3
+ireland | 3
+6x16mm | 3
+0.35 mm | 3
+type b | 3
+1 apl | 3
+france | 3
+45cm | 3
+m10    110dg | 3
+instrument audit | 3
+ersatzt.f.73-101-00 | 3
+m20   90dg | 3
+module size 1/3 | 3
+empty | 3
+nc | 3
+ec | 3
+unlabeled/blank | 3
+labeled individually | 3
+opening support | 3
+105 mm | 3
+4 pcs | 3
+lid cont. | 3
+silicone gasket | 3
+metal | 3
+without lid | 3
+m10  100dg | 3
+gb typ g | 3
+5x150mm | 3
+t-handle | 3
+dental attachment | 3
+length 130 mm | 3
+7 hole | 3
+pmi | 3
+18 holes | 3
+china typ i | 3
+6 m | 3
+length 275 mm | 3
+14 holes | 3
+right side | 3
+height 150 mm | 3
+length 200 mm | 3
+usb | 3
+cablelength 1 | 3
+storage complete | 3
+sofield | 3
+special | 3
+85x50mm | 3
+it typ l | 3
+ø1.2mm | 3
+jobson-horne | 3
+strassburger mod. | 3
+5x15 | 3
+0x30mm | 3
+laryng. | 3
+weinstein | 3
+60x10mm | 3
+anel | 3
+90x35mm | 3
+f. spermatic cord | 3
+# 6 | 3
+# 5 | 3
+total length 24 mm | 3
+steg 12mm | 3
+30ch | 3
+29ch | 3
+28ch | 3
+27ch | 3
+6ch | 3
+w/o suspension | 3
+leech-wilkinson | 3
+5x298mm lid:green | 3
+237 mm | 3
+basic instrument bar | 3
+schroeder | 3
+littlewood | 3
+meyer | 3
+l 50 mm | 3
+stop 10 mm | 3
+pa kls plan | 3
+dimensions 51x51 mm | 3
+f. adults | 3
+siegle | 3
+1.5.7-h | 3
+1.5.11-h | 3
+2.2 mm | 3
+0 / 51x51 mm | 3
+1.5.9-h | 3
+tongue | 3
+6 x 7 mm | 3
+dent.f.sonicw. | 3
+tröltsch | 3
+angl.80-100dg | 3
+100 pcs. | 3
+1x4 mm | 3
+10cc | 3
+0x22mm | 3
+slightly contoured | 3
+0x24mm | 3
+237mm | 3
+reposition | 3
+adults | 3
+perforated lid and bottom | 3
+waugh | 3
+museux | 3
+intest. | 3
+casp. | 3
+45° upw. | 3
+172 mm | 3
+mall | 3
+90x50 mm | 3
+75x25 mm | 3
+mixter | 3
+152 mm | 3
+230x130x50 mm | 3
+260x150x50 mm | 3
+325x275x50 mm | 3
+container microstop | 3
+k. storz | 3
+ms-container | 3
+pozzi | 3
+2x2t | 3
+40x40 mm | 3
+children | 3
+37 cm | 3
+vignal | 3
+162mm | 3
+6-hol | 3
+steg 12 mm | 3
+grünwald-henke | 3
+freer-yasargil | 3
+ø 35 mm | 3
+300gr. | 3
+h=30 mm | 3
+wound | 3
+abd. | 3
+5.0 mm | 3
+19x28 mm | 3
+canny-ryall | 3
+h=54 mm | 3
+simmen | 3
+hajek | 3
+mod. | 3
+kocher-wagner | 3
+kocher-lang. | 3
+277x171x30 mm | 3
+pelkmann | 3
+w. silicon strips | 3
+silcone strips | 3
+e=7 | 3
+1x2z | 3
+0x4mm | 3
+working end width 4.5 mm | 3
+crawford | 3
+flex.cvd | 3
+ø 3.7 mm | 3
+ø 2.1 mm | 3
+acc. to wolford | 3
+acc. to stratte | 3
+angled upward | 3
+working length width 6.5 mm | 3
+ø 3.0mm | 3
+acc. to mayo- hegar | 3
+acc. to wilkes | 3
+acc. to hartmann-herzfeld | 3
+proximal | 3
+slotted | 3
+acc. to hartmann-wullstein | 3
+heavy-duty | 3
+str.tooth. | 3
+implant | 3
+2-pronged | 3
+21x13-hole | 3
+jameson | 3
+acc. to papavero-caspar | 3
+5x12 mm | 3
+acc. to halsey | 3
+total length 26 cm | 3
+acc. to farrell | 3
+shaft length 200 mm | 3
+twisted | 3
+acc. to varady | 3
+varady | 3
+5 mm demo | 3
+bay.cvd. | 3
+shank-d.2 | 3
+0 m.schiebehuelse | 3
+acc. to billeau | 3
+acc. to cushing-landolt | 3
+acc. to haberer | 3
+width 50 mm | 3
+sequence bar le fort i | 3
+nagel | 3
+8mm thread | 3
+acc. to smith | 3
+hurd | 3
+14x9-holes | 3
+operating table | 3
+bracket | 3
+figure 33 | 3
+figure 51 | 3
+width 3.3 mm | 3
+14x2-holes | 3
+for molars with carious or broken caps | 3
+l 4 | 3
+acc. to krause | 3
+acc. to grã¼nwald | 3
+figure 30 | 3
+m.ext.kuehl. | 3
+40 mm x 35 mm | 3
+cahouet | 3
+airliquide taema | 3
+figure 40 | 3
+24 mm x 70 mm | 3
+24 mm x 60 mm | 3
+epigastrium | 3
+width 6.1 mm | 3
+michel | 3
+184mm | 3
+henke | 3
+acc. to trã¶ltsch (wilde) | 3
+3 x 32 mm | 3
+300mm | 3
+elastic tip | 3
+90 x 40 mm | 3
+3 x 30 mm | 3
+3 x 28 mm | 3
+3 x 26 mm | 3
+uro | 3
+3 x 24 mm | 3
+0mm demo | 3
+krause | 3
+lang | 3
+rechts | 3
+arch | 3
+with stop | 3
+str. cvd. | 3
+retractor blade thickness 1.25 mm | 3
+24 mm x 50 mm | 3
+button-ended | 3
+jaw 10x3 mm | 3
+jaw 10x4 mm | 3
+working length 55 mm | 3
+acc. to kerrison | 3
+freer | 3
+working length 90 mm | 3
+working length 135 mm | 3
+ø 1.5 | 3
+acc. to mckenty | 3
+3x6 mm | 3
+acc. to byrd | 3
+working length 70 mm | 3
+septum | 3
+l 155 mm | 3
+working end length 75 mm | 3
+lanz.sp. | 3
+acc. to neivert-anderson | 3
+acc. to yankauer | 3
+jaw 10x2 mm | 3
+tuohy | 3
+acc. to derf | 3
+könig | 3
+luer-lock connection = female | 3
+jaw width 4.5 mm | 3
+l 3 | 3
+45° angled upward | 3
+st. barts | 3
+jaw width 2.5 mm | 3
+shaft length 10 cm | 3
+1.4x100 mm | 3
+1.2x100 mm | 3
+mcintosh | 3
+cvd. right | 3
+mini-lambotte | 3
+#2 | 3
+3x20 mm | 3
+verres | 3
+3x19 mm | 3
+puncture | 3
+jaw width 5 mm | 3
+length 210 mm | 3
+working length 185 mm | 3
+length 250 mm | 3
+5 mm system | 3
+0/6 | 3
+acc. to allen-iglhaut | 3
+7/12 mm | 3
+adams | 3
+5x18 mm | 3
+vertically | 3
+acc. to politzer | 3
+acc. to davis-boyle | 3
+mc indoe | 3
+acc. to silver | 3
+dingmann | 3
+w. joint | 3
+2.5 v | 3
+working end width front 26.5 mm | 3
+cm & inch | 3
+l&m | 3
+acc. to ishi | 3
+working end width 14.5 mm | 3
+battery | 3
+l 30 cm | 3
+clar | 3
+olive-s. | 3
+acc. to baron-schuknecht | 3
+0x19 mm | 3
+280mm | 3
+0x6 mm | 3
+ø 9.5 mm | 3
+nelson | 3
+working end length 35 mm | 3
+w.spheric.tip. | 3
+fogarty | 3
+acc. to hartmann-halle | 3
+velcro cuff | 3
+acc. to dingman | 3
+acc. to cottle-walsham | 3
+berger | 3
+artif.wood | 3
+acc. to goldsmith | 3
+ø 17 mm | 3
+24 mm x 55 mm | 3
+disposable | 3
+jaw width 3.0 mm | 3
+spratt | 3
+pelvis | 3
+acc. to meriam | 3
+upward-bent | 3
+19x25 mm | 3
+tip width 2 mm | 3
+suct.up | 3
+19x30 mm | 3
+19x35 mm | 3
+19x40 mm | 3
+19x45 mm | 3
+19x50 mm | 3
+19x55 mm | 3
+fenestr. | 3
+with socket for cable | 3
+19x60 mm | 3
+mo. | 3
+24x30 mm | 3
+24x40 mm | 3
+schwenkb.geoeff mault | 3
+24x45 mm | 3
+24x50 mm | 3
+to dv | 3
+24x55 mm | 3
+width 0.9 mm | 3
+24x60 mm | 3
+24x65 mm | 3
+83 mm | 3
+or higher) | 3
+20x35 mm | 3
+20x45 mm | 3
+width 1.6 mm | 3
+8.5cm | 3
+20x65 mm | 3
+plate profile 0.4 mm | 3
+acc. to gracey rigid | 3
+acc. to goldman-fox | 3
+especially for excision of  interproximal tissue in gingivectomy | 3
+3d-preformed | 3
+mesial/distal | 3
+noyes | 3
+cyl.attachmt | 3
+acc. to kirkland | 3
+extra rigid | 3
+for stubborn plaque | 3
+bl | 3
+low-profile | 3
+fan-shaped | 3
+width 1.1 mm | 3
+5/6 | 3
+grasping forceps exchangeable electrode | 3
+acc. to gelpi | 3
+arm length 310 mm | 3
+length 500 mm | 3
+7/8 | 3
+air | 3
+13/14 | 3
+upwards | 3
+length 800 mm | 3
+length 1500 mm | 3
+24 mm x 45 mm | 3
+for right orbita | 3
+3t. | 3
+acc. to white | 3
+clamp | 3
+20x55 mm | 3
+100 x 20 mm | 3
+figure 17/18 | 3
+bayha | 3
+3x16 mm | 3
+halbscharf | 3
+11/12 | 3
+house | 3
+brunner | 3
+c2 512 | 3
+6x4-hole | 3
+length 31.5 mm | 3
+figure 3/4 | 3
+width 360 mm | 3
+c3 1024 | 3
+figure 3 a | 3
+80 x 30 mm | 3
+3/5-holes | 3
+needle electrode | 3
+conization electrode | 3
+c4 2048 | 3
+7x30 mm | 3
+fig. 1/2 | 3
+acc. to acc. to doyen-stille | 3
+4x2-hole | 3
+angular | 3
+non-sterile | 3
+biscuspids | 3
+8 x10mm | 3
+incisors and roots | 3
+ø 13.0 mm | 3
+w | 3
+24 mm x 35 mm | 3
+24 mm x 40 mm | 3
+3x14 mm | 3
+graduation 3-6-9-12 | 3
+with counter angled shank | 3
+height 600 mm | 3
+40x35 mm | 3
+270mm | 3
+with nstc blade | 3
+plate profile 0.5 mm | 3
+80 x 20 mm | 3
+middle-driv | 3
+rheinstadter | 3
+figure cpg 12 | 3
+60x35 mm | 3
+wl 80 mm | 3
+spreading width 80 mm | 3
+size 00 | 3
+0x20 mm | 3
+8x7mm | 3
+length 26.5 mm | 3
+spreading width 120 mm | 3
+philips | 3
+8cc mtr | 3
+acc. to coryllos | 3
+8cc usa | 3
+ri cvd | 3
+not sterile | 3
+with ball | 3
+le cvd | 3
+acc. to chompret | 3
+acc. to austin | 3
+plate profile 0.1 mm | 3
+3x12 mm | 3
+0x18 mm | 3
+acc. to gosset | 3

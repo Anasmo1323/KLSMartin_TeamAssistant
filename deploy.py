@@ -58,11 +58,33 @@ def upload_asset_to_release(token, upload_url, file_path):
         "Content-Type": "application/octet-stream"
     }
     
-    with open(file_path, "rb") as f:
+    class ProgressReader:
+        def __init__(self, filename):
+            self.fd = open(filename, 'rb')
+            self.total = os.path.getsize(filename)
+            self.read_bytes = 0
+            
+        def read(self, size=-1):
+            chunk = self.fd.read(size)
+            self.read_bytes += len(chunk)
+            if self.total > 0:
+                pct = self.read_bytes * 100.0 / self.total
+                bar = '=' * int(pct / 2.5) + ' ' * (40 - int(pct / 2.5))
+                sys.stdout.write(f"\rUploading: [{bar}] {pct:.1f}%")
+                sys.stdout.flush()
+            return chunk
+            
+        def __len__(self):
+            return self.total
+
+    reader = ProgressReader(file_path)
+    try:
         params = {"name": os.path.basename(file_path)}
-        response = requests.post(upload_url, headers=headers, params=params, data=f)
+        response = requests.post(upload_url, headers=headers, params=params, data=reader)
         response.raise_for_status()
-        print("--> Upload complete!")
+        print("\n--> Upload complete!")
+    finally:
+        reader.fd.close()
 
 if __name__ == "__main__":
     print(f"--- KLSMartin Team Assistant Deployer ---")

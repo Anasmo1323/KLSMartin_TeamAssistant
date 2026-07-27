@@ -12,6 +12,11 @@ class DynamicTableWidget(QTableWidget):
         self.setSelectionMode(QTableWidget.SelectionMode.ExtendedSelection)
         self.verticalHeader().setVisible(False)
         self.setVerticalScrollMode(QTableWidget.ScrollMode.ScrollPerPixel)
+        
+        # Undo/Redo system
+        self.undo_stack = []
+        self.redo_stack = []
+        self.is_restoring = False
 
     def show_header_menu(self, pos):
         col_index = self.horizontalHeader().logicalIndexAt(pos)
@@ -39,6 +44,13 @@ class DynamicTableWidget(QTableWidget):
         from PyQt6.QtWidgets import QApplication
         if event.key() == Qt.Key.Key_C and (event.modifiers() & Qt.KeyboardModifier.ControlModifier):
             self.copy_selection()
+        elif event.key() == Qt.Key.Key_V and (event.modifiers() & Qt.KeyboardModifier.ControlModifier):
+            self.save_snapshot()
+            self.paste_selection()
+        elif event.key() == Qt.Key.Key_Z and (event.modifiers() & Qt.KeyboardModifier.ControlModifier):
+            self.undo()
+        elif event.key() == Qt.Key.Key_Y and (event.modifiers() & Qt.KeyboardModifier.ControlModifier):
+            self.redo()
         else:
             super().keyPressEvent(event)
 
@@ -73,3 +85,81 @@ class DynamicTableWidget(QTableWidget):
                 tsv += "\t".join(row_data) + "\n"
 
         QApplication.clipboard().setText(tsv)
+
+    def paste_selection(self):
+        from PyQt6.QtWidgets import QApplication, QTableWidgetItem
+        clipboard_text = QApplication.clipboard().text()
+        if not clipboard_text:
+            return
+
+        rows = clipboard_text.strip().split('\n')
+        current_row = self.currentRow()
+        current_col = self.currentColumn()
+
+        if current_row < 0 or current_col < 0:
+            current_row = 0
+            current_col = 0
+
+        # Ensure table is large enough
+        required_rows = current_row + len(rows)
+        if required_rows > self.rowCount():
+            self.setRowCount(required_rows)
+
+        for i, row_text in enumerate(rows):
+            cols = row_text.split('\t')
+            required_cols = current_col + len(cols)
+            if required_cols > self.columnCount():
+                self.setColumnCount(required_cols)
+
+            for j, col_text in enumerate(cols):
+                item = self.item(current_row + i, current_col + j)
+                if not item:
+                    item = QTableWidgetItem()
+                    self.setItem(current_row + i, current_col + j, item)
+                item.setText(col_text)
+
+    def get_snapshot(self):
+        state = []
+        for r in range(self.rowCount()):
+            for c in range(self.columnCount()):
+                item = self.item(r, c)
+                if item and item.text():
+                    state.append({'row': r, 'col': c, 'value': item.text()})
+        return {'rows': self.rowCount(), 'cols': self.columnCount(), 'cells': state}
+        
+    def save_snapshot(self):
+        if self.is_restoring:
+            return
+        self.undo_stack.append(self.get_snapshot())
+        self.redo_stack.clear()
+        # limit stack
+        if len(self.undo_stack) > 20:
+            self.undo_stack.pop(0)
+            
+    def restore_snapshot(self, state):
+        self.is_restoring = True
+        
+        self.clearContents()
+        self.setRowCount(state['rows'])
+        self.setColumnCount(state['cols'])
+        
+        from PyQt6.QtWidgets import QTableWidgetItem
+        for cell in state['cells']:
+            item = QTableWidgetItem(cell['value'])
+            self.setItem(cell['row'], cell['col'], item)
+            
+        self.is_restoring = False
+        
+    def undo(self):
+        if not self.undo_stack:
+            return
+        self.redo_stack.append(self.get_snapshot())
+        prev_state = self.undo_stack.pop()
+        self.restore_snapshot(prev_state)
+        
+    def redo(self):
+        if not self.redo_stack:
+            return
+        self.undo_stack.append(self.get_snapshot())
+        next_state = self.redo_stack.pop()
+        self.restore_snapshot(next_state)

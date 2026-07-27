@@ -10,6 +10,7 @@ from ui.widgets.side_panel import ProductSidePanel
 from ui.tabs.kls_master_tab import KlsMasterTab
 from ui.tabs.stock_tab import StockTab
 from ui.tabs.inspection_tab import InspectionTab
+from ui.tabs.shared_workspace_tab import SharedWorkspaceTab
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -25,15 +26,18 @@ class MainWindow(QMainWindow):
         self.side_panel = ProductSidePanel(self.kls_master_tab)
         self.stock_tab = StockTab(self.kls_master_tab)
         self.inspection_tab = InspectionTab(self.kls_master_tab)
+        self.shared_workspace_tab = SharedWorkspaceTab()
 
         self.tabs = QTabWidget()
         self.tabs.addTab(self.kls_master_tab, "Master")
         self.tabs.addTab(self.stock_tab, "Stock")
         self.tabs.addTab(self.inspection_tab, "Inspection")
+        self.tabs.addTab(self.shared_workspace_tab, "Shared Workspace")
 
         self.kls_master_tab.table.currentCellChanged.connect(self.handle_cell_click)
         self.stock_tab.table.currentCellChanged.connect(self.handle_cell_click)
         self.inspection_tab.table.currentCellChanged.connect(self.handle_cell_click)
+        self.shared_workspace_tab.table.currentCellChanged.connect(self.handle_cell_click)
 
         central_widget = QWidget(self)
         central_layout = QHBoxLayout(central_widget)
@@ -98,6 +102,7 @@ class MainWindow(QMainWindow):
             self.kls_master_tab.table,
             self.stock_tab.table,
             self.inspection_tab.table,
+            self.shared_workspace_tab.table
         ]
         for table in tables:
             if table is active_table:
