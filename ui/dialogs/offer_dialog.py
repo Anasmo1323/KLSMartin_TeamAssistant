@@ -24,7 +24,7 @@ def shape_arabic(text):
     return get_display(arabic_reshaper.reshape(text))
 
 from PyQt6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
-                             QHeaderView, QTableWidgetItem, QMessageBox, QFileDialog, QWidget)
+                             QHeaderView, QTableWidgetItem, QMessageBox, QFileDialog, QWidget, QInputDialog)
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QColor, QFont
 
@@ -44,6 +44,7 @@ class OfferListDialog(QDialog):
         self.resize(800, 600)
         self.init_ui()
         self.refresh_offer_table()
+        self.offer_table.scrollToBottom()
 
     def init_ui(self):
         layout = QVBoxLayout(self)
@@ -55,7 +56,7 @@ class OfferListDialog(QDialog):
         self.offer_table = DynamicTableWidget()
         self.offer_table.setColumnCount(4)
         self.offer_table.setHorizontalHeaderLabels(["", "CODE", "DESCRIPTION", "QTY"])
-        self.offer_table.setColumnWidth(0, 54)
+        self.offer_table.setColumnWidth(0, 80)
         self.offer_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents)
         self.offer_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
         self.offer_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.ResizeToContents)
@@ -67,6 +68,9 @@ class OfferListDialog(QDialog):
         btn_layout = QHBoxLayout()
         self.btn_clear = QPushButton("Clear List")
         self.btn_clear.clicked.connect(self.clear_offer_list)
+        
+        self.btn_add_section = QPushButton("Add Section Header")
+        self.btn_add_section.clicked.connect(self.add_section_manually)
         
         self.btn_bulk_upload = QPushButton("Bulk Upload (Excel/CSV)")
         self.btn_bulk_upload.clicked.connect(self.bulk_upload_offer)
@@ -85,6 +89,7 @@ class OfferListDialog(QDialog):
         self.btn_export_pptx.clicked.connect(self.export_pptx)
 
         btn_layout.addWidget(self.btn_clear)
+        btn_layout.addWidget(self.btn_add_section)
         btn_layout.addWidget(self.btn_bulk_upload)
         btn_layout.addWidget(self.btn_load_set)
         btn_layout.addStretch()
@@ -102,9 +107,21 @@ class OfferListDialog(QDialog):
         
         serial_counter = 1
         for i, data in enumerate(self.offer_data):
+            btn_up = QPushButton("▲")
+            btn_up.setFixedSize(20, 20)
+            btn_up.setCursor(Qt.CursorShape.PointingHandCursor)
+            btn_up.clicked.connect(lambda _, row=i: self.move_offer_item_up(row))
+            if i == 0: btn_up.setEnabled(False)
+
+            btn_down = QPushButton("▼")
+            btn_down.setFixedSize(20, 20)
+            btn_down.setCursor(Qt.CursorShape.PointingHandCursor)
+            btn_down.clicked.connect(lambda _, row=i: self.move_offer_item_down(row))
+            if i == len(self.offer_data) - 1: btn_down.setEnabled(False)
+
             btn = QPushButton("−")
             btn.setObjectName("removeButton")
-            btn.setFixedSize(24, 24)
+            btn.setFixedSize(20, 20)
             btn.setCursor(Qt.CursorShape.PointingHandCursor)
             btn.setToolTip("Remove from offer list")
             btn.clicked.connect(lambda _, row=i: self.remove_offer_item(row))
@@ -112,20 +129,27 @@ class OfferListDialog(QDialog):
             btn_container = QWidget()
             btn_container.setStyleSheet("QWidget { background: transparent; }")
             btn_layout = QHBoxLayout(btn_container)
-            btn_layout.setContentsMargins(0, 0, 0, 0)
-            btn_layout.addWidget(btn, alignment=Qt.AlignmentFlag.AlignCenter)
+            btn_layout.setContentsMargins(2, 0, 2, 0)
+            btn_layout.setSpacing(2)
+            btn_layout.addWidget(btn_up)
+            btn_layout.addWidget(btn_down)
+            btn_layout.addWidget(btn)
             self.offer_table.setRowHeight(i, 36)
             self.offer_table.setCellWidget(i, 0, btn_container)
 
             if data.get("is_section", False):
-                item_desc = QTableWidgetItem(data["desc"])
-                item_desc.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsEnabled)
-                item_desc.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
-                item_desc.setBackground(QColor("#DDE3EC"))
-                item_desc.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                
-                self.offer_table.setItem(i, 1, item_desc)
-                self.offer_table.setSpan(i, 1, 1, 4 + len(self.extra_columns)) 
+                serial_counter = 1
+                for c in range(1, 5 + len(self.extra_columns)):
+                    if c == 3:
+                        item = QTableWidgetItem(data["desc"])
+                    else:
+                        item = QTableWidgetItem("")
+                    item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsEnabled)
+                    item.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
+                    item.setBackground(QColor("#DDE3EC"))
+                    if c == 3:
+                        item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                    self.offer_table.setItem(i, c, item)
             else:
                 item_sr = QTableWidgetItem(str(serial_counter))
                 item_sr.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsEnabled)
@@ -162,18 +186,21 @@ class OfferListDialog(QDialog):
 
         new_val = item.text().strip()
 
-        if col == 1:
+        if col == 2:
             self.offer_data[row]["code"] = new_val
-        elif col == 2:
-            self.offer_data[row]["desc"] = new_val
         elif col == 3:
+            self.offer_data[row]["desc"] = new_val
+        elif col == 4:
             try:
                 self.offer_data[row]["qty"] = int(new_val)
             except ValueError:
                 pass
-        elif col >= 4:
-            col_name = self.extra_columns[col - 4]
+        elif col >= 5:
+            col_name = self.extra_columns[col - 5]
             self.offer_data[row][col_name] = new_val
+        
+        if hasattr(self, 'master_tab') and hasattr(self.master_tab, 'save_offer_list'):
+            self.master_tab.save_offer_list()
 
     def _on_table_selection_changed(self, current_row, current_col, prev_row, prev_col):
         if current_row < 0 or current_row >= len(self.offer_data):
@@ -194,14 +221,55 @@ class OfferListDialog(QDialog):
             if hasattr(main_win, 'side_panel'):
                 main_win.side_panel.update_panel(code)
 
+    def move_offer_item_up(self, row_idx):
+        if 0 < row_idx < len(self.offer_data):
+            self.offer_data[row_idx - 1], self.offer_data[row_idx] = self.offer_data[row_idx], self.offer_data[row_idx - 1]
+            if hasattr(self, 'master_tab') and hasattr(self.master_tab, 'save_offer_list'):
+                self.master_tab.save_offer_list()
+            self.refresh_offer_table()
+
+    def move_offer_item_down(self, row_idx):
+        if 0 <= row_idx < len(self.offer_data) - 1:
+            self.offer_data[row_idx + 1], self.offer_data[row_idx] = self.offer_data[row_idx], self.offer_data[row_idx + 1]
+            if hasattr(self, 'master_tab') and hasattr(self.master_tab, 'save_offer_list'):
+                self.master_tab.save_offer_list()
+            self.refresh_offer_table()
+
     def remove_offer_item(self, row_idx):
         if 0 <= row_idx < len(self.offer_data):
             self.offer_data.pop(row_idx)
+            if hasattr(self, 'master_tab') and hasattr(self.master_tab, 'save_offer_list'):
+                self.master_tab.save_offer_list()
             self.refresh_offer_table()
 
     def clear_offer_list(self):
+        msg_box = QMessageBox(self)
+        msg_box.setWindowTitle("Clear Offer List")
+        msg_box.setText("Choose clearing options:")
+        btn_clear_only = msg_box.addButton("Clear Offer List Only", QMessageBox.ButtonRole.ActionRole)
+        btn_clear_both = msg_box.addButton("Clear Offer List & Reset Mapping", QMessageBox.ButtonRole.ActionRole)
+        btn_cancel = msg_box.addButton(QMessageBox.StandardButton.Cancel)
+        msg_box.exec()
+        
+        if msg_box.clickedButton() == btn_cancel:
+            return
+
         self.offer_data.clear()
+        if hasattr(self, 'master_tab') and hasattr(self.master_tab, 'save_offer_list'):
+            self.master_tab.save_offer_list()
         self.refresh_offer_table()
+        
+        if msg_box.clickedButton() == btn_clear_both:
+            if hasattr(self.master_tab, 'wizard_panel'):
+                self.master_tab.wizard_panel.reset_mapping()
+
+    def add_section_manually(self):
+        text, ok = QInputDialog.getText(self, "Add Section Header", "Enter Header Title:")
+        if ok and text.strip():
+            self.offer_data.append({"is_section": True, "desc": text.strip()})
+            if hasattr(self, 'master_tab') and hasattr(self.master_tab, 'save_offer_list'):
+                self.master_tab.save_offer_list()
+            self.refresh_offer_table()
 
     def load_set_offer(self):
         master_df = self.master_tab.df
@@ -258,6 +326,8 @@ class OfferListDialog(QDialog):
                 })
         
         self.refresh_offer_table()
+        if hasattr(self, 'master_tab') and hasattr(self.master_tab, 'save_offer_list'):
+            self.master_tab.save_offer_list()
         if skipped:
             QMessageBox.warning(
                 self,
@@ -375,6 +445,8 @@ class OfferListDialog(QDialog):
                     valid_rows.append(code_val)
 
                 if valid_rows:
+                    if hasattr(self, 'master_tab') and hasattr(self.master_tab, 'save_offer_list'):
+                        self.master_tab.save_offer_list()
                     self.refresh_offer_table()
 
                 if skipped_codes:
@@ -413,6 +485,7 @@ class OfferListDialog(QDialog):
                         header_name, dict_key = self.get_logical_col_key(log_col)
                         if header_name:
                             if data.get("is_section", False):
+                                serial_counter = 1
                                 export_dict[header_name] = data["desc"] if dict_key == "desc" else ""
                             else:
                                 if dict_key == "sr_no":
@@ -425,6 +498,27 @@ class OfferListDialog(QDialog):
 
                 df = pd.DataFrame(export_list)
                 df.to_excel(path, index=False)
+                
+                try:
+                    import openpyxl
+                    from openpyxl.styles import PatternFill, Alignment, Font
+                    
+                    wb = openpyxl.load_workbook(path)
+                    ws = wb.active
+                    
+                    for idx, data in enumerate(self.offer_data):
+                        excel_row = idx + 2
+                        if data.get("is_section", False):
+                            for col_idx in range(1, len(visual_cols) + 1):
+                                cell = ws.cell(row=excel_row, column=col_idx)
+                                cell.alignment = Alignment(horizontal="center", vertical="center")
+                                cell.fill = PatternFill(start_color="D9D9D9", end_color="D9D9D9", fill_type="solid")
+                                cell.font = Font(bold=True)
+                            
+                    wb.save(path)
+                except Exception as e:
+                    print(f"Failed to style Excel: {e}")
+
             QMessageBox.information(self, "Success", "Excel Exported Successfully.")
 
     def _find_image_path(self, code):
@@ -565,8 +659,10 @@ class OfferListDialog(QDialog):
                 
                 dynamic_styles = []
 
+                serial_counter = 1
                 for row_idx, data in enumerate(self.offer_data, start=1):
                     if data.get("is_section", False):
+                        serial_counter = 1
                         sec_p = Paragraph(f"<b>{shape_arabic(data['desc'])}</b>", ParagraphStyle("sec", parent=cell_style, alignment=TA_CENTER, fontName=f_bold))
                         row_data = [sec_p] + [""] * len(visual_cols)
                         table_data.append(row_data)
@@ -584,11 +680,15 @@ class OfferListDialog(QDialog):
                         for log_col in visual_cols:
                             header_name, dict_key = self.get_logical_col_key(log_col)
                             if header_name:
-                                style = qty_style if header_name == "QTY" else cell_style
-                                row_data.append(Paragraph(shape_arabic(str(data.get(dict_key, ""))), style))
+                                if dict_key == "sr_no":
+                                    row_data.append(Paragraph(str(serial_counter), qty_style))
+                                else:
+                                    style = qty_style if header_name == "QTY" else cell_style
+                                    row_data.append(Paragraph(shape_arabic(str(data.get(dict_key, ""))), style))
                         
                         row_data.append(img_cell)
                         table_data.append(row_data)
+                        serial_counter += 1
 
                 tbl = Table(table_data, colWidths=col_widths, repeatRows=1)
                 

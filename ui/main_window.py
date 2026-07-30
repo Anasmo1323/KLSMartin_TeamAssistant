@@ -39,6 +39,8 @@ class MainWindow(QMainWindow):
         self.inspection_tab.table.currentCellChanged.connect(self.handle_cell_click)
         self.shared_workspace_tab.table.currentCellChanged.connect(self.handle_cell_click)
 
+        from PyQt6.QtWidgets import QScrollArea
+
         central_widget = QWidget(self)
         central_layout = QHBoxLayout(central_widget)
         central_layout.setContentsMargins(12, 12, 12, 12)
@@ -46,6 +48,7 @@ class MainWindow(QMainWindow):
         main_splitter = QSplitter(Qt.Orientation.Horizontal)
         main_splitter.addWidget(self.tabs)
         main_splitter.addWidget(self.side_panel)
+        self.side_panel.setMinimumWidth(50)
         # Set standard ratio: tabs get most space (e.g., 3:1 ratio)
         main_splitter.setSizes([900, 350])
         

@@ -1,19 +1,35 @@
 import os
 import re
 import pandas as pd
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QHeaderView, QFileDialog, QDialog, QMessageBox, QTableWidgetItem, QInputDialog, QSplitter
+from PyQt6.QtWidgets import (
+    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QTableWidgetItem, QHeaderView, QSplitter,
+    QStackedWidget, QComboBox, QMessageBox, QFileDialog, QListWidgetItem, QApplication, QInputDialog
+)
 from PyQt6.QtCore import Qt, QTimer, QEvent
+from PyQt6.QtGui import QPixmap, QIcon
 
+import math
+
+from core.utils import resource_path, show_loading
 from ui.widgets.segmented_edit import SegmentedCodeEdit
 from ui.widgets.dynamic_table import DynamicTableWidget
 from ui.dialogs.mapping_dialog import MappingDialog
 from ui.dialogs.offer_dialog import OfferListDialog
+from ui.widgets.customer_wizard import CustomerWizardPanel
 from ui.widgets.checkable_list import CheckableListWidget, CheckableTreeWidget
 from ui.widgets.collapsible_box import CollapsibleBox
 from core.constants import CATEGORY_MAPPING, BROCHURE_HIERARCHY
-from core.utils import show_loading, resource_path
-from PyQt6.QtWidgets import QStackedWidget, QListWidgetItem, QComboBox
-from PyQt6.QtGui import QPixmap, QColor
+from PyQt6.QtGui import QPixmap, QColor, QKeySequence
+
+class MultiLineSearchEdit(QLineEdit):
+    def keyPressEvent(self, event):
+        if event.matches(QKeySequence.StandardKey.Paste):
+            text = QApplication.clipboard().text()
+            if '\n' in text or '\r' in text:
+                clean_text = ' // '.join([line.strip() for line in text.splitlines() if line.strip()])
+                self.insert(clean_text)
+                return
+        super().keyPressEvent(event)
 
 class KlsMasterTab(QWidget):
     def __init__(self):
@@ -21,6 +37,7 @@ class KlsMasterTab(QWidget):
         self.df = None
         self.offer_data = []
         self.default_path = "KLS_All_Products.xlsx"
+        self.autosave_path = "offer_list_autosave.json"
         self.required_fields = ['code', 'description', 'brochures', 'state']
         
         self.filter_timer = QTimer()
@@ -28,6 +45,7 @@ class KlsMasterTab(QWidget):
         self.filter_timer.timeout.connect(self.apply_filter)
         
         self.init_ui()
+        self.load_offer_list()
         QTimer.singleShot(100, self.load_default_master)
         
     def queue_filter(self):
@@ -41,8 +59,8 @@ class KlsMasterTab(QWidget):
         main_splitter = QSplitter(Qt.Orientation.Horizontal)
         main_layout.addWidget(main_splitter)
 
-        # Left Panel (Filters - Accordion)
         left_panel_widget = QWidget()
+        left_panel_widget.setMinimumWidth(50)
         left_layout = QVBoxLayout(left_panel_widget)
         left_layout.setContentsMargins(0, 0, 0, 0)
         left_layout.setSpacing(4)
@@ -91,7 +109,7 @@ class KlsMasterTab(QWidget):
         search_layout = QHBoxLayout()
         search_layout.setSpacing(8)
         
-        self.txt_global_search = QLineEdit()
+        self.txt_global_search = MultiLineSearchEdit()
         self.txt_global_search.setPlaceholderText("Global Search...")
         self.txt_global_search.setMinimumWidth(150)
         self.txt_global_search.setMaximumWidth(300)
@@ -129,9 +147,21 @@ class KlsMasterTab(QWidget):
         self.btn_upload.clicked.connect(self.upload_new_master)
         search_layout.addWidget(self.btn_upload)
         
+        self.btn_wizard = QPushButton("🪄")
+        self.btn_wizard.setToolTip("Customer Request Wizard")
+        self.btn_wizard.setMinimumWidth(50)
+        self.btn_wizard.setMaximumWidth(80)
+        self.btn_wizard.clicked.connect(self.toggle_customer_wizard)
+        search_layout.addWidget(self.btn_wizard)
+        
         search_layout.addStretch()
         right_panel.addLayout(search_layout)
 
+        # Right Splitter (Table top, Wizard bottom)
+        self.right_splitter = QSplitter(Qt.Orientation.Vertical)
+        self.right_splitter.setHandleWidth(8)
+        self.right_splitter.setStyleSheet("QSplitter::handle:vertical { background-color: #E2E8F0; margin: 2px; border-radius: 2px; }")
+        
         self.stacked_widget = QStackedWidget()
         
         # Placeholder Image
@@ -154,23 +184,41 @@ class KlsMasterTab(QWidget):
         self.table.setColumnWidth(0, 54)
         self.table.installEventFilter(self)
         
-        self.stacked_widget.addWidget(self.placeholder_label)
         self.stacked_widget.addWidget(self.table)
         self.stacked_widget.setCurrentWidget(self.placeholder_label)
 
-        right_panel.addWidget(self.stacked_widget)
+        self.right_splitter.addWidget(self.stacked_widget)
+        
+        self.wizard_panel = CustomerWizardPanel(self)
+        self.wizard_panel.hide()
+        self.wizard_panel.btn_close.clicked.connect(lambda: self.wizard_panel.hide())
+        self.right_splitter.addWidget(self.wizard_panel)
+        
+        right_panel.addWidget(self.right_splitter)
         main_splitter.addWidget(right_widget)
         
         # Set standard initial ratios for Master Tab
         main_splitter.setSizes([300, 900])
+        self.right_splitter.setSizes([700, 200])
+
+    def toggle_customer_wizard(self):
+        if self.wizard_panel.isVisible():
+            self.wizard_panel.hide()
+        else:
+            self.wizard_panel.show()
 
     def eventFilter(self, source, event):
         if source == self.table and event.type() == QEvent.Type.KeyPress:
             if event.key() == Qt.Key.Key_Return or event.key() == Qt.Key.Key_Enter:
-                current_row = self.table.currentRow()
-                if current_row >= 0:
-                    code_item = self.table.item(current_row, 1)
-                    desc_item = self.table.item(current_row, 2)
+                selected_rows = sorted(list(set(item.row() for item in self.table.selectedItems())))
+                if not selected_rows:
+                    current_row = self.table.currentRow()
+                    if current_row >= 0:
+                        selected_rows = [current_row]
+                
+                for row in selected_rows:
+                    code_item = self.table.item(row, 1)
+                    desc_item = self.table.item(row, 2)
                     if code_item and desc_item:
                         self.add_to_offer(code_item.text(), desc_item.text())
                 return True
@@ -396,11 +444,15 @@ class KlsMasterTab(QWidget):
 
     def _add_or_merge_offer_item(self, code, desc, qty):
         clean_code = str(code).replace('-', '').strip().lower()
-        for existing in self.offer_data:
-            if str(existing["code"]).replace('-', '').strip().lower() == clean_code:
+        for existing in reversed(self.offer_data):
+            if existing.get("is_section", False):
+                break
+            if str(existing.get("code", "")).replace('-', '').strip().lower() == clean_code:
                 existing["qty"] += qty
+                self.save_offer_list()
                 return
         self.offer_data.append({"code": code, "desc": desc, "qty": qty})
+        self.save_offer_list()
 
     def add_to_offer(self, code, desc):
         qty, ok = QInputDialog.getInt(self, "Quantity", f"Enter quantity for {code}:", 1, 1, 9999)
@@ -409,3 +461,21 @@ class KlsMasterTab(QWidget):
             if hasattr(self, 'offer_dialog') and self.offer_dialog.isVisible():
                 self.offer_dialog.refresh_offer_table()
             QMessageBox.information(self, "Added", f"Added {qty}x {code} to Offer List.")
+
+    def load_offer_list(self):
+        import json
+        if os.path.exists(self.autosave_path):
+            try:
+                with open(self.autosave_path, 'r', encoding='utf-8') as f:
+                    self.offer_data = json.load(f)
+            except Exception as e:
+                print(f"Failed to load autosaved offer list: {e}")
+                self.offer_data = []
+
+    def save_offer_list(self):
+        import json
+        try:
+            with open(self.autosave_path, 'w', encoding='utf-8') as f:
+                json.dump(self.offer_data, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            print(f"Failed to autosave offer list: {e}")

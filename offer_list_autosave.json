@@ -1,0 +1,66 @@
+[
+  {
+    "is_section": true,
+    "desc": "Towel Forceps"
+  },
+  {
+    "code": "13-881-05-07",
+    "desc": "Bulldog towel forceps, acc. to Jones, sharp, length 5.5 cm",
+    "qty": 1
+  },
+  {
+    "code": "13-881-09-07",
+    "desc": "Bulldog towel forceps, acc. to Jones, sharp, length 8.5 cm",
+    "qty": 1
+  },
+  {
+    "is_section": true,
+    "desc": "Scalpel Handle NO.4",
+    "qty": ""
+  },
+  {
+    "code": "10-100-04-50",
+    "desc": "SCALPEL HANDLE NO 4",
+    "qty": 1
+  },
+  {
+    "is_section": true,
+    "desc": "Towel Forceps",
+    "qty": ""
+  },
+  {
+    "code": "13-881-09-07",
+    "desc": "Bulldog towel forceps, acc. to Jones, sharp, length 8.5 cm",
+    "qty": 1
+  },
+  {
+    "is_section": true,
+    "desc": "Scalpel Handle NO.4",
+    "qty": ""
+  },
+  {
+    "code": "10-104-41-07",
+    "desc": "Scalpel handle, no. 4 L, length 21 cm",
+    "qty": 1
+  },
+  {
+    "is_section": true,
+    "desc": "Scalpel Handle NO.3",
+    "qty": ""
+  },
+  {
+    "code": "10-104-41-07",
+    "desc": "Scalpel handle, no. 4 L, length 21 cm",
+    "qty": 1
+  },
+  {
+    "is_section": true,
+    "desc": "Sponge Forceps",
+    "qty": ""
+  },
+  {
+    "code": "14-350-25-07",
+    "desc": "Sponge forceps, acc. to Förster, smooth jaws, straight, length 25 cm",
+    "qty": 1
+  }
+]
