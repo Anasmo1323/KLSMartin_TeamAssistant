@@ -24,8 +24,8 @@ def shape_arabic(text):
     return get_display(arabic_reshaper.reshape(text))
 
 from PyQt6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
-                             QHeaderView, QTableWidgetItem, QMessageBox, QFileDialog, QWidget, QInputDialog)
-from PyQt6.QtCore import Qt
+                             QHeaderView, QTableWidgetItem, QMessageBox, QFileDialog, QWidget, QInputDialog, QLineEdit, QCheckBox, QAbstractItemView)
+from PyQt6.QtCore import Qt, QEvent
 from PyQt6.QtGui import QColor, QFont
 
 from ui.widgets.dynamic_table import DynamicTableWidget
@@ -52,6 +52,26 @@ class OfferListDialog(QDialog):
         layout.setSpacing(12)
 
         layout.addWidget(QLabel("<b>Current Offer List</b>"))
+        
+        # Search Layout
+        search_layout = QHBoxLayout()
+        self.search_input = QLineEdit()
+        self.search_input.setPlaceholderText("Search in offer list (Press Enter for next)...")
+        self.search_input.returnPressed.connect(self.find_next)
+        self.search_input.textChanged.connect(self.reset_search)
+        
+        self.btn_find_next = QPushButton("Find Next")
+        self.btn_find_next.clicked.connect(self.find_next)
+        
+        self.chk_headers_only = QCheckBox("In Headers")
+        self.chk_headers_only.stateChanged.connect(self.reset_search)
+        
+        search_layout.addWidget(self.search_input)
+        search_layout.addWidget(self.btn_find_next)
+        search_layout.addWidget(self.chk_headers_only)
+        layout.addLayout(search_layout)
+
+        self.current_search_row = -1
 
         self.offer_table = DynamicTableWidget()
         self.offer_table.setColumnCount(4)
@@ -61,8 +81,15 @@ class OfferListDialog(QDialog):
         self.offer_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
         self.offer_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.ResizeToContents)
         self.offer_table.horizontalHeader().setSectionsMovable(True)
+        self.offer_table.setStyleSheet("""
+            QTableWidget::item:selected {
+                background-color: #FBBF24;
+                color: #000000;
+            }
+        """)
         self.offer_table.itemChanged.connect(self.on_offer_item_changed)
         self.offer_table.currentCellChanged.connect(self._on_table_selection_changed)
+        self.offer_table.installEventFilter(self)
         layout.addWidget(self.offer_table)
 
         btn_layout = QHBoxLayout()
@@ -176,6 +203,67 @@ class OfferListDialog(QDialog):
                 serial_counter += 1
 
         self.offer_table.blockSignals(False)
+
+    def reset_search(self):
+        self.current_search_row = -1
+        if not self.search_input.text().strip():
+            self.offer_table.clearSelection()
+
+    def find_next(self):
+        search_text = self.search_input.text().strip().lower()
+        if not search_text or not self.offer_data:
+            return
+            
+        headers_only = self.chk_headers_only.isChecked()
+        start_row = self.current_search_row + 1
+        
+        # Loop around the table to find the next match
+        for offset in range(len(self.offer_data)):
+            row = (start_row + offset) % len(self.offer_data)
+            data = self.offer_data[row]
+            is_section = data.get("is_section", False)
+            
+            if headers_only and not is_section:
+                continue
+                
+            match = False
+            if headers_only:
+                if search_text in str(data.get("desc", "")).lower():
+                    match = True
+            else:
+                for val in data.values():
+                    if search_text in str(val).lower():
+                        match = True
+                        break
+                        
+            if match:
+                self.current_search_row = row
+                self.offer_table.selectRow(row)
+                # Scroll to the selected row, specifically column 1 (to ensure visibility)
+                self.offer_table.scrollToItem(self.offer_table.item(row, 1), QAbstractItemView.ScrollHint.PositionAtCenter)
+                return
+                
+    def eventFilter(self, source, event):
+        if source == self.offer_table and event.type() == QEvent.Type.KeyPress:
+            if event.key() == Qt.Key.Key_Return or event.key() == Qt.Key.Key_Enter:
+                selected_rows = sorted(list(set(item.row() for item in self.offer_table.selectedItems())))
+                if not selected_rows:
+                    current_row = self.offer_table.currentRow()
+                    if current_row >= 0:
+                        selected_rows = [current_row]
+                
+                if selected_rows:
+                    import copy
+                    for row in selected_rows:
+                        if 0 <= row < len(self.offer_data):
+                            item_copy = copy.deepcopy(self.offer_data[row])
+                            self.offer_data.append(item_copy)
+                    
+                    if hasattr(self, 'master_tab') and hasattr(self.master_tab, 'save_offer_list'):
+                        self.master_tab.save_offer_list()
+                    self.refresh_offer_table()
+                    return True
+        return super().eventFilter(source, event)
 
     def on_offer_item_changed(self, item):
         row = item.row()

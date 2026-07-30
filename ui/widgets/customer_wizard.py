@@ -201,6 +201,8 @@ class CustomerWizardPanel(QWidget):
         self.floating_widget.btn_add_header.clicked.connect(self.add_section_header)
         self.floating_widget.btn_done.clicked.connect(self.done_item)
         self.floating_widget.btn_skip.clicked.connect(self.skip_item)
+        
+        self.table.cellDoubleClicked.connect(self.on_item_double_clicked)
 
     def toggle_expand(self, checked):
         if hasattr(self, 'master_tab') and hasattr(self.master_tab, 'right_splitter'):
@@ -245,6 +247,7 @@ class CustomerWizardPanel(QWidget):
                 self.df['has_header'] = False
                 self.df['is_done'] = False
                 self.df['is_skipped'] = False
+                self.df['offer_start_index'] = -1
                 
                 self.populate_table()
                 self.btn_start.setEnabled(True)
@@ -339,6 +342,7 @@ class CustomerWizardPanel(QWidget):
         else:
             self._initial_offer_len = 0
             
+        self.df.at[self.current_index, 'offer_start_index'] = self._initial_offer_len
         self._header_offer_index = None
             
         row = self.df.iloc[self.current_index]
@@ -376,16 +380,27 @@ class CustomerWizardPanel(QWidget):
         desc = str(row.get('desc', ''))
         
         # Add a section header to the offer data
+        insert_idx = getattr(self.master_tab, 'insert_mode_index', None)
+        
         if hasattr(self.master_tab, 'offer_data'):
-            self.master_tab.offer_data.append({
-                "is_section": True,
-                "desc": desc,
-                "qty": ""
-            })
+            if insert_idx is not None:
+                self.master_tab.offer_data.insert(insert_idx, {
+                    "is_section": True,
+                    "desc": desc,
+                    "qty": ""
+                })
+                self._header_offer_index = insert_idx
+                self.master_tab.insert_mode_index += 1
+            else:
+                self.master_tab.offer_data.append({
+                    "is_section": True,
+                    "desc": desc,
+                    "qty": ""
+                })
+                self._header_offer_index = len(self.master_tab.offer_data) - 1
             
             # Record state
             self.df.at[self.current_index, 'has_header'] = True
-            self._header_offer_index = len(self.master_tab.offer_data) - 1
             
             # Update Checkbox
             self._add_checkbox_to_cell(self.current_index, 3, "#3B82F6", True)
@@ -429,7 +444,19 @@ class CustomerWizardPanel(QWidget):
         self.df.at[self.current_index, 'is_skipped'] = True
         self._add_checkbox_to_cell(self.current_index, 5, "#EF4444", True)
         
-        self.current_index += 1
+        if hasattr(self.master_tab, 'insert_mode_index') and self.master_tab.insert_mode_index is not None:
+            self.master_tab.insert_mode_index = None
+            
+            # Snap back to the furthest incomplete item
+            next_idx = len(self.df) - 1
+            for i in range(len(self.df)):
+                if not self.df.at[i, 'is_done'] and not self.df.at[i, 'is_skipped']:
+                    next_idx = i
+                    break
+            self.current_index = next_idx
+        else:
+            self.current_index += 1
+            
         self.update_active_item()
         
     def done_item(self):
@@ -452,5 +479,68 @@ class CustomerWizardPanel(QWidget):
                 # No items added. (It's just "Header Only" or they did literally nothing)
                 self.df.at[self.current_index, 'is_done'] = False
         
-        self.current_index += 1
+        if hasattr(self.master_tab, 'insert_mode_index') and self.master_tab.insert_mode_index is not None:
+            self.master_tab.insert_mode_index = None
+            
+            # Snap back to the furthest incomplete item
+            next_idx = len(self.df) - 1
+            for i in range(len(self.df)):
+                if not self.df.at[i, 'is_done'] and not self.df.at[i, 'is_skipped']:
+                    next_idx = i
+                    break
+            self.current_index = next_idx
+        else:
+            self.current_index += 1
+            
         self.update_active_item()
+        
+    def on_item_double_clicked(self, row, col):
+        if self.df is None or self.df.empty:
+            return
+            
+        start_idx = self.df.at[row, 'offer_start_index']
+        if start_idx == -1:
+            QMessageBox.information(self, "Not Mapped", "This item has not been mapped yet. You can just skip to it by completing the previous ones, or restore to an earlier point.")
+            return
+            
+        msg_box = QMessageBox(self)
+        msg_box.setWindowTitle("Wizard Control")
+        msg_box.setText(f"You selected item {row + 1}. What would you like to do?")
+        btn_restore = msg_box.addButton("Restore list to this point (Delete after)", QMessageBox.ButtonRole.ActionRole)
+        btn_insert = msg_box.addButton("Hover Wizard (Insert Mode)", QMessageBox.ButtonRole.ActionRole)
+        btn_cancel = msg_box.addButton(QMessageBox.StandardButton.Cancel)
+        msg_box.exec()
+        
+        if msg_box.clickedButton() == btn_cancel:
+            return
+            
+        if msg_box.clickedButton() == btn_restore:
+            # Delete everything in offer_data from start_idx onwards
+            if hasattr(self.master_tab, 'offer_data') and start_idx < len(self.master_tab.offer_data):
+                self.master_tab.offer_data = self.master_tab.offer_data[:start_idx]
+                if hasattr(self.master_tab, 'save_offer_list'):
+                    self.master_tab.save_offer_list()
+                if hasattr(self.master_tab, 'offer_dialog') and self.master_tab.offer_dialog and self.master_tab.offer_dialog.isVisible():
+                    self.master_tab.offer_dialog.refresh_offer_table()
+                    
+            # Reset dataframe states for this row and all subsequent rows
+            for i in range(row, len(self.df)):
+                self.df.at[i, 'has_header'] = False
+                self.df.at[i, 'is_done'] = False
+                self.df.at[i, 'is_skipped'] = False
+                self.df.at[i, 'offer_start_index'] = -1
+                self._add_checkbox_to_cell(i, 3, "#3B82F6", False)
+                self._add_checkbox_to_cell(i, 4, "#10B981", False)
+                self._add_checkbox_to_cell(i, 5, "#EF4444", False)
+                
+            self.master_tab.insert_mode_index = None
+            self.current_index = row
+            self.show_floating_widget()
+            self.update_active_item()
+            
+        elif msg_box.clickedButton() == btn_insert:
+            # Turn on insert mode
+            self.master_tab.insert_mode_index = start_idx
+            self.current_index = row
+            self.show_floating_widget()
+            self.update_active_item()

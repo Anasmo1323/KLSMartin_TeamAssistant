@@ -216,11 +216,15 @@ class KlsMasterTab(QWidget):
                     if current_row >= 0:
                         selected_rows = [current_row]
                 
+                is_multi = len(selected_rows) > 1
                 for row in selected_rows:
                     code_item = self.table.item(row, 1)
                     desc_item = self.table.item(row, 2)
                     if code_item and desc_item:
-                        self.add_to_offer(code_item.text(), desc_item.text())
+                        self.add_to_offer(code_item.text(), desc_item.text(), skip_prompt=is_multi)
+                
+                if is_multi:
+                    QMessageBox.information(self, "Added", f"Added {len(selected_rows)} items to Offer List.")
                 return True
         return super().eventFilter(source, event)
 
@@ -451,16 +455,30 @@ class KlsMasterTab(QWidget):
                 existing["qty"] += qty
                 self.save_offer_list()
                 return
-        self.offer_data.append({"code": code, "desc": desc, "qty": qty})
+        # Check if insert_mode_index is set from the customer wizard
+        insert_idx = getattr(self, 'insert_mode_index', None)
+        
+        if insert_idx is not None:
+            self.offer_data.insert(insert_idx, {"code": code, "desc": desc, "qty": qty})
+            self.insert_mode_index += 1
+        else:
+            self.offer_data.append({"code": code, "desc": desc, "qty": qty})
+            
         self.save_offer_list()
 
-    def add_to_offer(self, code, desc):
-        qty, ok = QInputDialog.getInt(self, "Quantity", f"Enter quantity for {code}:", 1, 1, 9999)
+    def add_to_offer(self, code, desc, skip_prompt=False, default_qty=1):
+        if skip_prompt:
+            qty, ok = default_qty, True
+        else:
+            qty, ok = QInputDialog.getInt(self, "Quantity", f"Enter quantity for {code}:", 1, 1, 9999)
+            
         if ok:
             self._add_or_merge_offer_item(code, desc, qty)
             if hasattr(self, 'offer_dialog') and self.offer_dialog.isVisible():
                 self.offer_dialog.refresh_offer_table()
-            QMessageBox.information(self, "Added", f"Added {qty}x {code} to Offer List.")
+            
+            if not skip_prompt:
+                QMessageBox.information(self, "Added", f"Added {qty}x {code} to Offer List.")
 
     def load_offer_list(self):
         import json
