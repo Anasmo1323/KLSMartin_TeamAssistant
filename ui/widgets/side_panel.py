@@ -107,14 +107,44 @@ class ProductSidePanel(QFrame):
                 else:
                     self.image_label.clear_image("Image File Missing")
 
+        family = str(row.get('family', ''))
+        if pd.isna(row.get('family')) or not family.strip():
+            family_html = ""
+        else:
+            family_html = f"<h4 style='color:#555; margin-bottom: 0px; margin-top: 0px;'>{family}</h4>"
+
+        shape = str(row.get('shape', '')) if pd.notna(row.get('shape')) and str(row.get('shape')).strip() else 'N/A'
+        dimensions = str(row.get('dimensions', '')) if pd.notna(row.get('dimensions')) and str(row.get('dimensions')).strip() else 'N/A'
+        length = str(row.get('length', '')) if pd.notna(row.get('length')) and str(row.get('length')).strip() else 'N/A'
+        tip = str(row.get('tip_type', '')) if pd.notna(row.get('tip_type')) and str(row.get('tip_type')).strip() else 'N/A'
+        modifiers = str(row.get('modifiers', '')) if pd.notna(row.get('modifiers')) and str(row.get('modifiers')).strip() else 'N/A'
+
+        details_html = f"""
+        <table width='100%' cellpadding='4' style='border-collapse: collapse; margin-top: 10px; font-size: 12px;'>
+            <tr>
+                <td width='50%'><b>Shape:</b> {shape}</td>
+                <td width='50%'><b>Dimensions:</b> {dimensions}</td>
+            </tr>
+            <tr>
+                <td width='50%'><b>Length:</b> {length}</td>
+                <td width='50%'><b>Tip:</b> {tip}</td>
+            </tr>
+            <tr>
+                <td width='100%' colspan='2'><b>Extra:</b> {modifiers}</td>
+            </tr>
+        </table>
+        """
+
         url = row.get("product_url", "#")
         url_html = f"<a href='{url}'>Open on KLS Martin Website</a>" if "http" in str(url) else "N/A"
         html = f"""
-        <h3 style='color:#007BFF; margin-bottom: 2px;'>{row.get('code', code_val)}</h3>
+        {family_html}
+        <h3 style='color:#007BFF; margin-bottom: 2px; margin-top: 5px;'>{row.get('code', code_val)}</h3>
         <p style='font-size: 14px; font-weight: bold; color: #282829; margin-top: 0px;'>{row.get('description', 'N/A')}</p>
         <p dir='rtl' align='right' style='font-size: 11px; color: #282829; margin-top: -5px;'>{arb_text}</p>
+        {details_html}
         <hr/>
-        <p><b>Associated Catalogues:</b> {self.master_tab.process_brochures(row.get('brochures', ''))}</p>
+        <p><b>Associated Catalogues:</b><br>{self.master_tab._format_brochures(row.get('brochures', '')).replace(chr(10), '<br>')}</p>
         <hr/>
         <p><b>Web Link:</b><br>{url_html}</p>
         """

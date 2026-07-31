@@ -3,7 +3,7 @@ import re
 import pandas as pd
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QTableWidgetItem, QHeaderView, QSplitter,
-    QStackedWidget, QComboBox, QMessageBox, QFileDialog, QListWidgetItem, QApplication, QInputDialog
+    QStackedWidget, QComboBox, QMessageBox, QFileDialog, QListWidgetItem, QApplication, QInputDialog, QDialog
 )
 from PyQt6.QtCore import Qt, QTimer, QEvent
 from PyQt6.QtGui import QPixmap, QIcon
@@ -36,9 +36,9 @@ class KlsMasterTab(QWidget):
         super().__init__()
         self.df = None
         self.offer_data = []
-        self.default_path = "KLS_All_Products.xlsx"
+        self.default_path = "KLS_Product_Families.json"
         self.autosave_path = "offer_list_autosave.json"
-        self.required_fields = ['code', 'description', 'brochures', 'state']
+        self.required_fields = ['code', 'description', 'brochures', 'state', 'family', 'inventor', 'shape', 'length', 'tip_type', 'modifiers']
         
         self.filter_timer = QTimer()
         self.filter_timer.setSingleShot(True)
@@ -47,7 +47,7 @@ class KlsMasterTab(QWidget):
         self.init_ui()
         self.load_offer_list()
         QTimer.singleShot(100, self.load_default_master)
-        
+
     def queue_filter(self):
         self.filter_timer.start(300)
 
@@ -156,7 +156,6 @@ class KlsMasterTab(QWidget):
         
         search_layout.addStretch()
         right_panel.addLayout(search_layout)
-
         # Right Splitter (Table top, Wizard bottom)
         self.right_splitter = QSplitter(Qt.Orientation.Vertical)
         self.right_splitter.setHandleWidth(8)
@@ -176,12 +175,13 @@ class KlsMasterTab(QWidget):
 
         # Table
         self.table = DynamicTableWidget()
-        headers = ["ADD"] + [f.upper() for f in self.required_fields]
+        headers = ["#", "Code", "Description", "Shape", "Dimensions", "Length", "Tip", "Modifiers", "Brochures", "State"]
         self.table.setColumnCount(len(headers))
         self.table.setHorizontalHeaderLabels(headers)
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
-        self.table.horizontalHeader().setDefaultSectionSize(200)
+        self.table.horizontalHeader().setDefaultSectionSize(120)
         self.table.setColumnWidth(0, 54)
+        self.table.setColumnWidth(2, 350)
         self.table.installEventFilter(self)
         
         self.stacked_widget.addWidget(self.table)
@@ -221,7 +221,9 @@ class KlsMasterTab(QWidget):
                     code_item = self.table.item(row, 1)
                     desc_item = self.table.item(row, 2)
                     if code_item and desc_item:
-                        self.add_to_offer(code_item.text(), desc_item.text(), skip_prompt=is_multi)
+                        # Skip family header rows which don't have descriptions
+                        if desc_item.text().strip():
+                            self.add_to_offer(code_item.text(), desc_item.text(), skip_prompt=is_multi)
                 
                 if is_multi:
                     QMessageBox.information(self, "Added", f"Added {len(selected_rows)} items to Offer List.")
@@ -240,14 +242,13 @@ class KlsMasterTab(QWidget):
             unique_brochures.update(parts)
         self.brochure_list.set_items(sorted(list(unique_brochures)))
 
-    def process_brochures(self, text):
+    def _format_brochures(self, text):
         if pd.isna(text): return ""
         text = str(text)
         text = re.sub(r'\s*\([^)]*http[^)]*\)', '', text)
         text = re.sub(r'https?://\S+', '', text)
-        # CHANGED: Replaced the regex split with a strict semicolon split
         parts = [p.strip() for p in text.split(';') if p.strip()] 
-        return "<br>• ".join([""] + parts) if parts else "" # Formatted as HTML bullets
+        return "\n• ".join([""] + parts) if parts else ""
 
     def _update_cat_highlight(self):
         self.cat_box.set_highlight(bool(self.category_list.get_checked_items()))
@@ -262,8 +263,25 @@ class KlsMasterTab(QWidget):
         if os.path.exists(self.default_path):
             with show_loading(self, "Loading Master Database..."):
                 try:
-                    self.df = pd.read_excel(self.default_path)
-                    self.df.columns = [c.lower().strip() for c in self.df.columns]
+                    import json
+                    if self.default_path.endswith('.json'):
+                        with open(self.default_path, 'r', encoding='utf-8') as f:
+                            data = json.load(f)
+                        
+                        flat_data = []
+                        for family, f_data in data.items():
+                            schema = f_data.get("schema")
+                            for item in f_data.get("items", []):
+                                item["family"] = family
+                                item["schema"] = schema
+                                flat_data.append(item)
+                        self.df = pd.DataFrame(flat_data)
+                        if 'code' in self.df.columns:
+                            self.df['local_image_path'] = 'images\\' + self.df['code'].astype(str) + '.png'
+                    else:
+                        self.df = pd.read_excel(self.default_path)
+                        self.df.columns = [c.lower().strip() for c in self.df.columns]
+                        
                     self._update_brochures_list()
                     
                     # Load Sets
@@ -311,7 +329,7 @@ class KlsMasterTab(QWidget):
                     if 'local_image_path' not in self.df.columns and 'code' in self.df.columns:
                         self.df['local_image_path'] = 'images\\' + self.df['code'].astype(str) + '.png'
                         
-                    self.df.to_excel(self.default_path, index=False)
+                    self.df.to_excel(self.default_path.replace('.json', '.xlsx'), index=False)
                     self._update_brochures_list()
                     self.apply_filter()
                 except Exception as e:
@@ -321,52 +339,84 @@ class KlsMasterTab(QWidget):
         self.table.setRowCount(0)
         if dataframe is None or dataframe.empty:
             return
+            
+        # Group by family
+        dataframe = dataframe.copy()
+        dataframe['family'] = dataframe['family'].fillna('(Unclassified)')
+        grouped = dataframe.groupby('family')
         
-        self.table.setRowCount(len(dataframe))
-        for ui_row_idx, (orig_idx, row) in enumerate(dataframe.iterrows()):
-            code = str(row.get('code', ''))
-            desc = str(row.get('description', ''))
+        # Calculate total rows needed (headers + items)
+        total_rows = len(dataframe) + len(grouped)
+        self.table.setRowCount(total_rows)
+        
+        ui_row_idx = 0
+        for family, group_df in sorted(grouped, key=lambda g: g[0]):
+            # Insert Family Header Row
+            header_item = QTableWidgetItem(f"   {family} ({len(group_df)} variations)")
+            header_item.setFlags(Qt.ItemFlag.ItemIsEnabled)
+            header_item.setBackground(QColor("#E2E8F0"))
+            header_item.setForeground(QColor("#282829"))
+            font = header_item.font()
+            font.setBold(True)
+            font.setPointSize(11)
+            header_item.setFont(font)
             
-            # ADD button column
-            btn = QPushButton("+")
-            btn.setObjectName("addButton")
-            btn.setFixedSize(24, 24)
-            btn.setCursor(Qt.CursorShape.PointingHandCursor)
-            btn.setToolTip(f"Add {code} to offer list")
-            btn.clicked.connect(lambda _, c=code, d=desc: self.add_to_offer(c, d))
-
-            btn_container = QWidget()
-            btn_container.setObjectName("addButtonCell")
-            btn_container.setStyleSheet("QWidget { background: transparent; }")
-            btn_layout = QHBoxLayout(btn_container)
-            btn_layout.setContentsMargins(0, 0, 0, 0)
-            btn_layout.addWidget(btn, alignment=Qt.AlignmentFlag.AlignCenter)
-            self.table.setRowHeight(ui_row_idx, 36)
-            self.table.setCellWidget(ui_row_idx, 0, btn_container)
+            self.table.setItem(ui_row_idx, 0, header_item)
+            self.table.setSpan(ui_row_idx, 0, 1, self.table.columnCount())
+            self.table.setRowHeight(ui_row_idx, 30)
+            ui_row_idx += 1
             
-            raw_brochures = str(row.get('brochures', ''))
-            brochures_text = re.sub(r'\s*\([^)]*http[^)]*\)', '', raw_brochures)
-            brochures_text = re.sub(r'https?://\S+', '', brochures_text).replace(';', '\n')
-            
-            for c_idx, val in enumerate([code, desc, brochures_text]):
-                item = QTableWidgetItem(val)
-                item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
-                self.table.setItem(ui_row_idx, c_idx + 1, item)
-
-            state_val = str(row.get('state', ''))
-            state_item = QTableWidgetItem(state_val)
-            state_item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
-            state_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-            if state_val.lower() == 'active':
-                state_item.setForeground(QColor("green"))
-            elif state_val.lower() == 'inactive':
-                state_item.setForeground(QColor("red"))
-            self.table.setItem(ui_row_idx, 4, state_item)
+            # Insert Variations
+            for orig_idx, row in group_df.iterrows():
+                code = str(row.get('code', ''))
+                desc = str(row.get('description', ''))
+                shape = str(row.get('shape', '')) if pd.notna(row.get('shape')) else ""
+                dimensions = str(row.get('dimensions', '')) if pd.notna(row.get('dimensions')) else ""
+                length = str(row.get('length', '')) if pd.notna(row.get('length')) else ""
+                tip = str(row.get('tip_type', '')) if pd.notna(row.get('tip_type')) else ""
+                modifiers = str(row.get('modifiers', '')) if pd.notna(row.get('modifiers')) else ""
+                state_val = str(row.get('state', 'Active'))
+                brochures_text = self._format_brochures(str(row.get('brochures', '')))
+                
+                # ADD button column
+                btn = QPushButton("+")
+                btn.setObjectName("addButton")
+                btn.setFixedSize(24, 24)
+                btn.setCursor(Qt.CursorShape.PointingHandCursor)
+                btn.setToolTip(f"Add {code} to offer list")
+                btn.clicked.connect(lambda _, c=code, d=desc: self.add_to_offer(c, d))
+    
+                btn_container = QWidget()
+                btn_container.setObjectName("addButtonCell")
+                btn_container.setStyleSheet("QWidget { background: transparent; }")
+                btn_layout = QHBoxLayout(btn_container)
+                btn_layout.setContentsMargins(0, 0, 0, 0)
+                btn_layout.addWidget(btn, alignment=Qt.AlignmentFlag.AlignCenter)
+                self.table.setRowHeight(ui_row_idx, 36)
+                self.table.setCellWidget(ui_row_idx, 0, btn_container)
+                
+                col_data = [code, desc, shape, dimensions, length, tip, modifiers, brochures_text, state_val]
+                for c_idx, val in enumerate(col_data):
+                    item = QTableWidgetItem(val)
+                    item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
+                    
+                    if c_idx == len(col_data) - 1: # State column
+                        item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                        if val.lower() == 'active':
+                            item.setForeground(QColor("green"))
+                        elif val.lower() == 'inactive':
+                            item.setForeground(QColor("red"))
+                            
+                    self.table.setItem(ui_row_idx, c_idx + 1, item)
+                    
+                ui_row_idx += 1
+                
         self.table.resizeRowsToContents()
         
         if self.table.rowCount() > 0:
-            self.table.selectRow(0)
-            self.table.setCurrentCell(0, 0)
+            # Select first real row, not the header
+            self.table.selectRow(1)
+            self.table.setCurrentCell(1, 0)
 
     def apply_filter(self):
         if self.df is None or self.df.empty:

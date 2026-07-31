@@ -1,0 +1,1 @@
+Offer List Search & Duplication: Added a brand new "Ctrl+F" style search bar inside the Offer List dialog. You can instantly jump between matches in your list, with a bright yellow highlight indicating the current selection. Also includes a toggle to search specifically "In Headers". You can now also duplicate any row(s) in the Offer List to the bottom by simply pressing Enter!

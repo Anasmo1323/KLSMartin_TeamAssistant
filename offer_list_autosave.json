@@ -1,44 +1,7 @@
 [
   {
-    "is_section": true,
-    "desc": "lol"
-  },
-  {
-    "code": "55-803-50-04",
-    "desc": "Storage rack for Rhoton instruments, figure 1-19",
+    "code": "11-895-16-07",
+    "desc": "Aquila scissors, acc. to Mayo-Lexer, curved, length 16 cm",
     "qty": 1
-  },
-  {
-    "code": "55-803-70-04",
-    "desc": "Mesh tray for storage of monopolar electrodes, 277 x 172 x 29 mm",
-    "qty": 1
-  },
-  {
-    "is_section": true,
-    "desc": "dsdas"
-  },
-  {
-    "code": "55-806-92-04",
-    "desc": "Screwdriver for adapter unit",
-    "qty": 1
-  },
-  {
-    "code": "55-807-24-04",
-    "desc": "Silicone mat for size 1/2 (234 x 244 mm)",
-    "qty": 1
-  },
-  {
-    "code": "55-891-41-01",
-    "desc": "Small parts basket, fine-meshed, 200 x 100 x 50 mm",
-    "qty": 1
-  },
-  {
-    "code": "55-996-10-04",
-    "desc": "Spring hook",
-    "qty": 1
-  },
-  {
-    "is_section": true,
-    "desc": "dsdsl"
   }
 ]
