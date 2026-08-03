@@ -1,0 +1,74 @@
+:root {
+  /* KLS Martin Premium Light Palette */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f4f6f8;
+  --bg-glass: rgba(255, 255, 255, 0.95);
+  
+  --accent-blue: #e3000f; /* Re-mapped to KLS Red */
+  --accent-cyan: #e3000f; /* Re-mapped to KLS Red */
+  --accent-gradient: linear-gradient(135deg, #e3000f 0%, #b3000b 100%);
+  
+  --text-primary: #222222;
+  --text-secondary: #555555;
+  --text-muted: #888888;
+  
+  --border-light: #e2e8f0;
+  --border-focus: rgba(227, 0, 15, 0.3);
+  
+  --shadow-glow: 0 4px 15px rgba(227, 0, 15, 0.15);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.08);
+  
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Glassmorphism Utilities */
+.glass-panel {
+  background: var(--bg-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--bg-secondary);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

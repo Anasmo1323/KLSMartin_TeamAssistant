@@ -2,6 +2,12 @@
 
 A comprehensive inventory control, verification, and AI-powered product mapping assistant built with PyQt6. Designed specifically to handle large equipment catalogs, automate data matching, and streamline stock verification.
 
+## 📂 Project Structure
+- **`desktop_app/`**: The core Python Desktop Application (PyQt6).
+- **`offer_webapp/`**: The Next.js web application.
+- **`scripts/`**: Standalone data pipelines, parsing utilities, and scrapers.
+- **`data/`**: Core datasets (Excel, JSON) shared across the applications.
+
 ## 🚀 Key Features
 
 ### 1. KLS Master Catalog 
@@ -55,5 +61,6 @@ A comprehensive inventory control, verification, and AI-powered product mapping 
    ```
 2. Run the main application:
    ```bash
+   cd desktop_app
    python main.py
    ```
