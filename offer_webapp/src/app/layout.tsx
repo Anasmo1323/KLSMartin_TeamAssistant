@@ -20,14 +20,15 @@ export default function RootLayout({
         <header style={{
           backgroundColor: '#111111',
           borderBottom: '4px solid var(--accent-main)',
-          padding: '1rem 2rem',
+          padding: '0.5rem 1rem',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          height: '80px'
+          height: '60px',
+          overflow: 'hidden'
         }}>
-          <img src="/Technowave.png" alt="Technowave Logo" style={{ maxHeight: '180%', objectFit: 'contain' }} />
-          <img src="/kls.png" alt="KLS Martin Logo" style={{ maxHeight: '500%', objectFit: 'contain' }} />
+          <img src="/Technowave.png" alt="Technowave Logo" style={{ height: '100%', maxWidth: '40%', objectFit: 'contain' }} />
+          <img src="/kls.png" alt="KLS Martin Logo" style={{ height: '100%', maxWidth: '40%', objectFit: 'contain' }} />
         </header>
         {children}
       </body>
