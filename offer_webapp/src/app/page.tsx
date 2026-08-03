@@ -88,6 +88,18 @@ export default function Home() {
     }
   }, [cartState, isLoaded]);
 
+  // Lock body scroll when any modal or full-screen overlay is open
+  useEffect(() => {
+    if (mobileCartOpen || activeFamilyCode || showCheckout || lightboxImg) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [mobileCartOpen, activeFamilyCode, showCheckout, lightboxImg]);
+
   const updateQty = (opt: Option, delta: number, groupName: string, categoryName: string, setName: string) => {
     setCartState(prev => {
       const current = prev[opt.code]?.qty || 0;
