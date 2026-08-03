@@ -553,3 +553,39 @@
 .checkoutForm input:focus, .checkoutForm textarea:focus {
   border-color: var(--accent-cyan);
 }
+
+@media (max-width: 768px) {
+  .variationGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .categoryGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .modalOverlay {
+    padding: 0.5rem;
+  }
+  
+  .modalContent {
+    max-height: 95vh;
+  }
+  
+  .modalHeader {
+    padding: 1rem;
+  }
+  
+  .modalBody {
+    padding: 1rem;
+  }
+  
+  .sidebarTitle {
+    margin-top: 3rem; /* Leave room for close button or header */
+  }
+  
+  .title {
+    font-size: 2rem;
+  }
+}
