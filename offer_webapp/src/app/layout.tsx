@@ -17,18 +17,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <header style={{
-          backgroundColor: '#111111',
-          borderBottom: '4px solid var(--accent-main)',
-          padding: '0.5rem 1rem',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          height: '60px',
-          overflow: 'hidden'
-        }}>
-          <img src="/Technowave.png" alt="Technowave Logo" style={{ height: '100%', maxWidth: '40%', objectFit: 'contain' }} />
-          <img src="/kls.png" alt="KLS Martin Logo" style={{ height: '100%', maxWidth: '40%', objectFit: 'contain' }} />
+        <header className="main-header">
+          <img src="/Technowave.png" alt="Technowave Logo" className="header-logo-technowave" />
+          <img src="/kls.png" alt="KLS Martin Logo" className="header-logo-kls" />
         </header>
         {children}
       </body>
