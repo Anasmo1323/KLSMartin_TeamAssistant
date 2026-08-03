@@ -293,8 +293,8 @@ export default function Home() {
                 <label>
                   Doctor / Rep Name *
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <select 
-                      value={customerDetails.title} 
+                    <select
+                      value={customerDetails.title}
                       onChange={e => setCustomerDetails({ ...customerDetails, title: e.target.value })}
                       style={{ padding: '0.85rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-light)', background: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none' }}
                     >
@@ -334,7 +334,7 @@ export default function Home() {
 
       <main className={styles.mainContent}>
         <div className={styles.header}>
-          <p className={styles.subtitle} style={{marginTop: '1rem'}}>Browse disciplines and select your specific instrument variations.</p>
+          <p className={styles.subtitle} style={{ marginTop: '3rem' }}>Technowave Medical Equipment Trading LLC - Technical Offer List</p>
         </div>
 
         <div className={styles.navBar}>
@@ -495,7 +495,7 @@ export default function Home() {
 
       <button className={styles.mobileCartToggle} onClick={() => setMobileCartOpen(true)}>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="28px" height="28px">
-          <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+          <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
         </svg>
         {totalItems > 0 && <span className={styles.mobileCartBadge}>{totalItems}</span>}
       </button>
