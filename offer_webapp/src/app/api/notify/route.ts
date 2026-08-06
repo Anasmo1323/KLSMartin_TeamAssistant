@@ -2,17 +2,23 @@ import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { db } from '../../../lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
-
+import * as XLSX from 'xlsx';
 
 export async function POST(req: Request) {
   try {
-    const { submissionId, items, customer, totalItems } = await req.json();
+    const { submissionId, items, customer, totalItems, wantsExcelReceipt } = await req.json();
 
     // 1. Fetch notification emails from Firebase
     const configDoc = await getDoc(doc(db, 'config', 'notifications'));
     let emails: string[] = [];
     if (configDoc.exists()) {
       emails = configDoc.data().emails || [];
+    }
+
+    if (wantsExcelReceipt && customer.email) {
+      if (!emails.includes(customer.email)) {
+        emails.push(customer.email);
+      }
     }
 
     if (emails.length === 0) {
@@ -72,6 +78,29 @@ export async function POST(req: Request) {
       </div>
     `;
 
+    let attachments = [];
+    if (wantsExcelReceipt) {
+      const excelData = items.map((item: any) => ({
+        'Category': item.categoryName,
+        'Set': item.setName || 'General',
+        'Item Group': item.groupName,
+        'Code': item.code,
+        'Description': item.basic_description || '',
+        'Quantity': item.qty
+      }));
+      
+      const ws = XLSX.utils.json_to_sheet(excelData);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Requested Items");
+      
+      const buffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+      
+      attachments.push({
+        filename: `MMC_Request_${submissionId}.xlsx`,
+        content: buffer
+      });
+    }
+
     // 3. Send Email using Resend
     const resend = new Resend(process.env.RESEND_API_KEY);
     const { data, error } = await resend.emails.send({
@@ -79,6 +108,7 @@ export async function POST(req: Request) {
       to: emails,
       subject: `New Request Submission - ${customer.hospital}`,
       html: htmlContent,
+      attachments: attachments.length > 0 ? attachments : undefined,
     });
 
     if (error) {

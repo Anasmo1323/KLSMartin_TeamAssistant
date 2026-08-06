@@ -101,6 +101,7 @@ export default function Home() {
   // Checkout State
   const [showCheckout, setShowCheckout] = useState(false);
   const [checkoutStep, setCheckoutStep] = useState<0 | 1>(0);
+  const [wantsExcelReceipt, setWantsExcelReceipt] = useState(false);
   const [customerDetails, setCustomerDetails] = useState({ title: 'Dr.', name: '', hospital: '', phone: '', email: '', notes: '' });
 
   // Load cart from LocalStorage on mount
@@ -253,6 +254,10 @@ export default function Home() {
       alert("Please fill in the required fields (Name and Hospital).");
       return;
     }
+    if (wantsExcelReceipt && !customerDetails.email.trim()) {
+      alert("Please provide an email address to receive the Excel receipt.");
+      return;
+    }
     setIsSubmitting(true);
 
     try {
@@ -274,12 +279,14 @@ export default function Home() {
             submissionId: docRef.id,
             items: cartItems,
             customer: customerDetails,
-            totalItems
+            totalItems,
+            wantsExcelReceipt
           })
         }).catch(err => console.error("Email notification failed:", err));
 
         setCartState({});
       setCustomerDetails({ title: 'Dr.', name: '', hospital: '', phone: '', email: '', notes: '' });
+      setWantsExcelReceipt(false);
       setShowCheckout(false);
       setMobileCartOpen(false);
       setSubmitCooldown(10);
@@ -587,9 +594,13 @@ export default function Home() {
                     Phone Number (Optional)
                     <input type="tel" value={customerDetails.phone} onChange={e => setCustomerDetails({ ...customerDetails, phone: e.target.value })} placeholder="01xx xxx xxxx" />
                   </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '1rem', marginBottom: '1rem', cursor: 'pointer', padding: '1rem', backgroundColor: 'var(--bg-glass)', borderRadius: 'var(--radius-md)', border: '1px solid var(--accent-cyan)' }}>
+                    <input type="checkbox" checked={wantsExcelReceipt} onChange={e => setWantsExcelReceipt(e.target.checked)} style={{ width: '1.2rem', height: '1.2rem', accentColor: 'var(--accent-cyan)' }} />
+                    <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>Email me an Excel sheet containing my requested items</span>
+                  </label>
                   <label>
-                    Contact Email (Optional)
-                    <input type="email" value={customerDetails.email} onChange={e => setCustomerDetails({ ...customerDetails, email: e.target.value })} placeholder="email@example.com" />
+                    Contact Email {wantsExcelReceipt ? '*' : '(Optional)'}
+                    <input required={wantsExcelReceipt} type="email" value={customerDetails.email} onChange={e => setCustomerDetails({ ...customerDetails, email: e.target.value })} placeholder="email@example.com" />
                   </label>
                   <label>
                     Additional Notes (Optional)
