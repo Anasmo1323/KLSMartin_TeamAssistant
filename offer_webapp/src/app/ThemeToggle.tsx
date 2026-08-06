@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('kls_theme');
@@ -10,7 +10,8 @@ export default function ThemeToggle() {
       setTheme(savedTheme);
       document.documentElement.setAttribute('data-theme', savedTheme);
     } else {
-      document.documentElement.setAttribute('data-theme', 'light');
+      document.documentElement.setAttribute('data-theme', 'dark');
+      setTheme('dark');
     }
   }, []);
 
