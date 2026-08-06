@@ -1,0 +1,265 @@
+SET: Major Surgery Set (1)
+  Towel Forceps     تاول كلبس
+  Scalpel Handle NO.4    يد مشرط
+  Scalpel Handle NO.4    يد مشرط
+  Scalpel Handle NO.1   يد مشرط
+  Sponge Forceps    ماسك شاش
+  Sponge Forceps    ماسك شاش
+  Needle Holder  ماسك ابر
+  Needle Holder  ماسك ابر
+  Needle Holder  ماسك ابر
+  Needle Holder  ماسك ابر
+  Needle Holder  ماسك ابر
+  Dissecting scissor   مقص
+  Dissecting scissor   مقص
+  Dissecting scissor   مقص
+  Mayo Scissor      مقص
+  Dissecting scissor   مقص
+  Dissecting scissor   مقص
+  Mayo Scissor     مقص
+  Mosquito  Curved  مسكيتو منحني
+  Mosquito  straight مسكيتو مستقيم
+  mosquito curved  مسكيتو منحني
+  mosquito curved  مسكيتو منحني
+  Artery Curved   ارتري منحني
+  Artery Curved   ارتري منحني
+  Artery Curved   ارتري منحني
+  Artery Forceps   ارتري منحني
+  Kocher straight كوخر مستقيم
+  Kocher straight  كوخر مستقيم
+  Kocher Curved  كوخر منحني
+  Kocher straight كوخر مستقيم
+  Babcock Forceps    باكوك
+  Babcock Forceps  باكوك
+  Allis Forceps   اليس
+  Allis Forceps   اليس
+  Right Angle    رايت انجل
+  Right Angle  رايت انجل
+  Right Angle رايت انجل
+  Clamp Curved  كلامب منحني
+  Intestinal Curved كلامب امعاء منحني
+  Intestinal Straight كلامب امعاء مستقيم
+  Debakey Forceps جفت دبيكي
+  Debakey Forceps جفت دبيكي
+  Debakey Forceps جفت دبيكي
+  Debakey Forceps جفت دبيكي
+  Debakey Forceps جفت دبيكي
+  Non Toothed forceps  جفت بدون سن
+  Toothed forcep  جفت بسن
+  Appendix Forceps جفت زايده
+  Deaver Retractor مبعد ديفر
+  Deaver Retractor مبعد ديفر
+  Deaver Retractor مبعد ديفر
+  Richardson Retractor  مبعد ريداكشن
+  Richardson Retractor  مبعد ريداكشن
+  Langenbeck Retractor  لانجيابيك
+  Richardson Retractor  مبعد ريداكشن
+  Vein Retractor  مبعد عصب
+  Vein Retractor  مبعد عصب
+  Yankar Suction  بوز شفاط
+  Yankar Suction  بوز شفاط
+  Abdominal Maliable مسطره مولايبل
+  Abdominal Maliable مسطره مولايبل
+SET: Haemohrroid Set (1)
+  Towel Forceps تاول كلبس
+  Scalpel Handle NO.4 يد مشرط
+  Sponge Forceps ماسك شاش
+  needle holder ماسك ابر
+  Dissecting scissor  مقص
+  Mayo Dissecting Scissor مقص
+  Mosquito Forceps مسكيتو cv
+  Artery Forceps ارتري
+  Artery Forceps ارتري
+  Kocher Forceps كوخر
+  Allis Forceps اليس
+  Non Toothed جفت بدون سن
+  Toothed جفت بسن
+  Bone Curette  معلقه كحت
+  Anuo Scope مبعد شرجي
+  Anuo Scope مبعد شرجي
+  Masbar مسبر
+SET: General Surgery Set (1)
+  Towel Forceps تاول كلبس
+  Scalpel Handle NO.4 يد مشرط
+  Scalpel Handle NO.3 يد مشرط
+  Sponge Forceps ماسك شاش
+  Needle Holder ماسك ابر
+  Needle Holder ماسك ابر
+  Needle Holder ماسك ابر
+  Mayo Dissecting Scissor مقص
+  Dissecting scissor  مقص
+  Dissecting scissor  مقص
+  Dissecting scissor  مقص
+  Mosquito Forceps Curved مسكيتو منحني
+  Mosquito Forceps Striaght مسكيتو مستقيم
+  Artery Forceps  ارتري
+  Artery Forceps  ارتري
+  Artery Forceps  ارتري
+  Kocher Forceps كوخر
+  Kocher Forceps كوخر
+  Kocher Forceps كوخر
+  Babcock Forceps باكوك
+  Babcock Forceps باكوك
+  Allis Forceps اليس
+  Right Angle رايت انجل
+  Right Angle رايت انجل
+  Debakey Forceps جفت دبيكي
+  Debakey Forceps جفت دبيكي
+  Non Toothed جفت بدون سن
+  جفت بدون سن Non Toothed
+  Non Toothed جفت بدون سن
+  Toothed جفت بسن
+  Toothed جفت بسن
+  Appendex Forceps جفت زائده
+  Richardson Retractor  مبعد ريداكشن
+  Langenbeck Retractor لانجيلبيك
+  Yanker Suction بوز شفاط
+SET: Abdomenal Pediatric Set
+  Towel Clips تاول كلبس
+  Towel Clips تاول كلبس
+  Scalpel Handle يد مشرط
+  Scalpel Handle يد مشرط
+  Sponge Forceps ماسك شاش
+  Needle Holder ماسك ابر
+  Needle Holder ماسك ابر
+  Needle Holder ماسك ابر
+  Dissection Scissors Straight
+  Dissection Scissors مقص
+  Dissection Scissors  مقص
+  Mayo Scissors مقص
+  Mosquito Forceps Curved
+  Mosquito Forceps Straight
+  Mosquito Forceps Straight
+  Artery Curved ارتري
+  Kocher Straight كوخر
+  Allis Forceps اليس
+  Bobcock باكوك
+  Rt Angle Forceps رايت انجل
+  Rt Angle Forceps رايت انجل
+  Toothed Forceps جفت بسن
+  Non Toothed Forceps جفت بدون سن
+  Debakey Forceps جفت دبيكي
+  Non Toothed Forceps جفت بدون سن
+  Debakey Forceps جفت دبيكي
+  Appendix Forceps  جفت زائدة
+  Retractor مبعد
+  Skin Retractor مبعد جلد
+  Langenbeck Retractor لانجيلبيك
+  Langenbeck Retractor  لانجيلبيك
+  Langenbeck Retractor لانجيلبيك
+  Abdomenal Retractor مبعد بطن
+  Abdomenal Retractor مبعد بطن
+  Abdomenal Retractor مبعد بطن
+SET: Major Surgery  Set  ( 5 )
+  Towel Clip تاول كلبس
+  Towel Clip تاول كلبس
+  Towel Clip تاول كلبس
+  Scalpel Handle Size 4 L يد مشرط
+  Scalpel Handle Size 4 يد مشرط
+  Scalpel Handle Size 4 يد مشرط
+  Sponge Forceps ماسك شاش
+  Sponge Forceps ماسك شاش
+  Needle Holder ماسك ابر
+  Needle Holder ماسك ابر
+  Needle Holder ماسك ابر
+  Needle Holder ماسك ابر
+  Needle Holder ماسك ابر
+  Mayo Scissor مقص
+  Mayo Scissor مقص
+  Mets Scissor مقص
+  Mets Scissor مقص
+  Mets Scissor مقص
+  Mosquito Forceps Curved
+  Mosquito Forceps Staight
+  Artery Forceps
+  Artery Curved    ارتري
+  Artery Curved   ارتري
+  Artery Straight  ارتري مستقيم
+  Kocher Straight  كوخر
+  Allis Forceps      اليس
+  Babcock Forceps  باكوك
+  Right Angle   رايت انجل
+  Right Angle   رايت انجل
+  Toothed Forceps long
+  Toothed Forceps
+  Toothed Forceps long
+  Non Toothed Forceps
+  Adson Toothed Forceps
+  Debakey Forceps جفت دبيكي
+  Debakey Forceps جفت دبيكي
+  Hook هوك
+  Ruler مسطره
+  Vein Retractor مبعد عصب
+  Senn Retractor مبعد مزدوج
+  Abdominal Retractor مبعد بطن
+  Langenbeck Retractor لانجيلبيك
+  Langenbeck Retractor لانجيلبيك
+  Morris موريس
+  Deaver Retractor ديفر
+  Deaver Retractor ديفر
+  Morris موريس
+  Morris موريس
+  Intestinal Forceps Curved  كلامب امعاء منحني
+SET: Scissor and Needle
+  Needle Holder ماسك ابر
+  Needle Holder ماسك ابر
+  Needle Holder ماسك ابر
+  Needle Holder ماسك ابر
+  Needle Holder ماسك ابر
+  Dissecting Scissor مقص
+  Dissecting Scissor مقص
+  Dissecting Scissor مقص
+  Dissecting Scissor مقص
+  Dissecting Scissor مقص
+  Dissecting Scissor مقص
+  Mayo Scissor  مقص
+  Mayo Scissor  مقص
+SET: Retractor Liver  Set
+  Retractor Liver  Set
+  Retractor Liver  Set
+  Retractor Liver  Set
+  Retractor Liver  Set
+  Retractor Liver  Set
+  Retractor Liver  Set
+  Retractor Liver  Set
+  Retractor Liver  Set
+  Retractor Liver  Set
+  Retractor Liver  Set
+  Retractor Liver  Set
+  Retractor Liver  Set
+  Retractor Liver  Set
+  Retractor Liver  Set
+  Retractor Liver  Set
+  Retractor Liver  Set
+  Retractor Liver  Set
+  Retractor Liver  Set
+  Retractor Liver  Set
+  Retractor Liver  Set
+  Retractor Liver  Set
+  Retractor Liver  Set
+  Retractor Liver  Set
+  Retractor Liver  Set
+SET: Circumcision Set (1)
+  Scalpel Handle يد مشرط
+  Needle Holder ماسك ابر
+  Dissecting Scissor مقص
+  Mosquito Forceps Curved مسكيتو منحني
+  Bone Cutting مقص طهاره
+  Scalpel Handle يد مشرط
+  Needle Holder ماسك ابر
+  Dissecting Scissor مقص
+  Mosquito Forceps  ST
+  Mosquito Forceps Curved مسكيتو منحني
+  Bone Cutting مقص طهاره
+SET: Circumcision Set (2)
+  Scalpel Handle يد مشرط
+  Needle Holder ماسك ابر
+  Dissecting Scissor مقص
+  Mosquito Forceps Curved مسكيتو منحني
+  Bone Cutting مقص طهاره
+  Scalpel Handle يد مشرط
+  Needle Holder ماسك ابر
+  Dissecting Scissor مقص
+  Mosquito Forceps  ST
+  Mosquito Forceps Curved مسكيتو منحني
+  Bone Cutting مقص طهاره

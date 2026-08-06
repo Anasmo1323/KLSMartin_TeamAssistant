@@ -1,0 +1,172 @@
+0: Major Surgery Set (1) | QTY: nan
+1: Towel Forceps     تاول كلبس | QTY: 4.0
+3: Scalpel Handle NO.4    يد مشرط | QTY: 1.0
+6: Scalpel Handle NO.1   يد مشرط | QTY: 1.0
+8: Sponge Forceps    ماسك شاش | QTY: 1.0
+13: Needle Holder  ماسك ابر | QTY: 1.0
+41: Dissecting scissor   مقص | QTY: 1.0
+52: Mayo Scissor      مقص | QTY: 1.0
+57: Mosquito  Curved  مسكيتو منحني | QTY: 6.0
+59: Mosquito  straight مسكيتو مستقيم | QTY: 5.0
+63: Artery Curved   ارتري منحني | QTY: 4.0
+67: Kocher straight كوخر مستقيم | QTY: 2.0
+72: Kocher Curved  كوخر منحني | QTY: 2.0
+75: Babcock Forceps    باكوك | QTY: 2.0
+79: Allis Forceps   اليس | QTY: 3.0
+85: Right Angle    رايت انجل | QTY: 1.0
+88: Clamp Curved  كلامب منحني | QTY: 2.0
+91: Intestinal Curved كلامب امعاء منحني | QTY: 2.0
+94: Intestinal Straight كلامب امعاء مستقيم | QTY: 2.0
+98: Debakey Forceps جفت دبيكي | QTY: 1.0
+102: Non Toothed forceps  جفت بدون سن | QTY: 2.0
+110: Toothed forcep  جفت بسن | QTY: 2.0
+120: Appendix Forceps جفت زايده | QTY: 1.0
+123: Deaver Retractor مبعد ديفر | QTY: 1.0
+126: Richardson Retractor  مبعد ريداكشن | QTY: 1.0
+129: Langenbeck Retractor  لانجيابيك | QTY: 2.0
+135: Vein Retractor  مبعد عصب | QTY: 1.0
+140: Yankar Suction  بوز شفاط | QTY: 1.0
+144: Abdominal Maliable مسطره مولايبل | QTY: 1.0
+148: Haemohrroid Set (1) | QTY: nan
+149: Towel Forceps تاول كلبس | QTY: 2.0
+151: Scalpel Handle NO.4 يد مشرط | QTY: 1.0
+154: Sponge Forceps ماسك شاش | QTY: 1.0
+159: needle holder ماسك ابر | QTY: 1.0
+187: Dissecting scissor  مقص | QTY: 1.0
+198: Mayo Dissecting Scissor مقص | QTY: 1.0
+205: Mosquito Forceps مسكيتو cv | QTY: 2.0
+207: Artery Forceps ارتري | QTY: 2.0
+213: Kocher Forceps كوخر | QTY: 1.0
+218: Allis Forceps اليس | QTY: 2.0
+224: Non Toothed جفت بدون سن | QTY: 1.0
+232: Toothed جفت بسن | QTY: 1.0
+242: Bone Curette  معلقه كحت | QTY: 1.0
+250: Anuo Scope مبعد شرجي | QTY: 1.0
+252: Masbar مسبر | QTY: 1.0
+259: General Surgery Set (1) | QTY: nan
+260: Towel Forceps تاول كلبس | QTY: 5.0
+262: Scalpel Handle NO.4 يد مشرط | QTY: 1.0
+265: Scalpel Handle NO.3 يد مشرط | QTY: 1.0
+270: Sponge Forceps ماسك شاش | QTY: 2.0
+275: Needle Holder ماسك ابر | QTY: 1.0
+303: Mayo Dissecting Scissor مقص | QTY: 1.0
+308: Dissecting scissor  مقص | QTY: 1.0
+319: Mosquito Forceps Curved مسكيتو منحني | QTY: 6.0
+321: Mosquito Forceps Striaght مسكيتو مستقيم | QTY: 3.0
+325: Artery Forceps  ارتري | QTY: 1.0
+331: Kocher Forceps كوخر | QTY: 2.0
+336: Babcock Forceps باكوك | QTY: 2.0
+340: Allis Forceps اليس | QTY: 4.0
+346: Right Angle رايت انجل | QTY: 1.0
+349: Debakey Forceps جفت دبيكي | QTY: 1.0
+353: Non Toothed جفت بدون سن | QTY: 1.0
+361: Toothed جفت بسن | QTY: 1.0
+371: Appendex Forceps جفت زائده | QTY: 1.0
+374: Richardson Retractor  مبعد ريداكشن | QTY: 1.0
+377: Langenbeck Retractor لانجيلبيك | QTY: 2.0
+383: Yanker Suction بوز شفاط | QTY: 1.0
+387: General Surgery Laparoscopy Set 1 | QTY: nan
+388: Trocar 5 mm تروكر | QTY: 3.0
+390: Trocar 10 mm  تروكر | QTY: 2.0
+392: Palpation Probe بروب | QTY: 1.0
+397: Insaflator Caple خرطوم نفخ | QTY: 1.0
+399: Maryland ميرلاند | QTY: 2.0
+402: Clip Applicator كليب ابلير | QTY: 1.0
+413: Bercifascial Closure ماسك ابر مناظير | QTY: 1.0
+415: Claw Forcep كلاو | QTY: 1.0
+417: Hook هوك | QTY: 1.0
+429: Spatula اسباتيولا | QTY: 1.0
+434: Right Angle Forceps رايت انجل | QTY: 1.0
+439: Grasper جراسبر | QTY: 2.0
+441: Grasper Soft جراسبر سوفت | QTY: 2.0
+443: Laparoscopic Suction شفاط | QTY: 1.0
+445: Stone Forceps ماسك حصوة | QTY: 1.0
+448: Veress Needle ابره نفخ | QTY: 1.0
+450: Scissor مقص | QTY: 2.0
+463: Diathermy Cable كبل دياثرم | QTY: 1.0
+466: Abdomenal Pediatric Set | QTY: nan
+467: Towel Clips تاول كلبس | QTY: nan
+470: Scalpel Handle يد مشرط | QTY: nan
+476: Sponge Forceps ماسك شاش | QTY: nan
+481: Needle Holder ماسك ابر | QTY: nan
+499: Dissection Scissors Straight | QTY: nan
+504: Dissection Scissors مقص | QTY: nan
+515: Mayo Scissors مقص | QTY: nan
+520: Mosquito Forceps Curved | QTY: nan
+522: Mosquito Forceps Straight | QTY: nan
+526: Artery Curved ارتري | QTY: nan
+530: Kocher Straight كوخر | QTY: nan
+535: Allis Forceps اليس | QTY: nan
+541: Bobcock باكوك | QTY: nan
+545: Rt Angle Forceps رايت انجل | QTY: nan
+550: Toothed Forceps جفت بسن | QTY: nan
+560: Non Toothed Forceps جفت بدون سن | QTY: nan
+568: Debakey Forceps جفت دبيكي | QTY: nan
+572: Appendix Forceps  جفت زائدة | QTY: nan
+575: Retractor مبعد | QTY: nan
+579: Skin Retractor مبعد جلد | QTY: nan
+583: Langenbeck Retractor لانجيلبيك | QTY: nan
+589: Abdomenal Retractor مبعد بطن | QTY: nan
+610: Lap Appendectomy set | QTY: nan
+611: Trocar 5 mm تروكر | QTY: nan
+613: Trocar 10 mm  تروكر | QTY: nan
+615: Insaflator Caple خرطوم نفخ | QTY: nan
+617: Maryland ميرلاند | QTY: nan
+620: Claw Forcep كلاو | QTY: nan
+622: Hook هوك | QTY: nan
+634: Spatula اسباتيولا | QTY: nan
+639: Grasper جراسبر | QTY: nan
+641: Grasper Soft جراسبر سوفت | QTY: nan
+643: Veress Needle ابره نفخ | QTY: nan
+645: Diathermy Cable كبل دياثرم | QTY: nan
+648: Laparoscopic Suction شفاط | QTY: nan
+650: Major Surgery  Set  ( 5 ) | QTY: nan
+651: Towel Clip تاول كلبس | QTY: nan
+653: Scalpel Handle Size 4 L يد مشرط | QTY: nan
+656: Scalpel Handle Size 4 يد مشرط | QTY: nan
+658: Sponge Forceps ماسك شاش | QTY: nan
+663: Needle Holder ماسك ابر | QTY: nan
+691: Mayo Scissor مقص | QTY: nan
+696: Mets Scissor مقص | QTY: nan
+705: Mosquito Forceps Curved | QTY: nan
+707: Mosquito Forceps Staight | QTY: nan
+711: Artery Forceps | QTY: nan
+717: Artery Curved    ارتري | QTY: nan
+721: Kocher Straight  كوخر | QTY: nan
+726: Allis Forceps      اليس | QTY: nan
+732: Babcock Forceps  باكوك | QTY: nan
+736: Right Angle   رايت انجل | QTY: nan
+739: Toothed Forceps long | QTY: nan
+760: Toothed Forceps | QTY: nan
+770: Non Toothed Forceps | QTY: nan
+778: Adson Toothed Forceps | QTY: nan
+785: Debakey Forceps جفت دبيكي | QTY: nan
+789: Major Surgery  Set  ( 5 ) | QTY: nan
+790: Debakey Forceps جفت دبيكي | QTY: nan
+794: Hook هوك | QTY: nan
+806: Ruler مسطره | QTY: nan
+809: Vein Retractor مبعد عصب | QTY: nan
+812: Senn Retractor مبعد مزدوج | QTY: nan
+815: Abdominal Retractor مبعد بطن | QTY: nan
+834: Langenbeck Retractor لانجيلبيك | QTY: nan
+840: Morris موريس | QTY: nan
+845: Deaver Retractor ديفر | QTY: nan
+857: Intestinal Forceps Curved  كلامب امعاء منحني | QTY: nan
+864: Scissor and Needle | QTY: nan
+865: Needle Holder ماسك ابر | QTY: nan
+893: Dissecting Scissor مقص | QTY: nan
+904: Mayo Scissor  مقص | QTY: nan
+909: Retractor Liver  Set | QTY: nan
+920: Circumcision Set (1) | QTY: nan
+921: Scalpel Handle يد مشرط | QTY: nan
+927: Needle Holder ماسك ابر | QTY: nan
+955: Dissecting Scissor مقص | QTY: nan
+966: Mosquito Forceps Curved مسكيتو منحني | QTY: nan
+968: Bone Cutting مقص طهاره | QTY: nan
+975: Circumcision Set (2) | QTY: nan
+976: Scalpel Handle يد مشرط | QTY: nan
+982: Needle Holder ماسك ابر | QTY: nan
+1010: Dissecting Scissor مقص | QTY: nan
+1021: Mosquito  straight مسكيتو مستقيم | QTY: nan
+1025: Mosquito Forceps Curved مسكيتو منحني | QTY: nan
+1027: Bone Cutting مقص طهاره | QTY: nan

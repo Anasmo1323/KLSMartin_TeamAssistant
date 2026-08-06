@@ -10,7 +10,7 @@ from instrument_parser import parse_instrument_regex
 
 def parse_offer_list():
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    excel_path = os.path.join(base_dir, 'data', 'MCC_OfferList.xlsx')
+    excel_path = os.path.join(base_dir, 'data', 'MCC_OfferList_Final.xlsx')
     all_products_path = os.path.join(base_dir, 'data', 'KLS_All_Products.xlsx')
     output_json_path = os.path.join(base_dir, 'offer_webapp', 'src', 'data', 'offer_catalog.json')
     
@@ -50,8 +50,8 @@ def parse_offer_list():
                 header_name = str(row['DESCRIPTION']).strip()
                 header_qty = float(row['QTY']) if pd.notna(row['QTY']) else 1.0
                 
-                # If we already have a group but it's empty, the previous group was actually a Set!
-                if current_group and len(current_group['options']) == 0:
+                # If we already have a group but we never saw any item rows under it, it was actually a Set!
+                if current_group and current_group.get('item_rows_seen', 0) == 0:
                     # The previous header was an Internal Set
                     current_set = {
                         "set_id": f"{sheet_name}_set_{idx}",
@@ -67,19 +67,37 @@ def parse_offer_list():
                     "group_id": f"{sheet_name}_{idx}_{str(row['CODE']).strip() if pd.notna(row['CODE']) else ''}",
                     "group_name": header_name,
                     "required_qty": header_qty,
-                    "options": []
+                    "options": [],
+                    "item_rows_seen": 0
                 }
                 current_set["groups"].append(current_group)
                 
             else:
+                if current_group:
+                    current_group['item_rows_seen'] += 1
+                    
                 code = str(row['CODE']).strip() if pd.notna(row['CODE']) else ""
+                
+                if '99-999-99-99' in code:
+                    continue
+                    
+                is_standard = code.upper().startswith('KLS-') or code.upper().startswith('[KLS]')
+                if is_standard:
+                    code = re.sub(r'(?i)^(\[KLS\]\s*-?\s*|KLS-\s*)', '', code).strip()
+                
                 item_qty = float(row['QTY']) if pd.notna(row['QTY']) else None
                 desc = str(row['DESCRIPTION']).strip() if pd.notna(row['DESCRIPTION']) else ""
+                
+                desc_for_regex = desc
+                if code in lookup_dict and pd.notna(lookup_dict[code].get('description')):
+                    master_desc = str(lookup_dict[code]['description']).strip()
+                    if master_desc:
+                        desc_for_regex = master_desc
                 
                 base_code_match = re.match(r"^(\d{2}-\d{2})", code)
                 base_code = base_code_match.group(1) if base_code_match else code
                 
-                extracted = parse_instrument_regex(desc)
+                extracted = parse_instrument_regex(desc_for_regex)
                 extracted = {k: v for k, v in extracted.items() if v is not None}
                 
                 item = {
@@ -90,7 +108,8 @@ def parse_offer_list():
                     "qty": item_qty,
                     "image_url": None,
                     "extracted_features": extracted,
-                    "details": {}
+                    "details": {},
+                    "isStandard": is_standard
                 }
                 
                 if code in lookup_dict:
@@ -105,9 +124,11 @@ def parse_offer_list():
                     
         catalog.append(current_category)
 
-    # Filter out empty sets and groups
+    # Filter out empty sets and groups, and sort options to put KLS standards first
     for cat in catalog:
         for s in cat["sets"]:
+            for g in s["groups"]:
+                g["options"].sort(key=lambda x: not x.get("isStandard", False))
             s["groups"] = [g for g in s["groups"] if len(g["options"]) > 0]
         cat["sets"] = [s for s in cat["sets"] if len(s["groups"]) > 0]
     catalog = [c for c in catalog if len(c["sets"]) > 0]

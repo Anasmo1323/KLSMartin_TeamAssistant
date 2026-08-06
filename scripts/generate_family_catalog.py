@@ -45,7 +45,10 @@ def generate_family_catalog():
             "code": code,
             "base_code": base_code,
             "basic_description": desc,
-            "extracted_features": extracted
+            "extracted_features": extracted,
+            "details": {
+                "description": row.get('description', desc)
+            }
         }
         
         if base_code not in family_catalog:
