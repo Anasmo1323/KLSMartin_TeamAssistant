@@ -736,7 +736,7 @@ export default function Home() {
                       if (matchedInSet.length > 0) {
                         hasResults = true;
                         resultsBlock.push(
-                          <div key={`${cat.name}-${set.set_name}`} style={{ marginBottom: '2rem' }}>
+                          <div key={`${cat.name}-${set.set_id}`} style={{ marginBottom: '2rem' }}>
                             <h4 style={{ color: 'var(--text-primary)', borderBottom: '1px solid var(--border-light)', paddingBottom: '0.5rem', marginBottom: '1rem' }}>
                               {cat.name} <span style={{ color: 'var(--text-secondary)' }}>/</span> {set.set_name}
                             </h4>
