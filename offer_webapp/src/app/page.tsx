@@ -291,6 +291,12 @@ export default function Home() {
         // Save customer details (excluding order-specific notes) for next time
         localStorage.setItem('kls_customer', JSON.stringify({ ...customerDetails, notes: '' }));
 
+        if (wantsExcelReceipt) {
+          alert("Request submitted successfully!\n\nPlease check your email for the Excel receipt.\n\n⚠️ IMPORTANT: Since this is an automated email, it may have landed in your Spam/Junk folder. Please mark it as 'Not Spam' to ensure future receipts go to your Inbox.");
+        } else {
+          alert("Request submitted successfully!");
+        }
+
         setCartState({});
         setCustomerDetails(prev => ({ ...prev, notes: '' }));
         setWantsExcelReceipt(false);
