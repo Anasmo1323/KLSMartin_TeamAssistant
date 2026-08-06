@@ -87,24 +87,7 @@ export default function Home() {
   const [submitCooldown, setSubmitCooldown] = useState<number>(0);
   const [showOnboarding, setShowOnboarding] = useState<boolean>(false);
   const [onboardingStep, setOnboardingStep] = useState<number>(0);
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
 
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('kls_theme');
-    if (savedTheme === 'light' || savedTheme === 'dark') {
-      setTheme(savedTheme);
-      document.documentElement.setAttribute('data-theme', savedTheme);
-    } else {
-      document.documentElement.setAttribute('data-theme', 'dark');
-    }
-  }, []);
-
-  const toggleTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(newTheme);
-    localStorage.setItem('kls_theme', newTheme);
-    document.documentElement.setAttribute('data-theme', newTheme);
-  };
 
 
   // Cart State: Record<option_code, CartItem state without qty>
