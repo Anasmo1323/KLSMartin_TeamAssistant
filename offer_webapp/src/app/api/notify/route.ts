@@ -3,7 +3,6 @@ import { Resend } from 'resend';
 import { db } from '../../../lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: Request) {
   try {
@@ -74,6 +73,7 @@ export async function POST(req: Request) {
     `;
 
     // 3. Send Email using Resend
+    const resend = new Resend(process.env.RESEND_API_KEY);
     const { data, error } = await resend.emails.send({
       from: process.env.RESEND_FROM_EMAIL || 'Portal Notifications <onboarding@resend.dev>',
       to: emails,
