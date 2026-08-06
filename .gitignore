@@ -9,3 +9,7 @@ desktop_app/images/
 scraping/images_jpg/
 models/
 llm_family_cache.json
+# Web App Backups & Env
+offer_webapp/backup_ui/
+offer_webapp/.env.local
+offer_webapp/.env
