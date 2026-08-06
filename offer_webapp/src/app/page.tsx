@@ -104,11 +104,15 @@ export default function Home() {
   const [wantsExcelReceipt, setWantsExcelReceipt] = useState(false);
   const [customerDetails, setCustomerDetails] = useState({ title: 'Dr.', name: '', hospital: '', phone: '', email: '', notes: '' });
 
-  // Load cart from LocalStorage on mount
+  // Load cart and customer details from LocalStorage on mount
   useEffect(() => {
     const savedCart = localStorage.getItem('kls_cart');
     if (savedCart) {
       try { setCartState(JSON.parse(savedCart)); } catch (e) { }
+    }
+    const savedCustomer = localStorage.getItem('kls_customer');
+    if (savedCustomer) {
+      try { setCustomerDetails(JSON.parse(savedCustomer)); } catch (e) { }
     }
     setIsLoaded(true);
   }, []);
@@ -284,9 +288,12 @@ export default function Home() {
           })
         }).catch(err => console.error("Email notification failed:", err));
 
+        // Save customer details (excluding order-specific notes) for next time
+        localStorage.setItem('kls_customer', JSON.stringify({ ...customerDetails, notes: '' }));
+
         setCartState({});
-      setCustomerDetails({ title: 'Dr.', name: '', hospital: '', phone: '', email: '', notes: '' });
-      setWantsExcelReceipt(false);
+        setCustomerDetails(prev => ({ ...prev, notes: '' }));
+        setWantsExcelReceipt(false);
       setShowCheckout(false);
       setMobileCartOpen(false);
       setSubmitCooldown(10);
