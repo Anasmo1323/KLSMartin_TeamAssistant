@@ -5,9 +5,7 @@
   --bg-glass: rgba(255, 255, 255, 0.95);
 
   --accent-blue: #e3000f;
-  /* Re-mapped to KLS Red */
   --accent-cyan: #e3000f;
-  /* Re-mapped to KLS Red */
   --accent-gradient: linear-gradient(135deg, #e3000f 0%, #b3000b 100%);
 
   --text-primary: #222222;
@@ -23,6 +21,31 @@
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 8px;
+}
+
+[data-theme="dark"] {
+  /* Premium Dark Glassmorphism Palette */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #171717;
+  --bg-glass: rgba(23, 23, 23, 0.65);
+
+  --accent-blue: #e3000f;
+  --accent-cyan: #e3000f;
+  --accent-gradient: linear-gradient(135deg, #ff1a2b 0%, #a3000a 100%);
+
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  --border-light: rgba(255, 255, 255, 0.1);
+  --border-focus: rgba(227, 0, 15, 0.5);
+
+  --shadow-glow: 0 0 20px rgba(227, 0, 15, 0.3);
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
 }
 
 * {
@@ -60,7 +83,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--bg-secondary);
+  background: var(--border-light);
   border-radius: 4px;
 }
 

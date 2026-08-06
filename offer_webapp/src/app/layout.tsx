@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import ThemeToggle from './ThemeToggle'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -19,7 +20,10 @@ export default function RootLayout({
       <body className={inter.className}>
         <header className="main-header">
           <img src="/Technowave.png" alt="Technowave Logo" className="header-logo-technowave" />
-          <img src="/kls.png" alt="KLS Martin Logo" className="header-logo-kls" />
+          <div style={{ display: 'flex', alignItems: 'center', height: '100%', gap: '1rem' }}>
+            <ThemeToggle />
+            <img src="/kls.png" alt="KLS Martin Logo" className="header-logo-kls" />
+          </div>
         </header>
         {children}
       </body>
