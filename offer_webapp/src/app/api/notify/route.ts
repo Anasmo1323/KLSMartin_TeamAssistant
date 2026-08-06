@@ -10,20 +10,9 @@ export async function POST(req: Request) {
 
     // 1. Fetch notification emails from Firebase
     const configDoc = await getDoc(doc(db, 'config', 'notifications'));
-    let emails: string[] = [];
+    let adminEmails: string[] = [];
     if (configDoc.exists()) {
-      emails = configDoc.data().emails || [];
-    }
-
-    if (wantsExcelReceipt && customer.email) {
-      if (!emails.includes(customer.email)) {
-        emails.push(customer.email);
-      }
-    }
-
-    if (emails.length === 0) {
-      console.log('No notification emails configured.');
-      return NextResponse.json({ success: true, message: 'No emails configured' });
+      adminEmails = configDoc.data().emails || [];
     }
     
     // Safety check for Gmail credentials
@@ -37,7 +26,7 @@ export async function POST(req: Request) {
       `<li><strong>${item.categoryName} &gt; ${item.setName || 'General'}</strong>: ${item.qty}x ${item.groupName} (${item.code})</li>`
     ).join('');
 
-    const htmlContent = `
+    const adminHtmlContent = `
       <div style="font-family: sans-serif; max-width: 600px; margin: auto;">
         <h2 style="color: #00c8ff;">New Submission Received</h2>
         <p>A new instrument request has been successfully submitted through the Portal.</p>
@@ -78,28 +67,46 @@ export async function POST(req: Request) {
       </div>
     `;
 
+    const doctorHtmlContent = `
+      <div style="font-family: sans-serif; max-width: 600px; margin: auto;">
+        <h2 style="color: #00c8ff;">Your Instrument Request Receipt</h2>
+        <p>Dear ${customer.title} ${customer.name},</p>
+        <p>Thank you for submitting your instrument request through the KLS Martin Team Assistant.</p>
+        <p>Attached to this email is an Excel sheet containing your complete requested order list.</p>
+        
+        <h3>Order Summary (Total Items: ${totalItems})</h3>
+        <ul>
+          ${itemsHtml}
+        </ul>
+
+        <p style="margin-top: 2rem; color: #777; font-size: 0.9rem;">
+          Submission ID: <strong>${submissionId}</strong><br/>
+          <em>If you have any questions, please reply to this email.</em>
+        </p>
+      </div>
+    `;
+
     let attachments = [];
-    if (wantsExcelReceipt) {
-      const excelData = items.map((item: any) => ({
-        'Category': item.categoryName,
-        'Set': item.setName || 'General',
-        'Item Group': item.groupName,
-        'Code': item.code,
-        'Description': item.optionDesc || '',
-        'Quantity': item.qty
-      }));
-      
-      const ws = XLSX.utils.json_to_sheet(excelData);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Requested Items");
-      
-      const buffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
-      
-      attachments.push({
-        filename: `MMC_Request_${submissionId}.xlsx`,
-        content: buffer
-      });
-    }
+    // Always generate Excel attachment for admin & doctor
+    const excelData = items.map((item: any) => ({
+      'Category': item.categoryName,
+      'Set': item.setName || 'General',
+      'Item Group': item.groupName,
+      'Code': item.code,
+      'Description': item.optionDesc || '',
+      'Quantity': item.qty
+    }));
+    
+    const ws = XLSX.utils.json_to_sheet(excelData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Requested Items");
+    
+    const buffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+    
+    attachments.push({
+      filename: `MMC_Request_${submissionId}.xlsx`,
+      content: buffer
+    });
 
     // 3. Send Email using Nodemailer
     const transporter = nodemailer.createTransport({
@@ -110,16 +117,34 @@ export async function POST(req: Request) {
       },
     });
 
-    const info = await transporter.sendMail({
-      from: `"Portal Notifications" <${process.env.GMAIL_USER}>`,
-      to: emails.join(', '),
-      subject: `New Request Submission - ${customer.hospital}`,
-      html: htmlContent,
-      attachments: attachments.length > 0 ? attachments : undefined,
-    });
+    let messageId = null;
 
-    console.log(`Notification email sent via Gmail for submission ${submissionId}. MessageId:`, info.messageId);
-    return NextResponse.json({ success: true, messageId: info.messageId });
+    if (adminEmails.length > 0) {
+      const adminInfo = await transporter.sendMail({
+        from: `"Portal Notifications" <${process.env.GMAIL_USER}>`,
+        to: adminEmails.join(', '),
+        subject: `New Request Submission - ${customer.hospital}`,
+        html: adminHtmlContent,
+        attachments: attachments,
+      });
+      messageId = adminInfo.messageId;
+      console.log(`Admin notification sent for ${submissionId}. MessageId:`, adminInfo.messageId);
+    } else {
+      console.log('No admin emails configured. Admin email skipped.');
+    }
+
+    if (wantsExcelReceipt && customer.email) {
+      const doctorInfo = await transporter.sendMail({
+        from: `"KLS Martin Team Assistant" <${process.env.GMAIL_USER}>`,
+        to: customer.email,
+        subject: `Your Instrument Request Receipt - KLS Martin`,
+        html: doctorHtmlContent,
+        attachments: attachments,
+      });
+      console.log(`Doctor receipt sent for ${submissionId}. MessageId:`, doctorInfo.messageId);
+    }
+
+    return NextResponse.json({ success: true, messageId });
 
   } catch (error: any) {
     console.error('Error sending notification email:', error);
