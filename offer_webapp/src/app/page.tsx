@@ -102,6 +102,7 @@ export default function Home() {
   const [showCheckout, setShowCheckout] = useState(false);
   const [checkoutStep, setCheckoutStep] = useState<0 | 1>(0);
   const [wantsExcelReceipt, setWantsExcelReceipt] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState<'none' | 'standard' | 'receipt'>('none');
   const [customerDetails, setCustomerDetails] = useState({ title: 'Dr.', name: '', hospital: '', phone: '', email: '', notes: '' });
 
   // Load cart and customer details from LocalStorage on mount
@@ -175,7 +176,7 @@ export default function Home() {
 
   // Lock body scroll when any modal or full-screen overlay is open
   useEffect(() => {
-    if (mobileCartOpen || activeFamilyCode || showCheckout || lightboxImg || showLoginModal || showOnboarding) {
+    if (mobileCartOpen || activeFamilyCode || showCheckout || lightboxImg || showLoginModal || showOnboarding || showSuccessModal !== 'none') {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
@@ -183,7 +184,7 @@ export default function Home() {
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [mobileCartOpen, activeFamilyCode, showCheckout, lightboxImg, showLoginModal, showOnboarding]);
+  }, [mobileCartOpen, activeFamilyCode, showCheckout, lightboxImg, showLoginModal, showOnboarding, showSuccessModal]);
 
   const updateQty = (opt: Option, delta: number, groupName: string, categoryName: string, setName: string) => {
     setCartState(prev => {
@@ -292,9 +293,9 @@ export default function Home() {
         localStorage.setItem('kls_customer', JSON.stringify({ ...customerDetails, notes: '' }));
 
         if (wantsExcelReceipt) {
-          alert("Request submitted successfully!\n\nPlease check your email for the Excel receipt.\n\n⚠️ IMPORTANT: Since this is an automated email, it may have landed in your Spam/Junk folder. Please mark it as 'Not Spam' to ensure future receipts go to your Inbox.");
+          setShowSuccessModal('receipt');
         } else {
-          alert("Request submitted successfully!");
+          setShowSuccessModal('standard');
         }
 
         setCartState({});
@@ -632,6 +633,46 @@ export default function Home() {
                 </form>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success Modal */}
+      {showSuccessModal !== 'none' && (
+        <div className={styles.modalOverlay} style={{ justifyContent: 'center', alignItems: 'center', zIndex: 10000 }}>
+          <div className={styles.modalContent} style={{ maxWidth: '450px', width: '90%', padding: '2.5rem 2rem', textAlign: 'center', margin: 'auto', display: 'flex', flexDirection: 'column', gap: '1.5rem', border: '1px solid var(--accent-cyan)' }}>
+            
+            <div style={{ width: '60px', height: '60px', borderRadius: '50%', backgroundColor: 'rgba(0, 200, 255, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto', color: 'var(--accent-cyan)', fontSize: '2rem' }}>
+              ✓
+            </div>
+
+            <h2 style={{ fontSize: '1.5rem', color: 'var(--text-primary)', margin: 0 }}>Request Submitted!</h2>
+            
+            <div style={{ color: 'var(--text-secondary)', lineHeight: '1.6' }}>
+              {showSuccessModal === 'receipt' ? (
+                <>
+                  <p style={{ margin: '0 0 1rem 0' }}>Your instrument request has been sent successfully.</p>
+                  <div style={{ padding: '1rem', backgroundColor: 'var(--bg-primary)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-light)', fontSize: '0.95rem' }}>
+                    <p style={{ margin: '0 0 0.5rem 0', fontWeight: 600, color: 'var(--text-primary)' }}>Excel Receipt Sent</p>
+                    <p style={{ margin: '0 0 0.75rem 0' }}>Please check your email inbox for the attached Excel sheet.</p>
+                    <p style={{ margin: 0, color: 'var(--accent-red)', fontSize: '0.85rem' }}>
+                      ⚠️ <strong>Important:</strong> If you don't see it, check your Spam/Junk folder and mark it as "Not Spam".
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <p style={{ margin: 0 }}>Your instrument request has been sent successfully. Our team will review it shortly.</p>
+              )}
+            </div>
+
+            <button 
+              className={styles.submitBtn} 
+              style={{ width: '100%', marginTop: '0.5rem' }}
+              onClick={() => setShowSuccessModal('none')}
+            >
+              Close
+            </button>
+
           </div>
         </div>
       )}
