@@ -85,7 +85,7 @@ export async function POST(req: Request) {
         'Set': item.setName || 'General',
         'Item Group': item.groupName,
         'Code': item.code,
-        'Description': item.basic_description || '',
+        'Description': item.optionDesc || '',
         'Quantity': item.qty
       }));
       
