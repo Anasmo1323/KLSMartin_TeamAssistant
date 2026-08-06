@@ -590,6 +590,24 @@
   .title {
     font-size: 2rem;
   }
+
+  .checkoutItemCard {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+  
+  .checkoutItemCard > div:first-child {
+    width: 100% !important;
+    height: 200px !important;
+    margin-bottom: 0.5rem;
+  }
+
+  .checkoutItemControls {
+    align-items: flex-start !important;
+    width: 100%;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+  }
 }
 
 /* Onboarding Overlay */

@@ -532,7 +532,7 @@ export default function Home() {
                         {cartItemsBySite[siteKey].map((item, idx) => {
                           const publicId = (cloudinaryMapping as Record<string, string>)[item.code];
                           return (
-                            <div key={idx} style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', backgroundColor: 'var(--bg-secondary)', padding: '1rem', borderRadius: '8px', marginBottom: '1rem', border: '1px solid var(--border-light)' }}>
+                            <div key={idx} className={styles.checkoutItemCard} style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', backgroundColor: 'var(--bg-secondary)', padding: '1rem', borderRadius: '8px', marginBottom: '1rem', border: '1px solid var(--border-light)' }}>
                               <div style={{ width: '120px', height: '120px', backgroundColor: 'var(--bg-glass)', borderRadius: '8px', padding: '0.5rem', display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
                                 {publicId ? (
                                   <Image
@@ -551,7 +551,7 @@ export default function Home() {
                                 <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Item Code: <span style={{ color: 'var(--accent-cyan)' }}>{item.code}</span></div>
                                 <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>{item.optionDesc}</div>
                               </div>
-                              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '1rem' }}>
+                              <div className={styles.checkoutItemControls} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '1rem' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', backgroundColor: 'var(--bg-primary)', padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border-light)' }}>
                                   <button className={styles.qtyBtn} onClick={() => updateCartQty(item.cartKey, -1)} style={{ padding: '0.25rem 0.75rem' }}>-</button>
                                   <span style={{ minWidth: '30px', textAlign: 'center', fontWeight: 600, fontSize: '1.1rem' }}>{item.qty}</span>
