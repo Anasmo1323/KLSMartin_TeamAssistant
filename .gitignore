@@ -13,3 +13,7 @@ llm_family_cache.json
 offer_webapp/backup_ui/
 offer_webapp/.env.local
 offer_webapp/.env
+
+# Node Modules
+node_modules/
+*/node_modules/
