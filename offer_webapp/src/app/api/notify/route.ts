@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 import { db } from '../../../lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import * as XLSX from 'xlsx';
@@ -26,10 +26,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true, message: 'No emails configured' });
     }
     
-    // Safety check for API key
-    if (!process.env.RESEND_API_KEY) {
-       console.error("RESEND_API_KEY is missing from environment variables.");
-       return NextResponse.json({ success: false, error: "Server misconfigured. Missing API key." }, { status: 500 });
+    // Safety check for Gmail credentials
+    if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
+       console.error("GMAIL_USER or GMAIL_APP_PASSWORD is missing from environment variables.");
+       return NextResponse.json({ success: false, error: "Server misconfigured. Missing Gmail credentials." }, { status: 500 });
     }
 
     // 2. Build HTML Email Draft
@@ -101,23 +101,25 @@ export async function POST(req: Request) {
       });
     }
 
-    // 3. Send Email using Resend
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    const { data, error } = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL || 'Portal Notifications <onboarding@resend.dev>',
-      to: emails,
+    // 3. Send Email using Nodemailer
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD,
+      },
+    });
+
+    const info = await transporter.sendMail({
+      from: `"Portal Notifications" <${process.env.GMAIL_USER}>`,
+      to: emails.join(', '),
       subject: `New Request Submission - ${customer.hospital}`,
       html: htmlContent,
       attachments: attachments.length > 0 ? attachments : undefined,
     });
 
-    if (error) {
-       console.error("Resend API error:", error);
-       return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-    }
-
-    console.log(`Notification email sent via Resend for submission ${submissionId}.`, data);
-    return NextResponse.json({ success: true, data });
+    console.log(`Notification email sent via Gmail for submission ${submissionId}. MessageId:`, info.messageId);
+    return NextResponse.json({ success: true, messageId: info.messageId });
 
   } catch (error: any) {
     console.error('Error sending notification email:', error);
