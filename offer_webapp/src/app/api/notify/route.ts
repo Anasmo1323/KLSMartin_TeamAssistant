@@ -14,15 +14,15 @@ export async function POST(req: Request) {
     if (configDoc.exists()) {
       adminEmails = configDoc.data().emails || [];
     }
-    
+
     // Safety check for Gmail credentials
     if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
-       console.error("GMAIL_USER or GMAIL_APP_PASSWORD is missing from environment variables.");
-       return NextResponse.json({ success: false, error: "Server misconfigured. Missing Gmail credentials." }, { status: 500 });
+      console.error("GMAIL_USER or GMAIL_APP_PASSWORD is missing from environment variables.");
+      return NextResponse.json({ success: false, error: "Server misconfigured. Missing Gmail credentials." }, { status: 500 });
     }
 
     // 2. Build HTML Email Draft
-    const itemsHtml = items.map((item: any) => 
+    const itemsHtml = items.map((item: any) =>
       `<li><strong>${item.categoryName} &gt; ${item.setName || 'General'}</strong>: ${item.qty}x ${item.groupName} (${item.code})</li>`
     ).join('');
 
@@ -67,18 +67,18 @@ export async function POST(req: Request) {
       </div>
     `;
 
-    const hasOrthoItem = items.some((item: any) => 
-      (item.categoryName || '').toUpperCase().includes('ORTHO') || 
-      (item.setName || '').toUpperCase().includes('ORTHO') || 
-      (item.groupName || '').toUpperCase().includes('ORTHO') || 
+    const hasOrthoItem = items.some((item: any) =>
+      (item.categoryName || '').toUpperCase().includes('ORTHO') ||
+      (item.setName || '').toUpperCase().includes('ORTHO') ||
+      (item.groupName || '').toUpperCase().includes('ORTHO') ||
       (item.code || '').toUpperCase().includes('ORTHO')
     );
 
     const doctorHtmlContent = `
       <div style="font-family: sans-serif; max-width: 600px; margin: auto;">
-        <h2 style="color: #00c8ff;">Greetings from Technowave team - KLSMartin</h2>
+        <h2 style="color: #00c8ff;">Greetings from Technowave Team - KLSMartin</h2>
         <p>Dear ${customer.title} ${customer.name},</p>
-        <p>Thank you for submitting your instrument request through the KLS Martin Team Assistant.</p>
+        <p>Thank you for submitting your instrument request Technowave - KLSMartin Portal.</p>
         <p>Attached to this email is an Excel sheet containing your complete requested order list.</p>
         
         <h3>Order Summary (Total Items: ${totalItems})</h3>
@@ -99,18 +99,26 @@ export async function POST(req: Request) {
           Submission ID: <strong>${submissionId}</strong>
         </p>
 
-        <div style="margin-top: 3rem; font-family: sans-serif;">
-          <p style="margin-bottom: 1.5rem;">Don’t hesitate to contact me if you require any further information.</p>
-          <img src="https://klsmcc.vercel.app/Technowave.png" alt="Technowave" style="max-height: 80px; margin-bottom: 1rem;" />
-          <p style="margin: 0;"><strong>Eng. Albear Emil Ayoub</strong></p>
-          <p style="margin: 0; color: #555;">Sales Manager</p>
-          <p style="margin: 1rem 0 0 0; color: #555;"><strong>Tel:</strong> +202-27498312/ 3 / 4 EXT:212</p>
-          <p style="margin: 0; color: #555;"><strong>Fax:</strong> +202-27498309</p>
-          <p style="margin: 0; color: #555;"><strong>Mob:</strong> +201222247653</p>
-          <p style="margin: 1rem 0 0 0; color: #555;">Sky Tower, Ring Road,<br/>Besides Bavarian Auto (BMW)<br/>Katamia, Cairo - Egypt</p>
-          <hr style="border: none; border-top: 1px solid #ddd; margin: 2rem 0 1rem 0;" />
-          <p style="margin: 0; font-size: 0.8rem; color: #999; text-align: justify; line-height: 1.4;">
-            This e-mail may contain confidential and/or privileged information. If you are not the intended recipient (or have received this e-mail in error) please notify the sender immediately and destroy this e-mail. Any unauthorized copying, disclosure, or distribution of the material in this e-mail is strictly forbidden.
+        <div style="margin-top: 3rem; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+          <p style="margin-bottom: 1.5rem; color: #1e477a; font-weight: bold; font-size: 13px;">Don’t hesitate to contact me if you require any further information.</p>
+          
+          <img src="https://klsmcc.vercel.app/Technowave.png" alt="Technowave" style="max-height: 60px; margin-bottom: 1.5rem;" />
+          
+          <p style="margin: 0; color: #1e477a; font-family: 'Times New Roman', Times, serif; font-size: 18px; font-weight: bold;">Eng. Albear Emil Ayoub</p>
+          <p style="margin: 4px 0 2px 0; color: #1e477a; font-size: 13px; font-weight: bold;">Sales Manager</p>
+          
+          <p style="margin: 2px 0; color: #1e477a; font-size: 13px;">Tel :+202-27498312/ 3 / 4  EXT:212</p>
+          <p style="margin: 2px 0; color: #1e477a; font-size: 13px;">Fax:+202-27498309</p>
+          <p style="margin: 2px 0; color: #1e477a; font-size: 13px;">Mob:  +201222247653</p>
+          
+          <p style="margin: 6px 0 2px 0; color: #1e477a; font-size: 13px;">Sky Tower, Ring Road,</p>
+          <p style="margin: 2px 0; color: #1e477a; font-size: 13px;">Besides Bavarian Auto (BMW)</p>
+          <p style="margin: 2px 0; color: #1e477a; font-size: 13px;">Katamia, Cairo - Egypt</p>
+          
+          <br/>
+          <p style="margin: 1rem 0 0 0; font-size: 11px; color: #000; font-weight: bold; line-height: 1.4; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+            This e-mail may contain confidential and/or privileged information. If you are not the intended recipient (or have received this e-mail in error) please notify the sender immediately and destroy this e-mail.<br/>
+            Any unauthorized copying, disclosure, or distribution of the material in this e-mail is strictly forbidden.
           </p>
         </div>
       </div>
@@ -126,13 +134,13 @@ export async function POST(req: Request) {
       'Description': item.optionDesc || '',
       'Quantity': item.qty
     }));
-    
+
     const ws = XLSX.utils.json_to_sheet(excelData);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Requested Items");
-    
+
     const buffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
-    
+
     attachments.push({
       filename: `MMC_Request_${submissionId}.xlsx`,
       content: buffer
