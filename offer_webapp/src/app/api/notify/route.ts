@@ -67,9 +67,16 @@ export async function POST(req: Request) {
       </div>
     `;
 
+    const hasOrthoItem = items.some((item: any) => 
+      (item.categoryName || '').toUpperCase().includes('ORTHO') || 
+      (item.setName || '').toUpperCase().includes('ORTHO') || 
+      (item.groupName || '').toUpperCase().includes('ORTHO') || 
+      (item.code || '').toUpperCase().includes('ORTHO')
+    );
+
     const doctorHtmlContent = `
       <div style="font-family: sans-serif; max-width: 600px; margin: auto;">
-        <h2 style="color: #00c8ff;">Your Instrument Request Receipt</h2>
+        <h2 style="color: #00c8ff;">Greetings from Technowave team - KLSMartin</h2>
         <p>Dear ${customer.title} ${customer.name},</p>
         <p>Thank you for submitting your instrument request through the KLS Martin Team Assistant.</p>
         <p>Attached to this email is an Excel sheet containing your complete requested order list.</p>
@@ -79,10 +86,33 @@ export async function POST(req: Request) {
           ${itemsHtml}
         </ul>
 
+        <div style="margin-top: 2rem;">
+          <p><strong>Helpful Links:</strong></p>
+          <ul>
+            <li style="margin-bottom: 0.5rem;"><a href="https://www.klsmartin.com/en/media-library/brochures-catalogs-flyers/#%7B%22fulltext%22:%22%22,%22applicationField%22:%22%22,%22topic%22:%2220%22,%22language%22:%22%22,%22media%22:%22%22,%22page%22:%220%22%7D">KLS Martin Brochures</a></li>
+            <li style="margin-bottom: 0.5rem;"><a href="https://www.klsmartin.com/shop/en/">KLS Martin Shop</a></li>
+            ${hasOrthoItem ? '<li style="margin-bottom: 0.5rem;"><a href="https://www.klsmartin.com/mediathek/91-350-73-02_Nexos_Pelvis_Access_and_repositioning.pdf">Nexos Pelvis Access and repositioning</a></li>' : ''}
+          </ul>
+        </div>
+
         <p style="margin-top: 2rem; color: #777; font-size: 0.9rem;">
-          Submission ID: <strong>${submissionId}</strong><br/>
-          <em>If you have any questions, please reply to this email.</em>
+          Submission ID: <strong>${submissionId}</strong>
         </p>
+
+        <div style="margin-top: 3rem; font-family: sans-serif;">
+          <p style="margin-bottom: 1.5rem;">Don’t hesitate to contact me if you require any further information.</p>
+          <img src="https://klsmcc.vercel.app/Technowave.png" alt="Technowave" style="max-height: 80px; margin-bottom: 1rem;" />
+          <p style="margin: 0;"><strong>Eng. Albear Emil Ayoub</strong></p>
+          <p style="margin: 0; color: #555;">Sales Manager</p>
+          <p style="margin: 1rem 0 0 0; color: #555;"><strong>Tel:</strong> +202-27498312/ 3 / 4 EXT:212</p>
+          <p style="margin: 0; color: #555;"><strong>Fax:</strong> +202-27498309</p>
+          <p style="margin: 0; color: #555;"><strong>Mob:</strong> +201222247653</p>
+          <p style="margin: 1rem 0 0 0; color: #555;">Sky Tower, Ring Road,<br/>Besides Bavarian Auto (BMW)<br/>Katamia, Cairo - Egypt</p>
+          <hr style="border: none; border-top: 1px solid #ddd; margin: 2rem 0 1rem 0;" />
+          <p style="margin: 0; font-size: 0.8rem; color: #999; text-align: justify; line-height: 1.4;">
+            This e-mail may contain confidential and/or privileged information. If you are not the intended recipient (or have received this e-mail in error) please notify the sender immediately and destroy this e-mail. Any unauthorized copying, disclosure, or distribution of the material in this e-mail is strictly forbidden.
+          </p>
+        </div>
       </div>
     `;
 
@@ -135,9 +165,9 @@ export async function POST(req: Request) {
 
     if (wantsExcelReceipt && customer.email) {
       const doctorInfo = await transporter.sendMail({
-        from: `"KLS Martin Team Assistant" <${process.env.GMAIL_USER}>`,
+        from: `"Technowave Team - KLSMartin" <${process.env.GMAIL_USER}>`,
         to: customer.email,
-        subject: `Your Instrument Request Receipt - KLS Martin`,
+        subject: `Your Instrument Request List - Technowave Team - KLSMartin`,
         html: doctorHtmlContent,
         attachments: attachments,
       });
