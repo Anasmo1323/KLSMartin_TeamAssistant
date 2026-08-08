@@ -79,6 +79,8 @@
   background: var(--bg-glass);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
 }
 
 .categoryCard:hover {
@@ -90,11 +92,15 @@
 .categoryCard h3 {
   font-size: 1.2rem;
   color: var(--text-primary);
+  position: relative;
+  z-index: 1;
 }
 
 .categoryCard p {
   color: var(--text-secondary);
   font-size: 0.9rem;
+  position: relative;
+  z-index: 1;
 }
 
 /* Accordion for Groups */

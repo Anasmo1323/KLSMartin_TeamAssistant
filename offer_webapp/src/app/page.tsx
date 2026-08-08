@@ -854,6 +854,7 @@ export default function Home() {
                   className={styles.categoryCard}
                   onClick={() => setActiveCategory(cat)}
                 >
+                  <img src={cat.name === 'ORTHO' ? '/bg_ORTHO.png' : '/bg_generic.png'} alt="" style={{ position: 'absolute', right: '-20px', bottom: '-20px', width: '120px', opacity: 0.1, pointerEvents: 'none', mixBlendMode: 'plus-lighter' }} />
                   <h3>{cat.name}</h3>
                   <p>{cat.sets.length} Subsets</p>
                 </div>
