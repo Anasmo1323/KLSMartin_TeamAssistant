@@ -722,14 +722,14 @@ export default function Home() {
               </>
             )}
           </div>
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', gap: '0.5rem', flex: 1, justifyContent: 'flex-end', maxWidth: '100%' }}>
             <input
               type="text"
               placeholder="Search Tool..."
               value={globalSearchQuery}
               onChange={e => setGlobalSearchQuery(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && setActiveSearchQuery(globalSearchQuery)}
-              style={{ padding: '0.5rem 1rem', borderRadius: '4px', border: '1px solid var(--border-light)', backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)', outline: 'none', minWidth: '200px' }}
+              style={{ padding: '0.5rem 1rem', borderRadius: '4px', border: '1px solid var(--border-light)', backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)', outline: 'none', width: '100%', minWidth: '100px', maxWidth: '200px' }}
             />
             <button
               onClick={() => setActiveSearchQuery(globalSearchQuery)}
