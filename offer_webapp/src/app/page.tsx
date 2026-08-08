@@ -100,7 +100,7 @@ export default function Home() {
 
   // Checkout State
   const [showCheckout, setShowCheckout] = useState(false);
-  const [checkoutStep, setCheckoutStep] = useState<0 | 1>(0);
+  const [checkoutStep, setCheckoutStep] = useState<0 | 1 | 2>(0);
   const [wantsExcelReceipt, setWantsExcelReceipt] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState<'none' | 'standard' | 'receipt'>('none');
   const [customerDetails, setCustomerDetails] = useState({ title: 'Dr.', name: '', hospital: '', phone: '', email: '', notes: '' });
