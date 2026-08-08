@@ -854,7 +854,7 @@ export default function Home() {
                   className={styles.categoryCard}
                   onClick={() => setActiveCategory(cat)}
                 >
-                  <img src={`/disciplines/${encodeURIComponent(cat.name)}.png`} alt="" style={{ position: 'absolute', right: '0px', bottom: '0px', height: '100%', objectFit: 'cover', pointerEvents: 'none', mixBlendMode: 'normal', opacity: 1 }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                  <img src={`/disciplines/${encodeURIComponent(cat.name)}.png`} alt="" style={{ position: 'absolute', right: '0px', bottom: '0px', height: '100%', width: '50%', objectFit: 'cover', pointerEvents: 'none', WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 30%)', maskImage: 'linear-gradient(to right, transparent 0%, black 30%)' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
                   <h3>{cat.name}</h3>
                   <p>{cat.sets.length} Subsets</p>
                 </div>
