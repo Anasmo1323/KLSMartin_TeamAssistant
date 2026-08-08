@@ -732,7 +732,7 @@ export default function Home() {
                 onClick={openLoginModal}
                 style={{ marginTop: '2.5rem', padding: '0.6rem 1.2rem', borderRadius: '4px', border: '1px solid var(--accent-cyan)', background: 'transparent', color: 'var(--accent-cyan)', cursor: 'pointer', fontWeight: 600 }}
               >
-                Enter New Code
+                Change Discipline
               </button>
             )}
           </div>
