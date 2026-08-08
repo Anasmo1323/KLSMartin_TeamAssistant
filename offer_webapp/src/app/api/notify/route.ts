@@ -102,7 +102,7 @@ export async function POST(req: Request) {
         <div style="margin-top: 3rem; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
           <p style="margin-bottom: 1.5rem; color: #1e477a; font-weight: bold; font-size: 13px;">Don’t hesitate to contact me if you require any further information.</p>
           
-          <img src="https://klsmcc.vercel.app/Technowave.png" alt="Technowave" style="max-height: 60px; margin-bottom: 1.5rem;" />
+          <img src="https://klsmcc.vercel.app/Technowave.png" alt="Technowave" width="220" style="margin-bottom: 1.5rem; display: block; border: none; outline: none;" />
           
           <p style="margin: 0; color: #1e477a; font-family: 'Times New Roman', Times, serif; font-size: 18px; font-weight: bold;">Eng. Albear Emil Ayoub</p>
           <p style="margin: 4px 0 2px 0; color: #1e477a; font-size: 13px; font-weight: bold;">Sales Manager</p>
