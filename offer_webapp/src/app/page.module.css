@@ -62,42 +62,44 @@
 /* Category Grid */
 .categoryGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2px;
 }
 
 .categoryCard {
-  padding: 2rem 1.5rem;
+  padding: 1.5rem 1.25rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  gap: 1rem;
+  align-items: flex-start;
+  justify-content: flex-start;
+  text-align: left;
+  gap: 0.5rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  background: var(--bg-glass);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-lg);
+  background: linear-gradient(90deg, #9b0c0c 30%, #520505 100%);
+  border: none;
+  border-radius: 0;
   position: relative;
   overflow: hidden;
+  height: 160px;
 }
 
 .categoryCard:hover {
-  transform: translateY(-5px);
-  border-color: var(--accent-blue);
-  box-shadow: var(--shadow-glow);
+  transform: scale(1.02);
+  z-index: 2;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
 .categoryCard h3 {
   font-size: 1.2rem;
-  color: var(--text-primary);
+  color: #ffffff;
+  font-weight: 400;
   position: relative;
   z-index: 1;
 }
 
 .categoryCard p {
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.7);
   font-size: 0.9rem;
   position: relative;
   z-index: 1;
