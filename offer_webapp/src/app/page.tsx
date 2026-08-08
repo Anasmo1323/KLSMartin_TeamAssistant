@@ -959,16 +959,14 @@ export default function Home() {
         {totalItems > 0 && <span className={styles.mobileCartBadge}>{totalItems}</span>}
       </button>
       {/* Floating Action Buttons (Bottom Left) */}
-      <div style={{ position: 'fixed', bottom: '20px', left: '20px', display: 'flex', flexDirection: 'column', gap: '15px', zIndex: 9999 }}>
-        <div style={{ transform: 'scale(1.2)' }}>
-          <ThemeToggle />
-        </div>
+      <div style={{ position: 'fixed', bottom: '20px', left: '20px', display: 'flex', flexDirection: 'column', gap: '15px', zIndex: 9999, alignItems: 'center' }}>
+        <ThemeToggle />
         <button 
           onClick={() => setShowOnboarding(true)}
           style={{ 
-            background: 'var(--accent-blue)', 
-            color: 'white', 
-            border: 'none', 
+            background: 'var(--bg-secondary)', 
+            color: 'var(--text-primary)', 
+            border: '1px solid var(--border-light)', 
             borderRadius: '50%', 
             width: '50px', 
             height: '50px', 
@@ -976,12 +974,13 @@ export default function Home() {
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center', 
-            fontSize: '1.5rem', 
             boxShadow: '0 4px 12px rgba(0,0,0,0.3)' 
           }}
           title="Watch Guide"
         >
-          ▶️
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
         </button>
       </div>
 

@@ -24,7 +24,7 @@ export default function ThemeToggle() {
   return (
     <button 
       onClick={toggleTheme} 
-      style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-light)', color: 'var(--text-primary)', borderRadius: '50%', width: '40px', height: '40px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', margin: '0 1rem', zIndex: 999 }}
+      style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-light)', color: 'var(--text-primary)', borderRadius: '50%', width: '50px', height: '50px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', margin: '0', zIndex: 999, boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}
       title="Toggle Theme"
     >
       {theme === 'dark' ? '☀️' : '🌙'}
