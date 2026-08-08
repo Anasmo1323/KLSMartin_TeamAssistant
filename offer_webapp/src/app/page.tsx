@@ -639,9 +639,9 @@ export default function Home() {
               ) : (
                 <div style={{ textAlign: 'center', padding: '1rem' }}>
                   <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>⚠️</div>
-                  <h3 style={{ color: '#ff4d4f', marginBottom: '1rem', fontSize: '1.5rem' }}>Final Confirmation</h3>
+                  <h3 style={{ color: '#ff4d4f', marginBottom: '1rem', fontSize: '1.5rem' }}>Final Review</h3>
                   <p style={{ color: 'var(--text-primary)', marginBottom: '1rem', lineHeight: '1.6' }}>
-                    This submission is <strong>final</strong>. Upon submitting, your requested items cart will be emptied and we will receive this request.
+                    Ready to submit? Upon confirming, your current cart will be sent to our team and cleared. (You can always create a new request later if needed).
                   </p>
                   <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem', lineHeight: '1.6' }}>
                     If you are not entirely sure and may want to change your request later, you can safely close this webpage or shut down your PC. <strong>Your progress is automatically saved!</strong>
