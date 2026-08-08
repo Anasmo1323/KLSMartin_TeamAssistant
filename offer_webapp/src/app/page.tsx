@@ -252,7 +252,7 @@ export default function Home() {
 
   const totalItems = Object.values(cartState).reduce((a, b) => a + b.qty, 0);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleProceedToFinal = (e: React.FormEvent) => {
     e.preventDefault();
     if (cartItems.length === 0) return;
     if (!customerDetails.name.trim() || !customerDetails.hospital.trim()) {
@@ -263,6 +263,11 @@ export default function Home() {
       alert("Please provide an email address to receive the Excel receipt.");
       return;
     }
+    setCheckoutStep(2);
+  };
+
+  const confirmSubmission = async () => {
+    if (cartItems.length === 0) return;
     setIsSubmitting(true);
 
     try {
@@ -582,8 +587,8 @@ export default function Home() {
                     </button>
                   </div>
                 </div>
-              ) : (
-                <form onSubmit={handleSubmit} className={styles.checkoutForm}>
+              ) : checkoutStep === 1 ? (
+                <form onSubmit={handleProceedToFinal} className={styles.checkoutForm}>
                   <label>
                     Doctor / Rep Name *
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -625,12 +630,31 @@ export default function Home() {
                       ← Back
                     </button>
                     {totalItems > 0 && (
-                      <button type="submit" className={styles.submitBtn} style={{ marginTop: 0, flex: 1 }} disabled={isSubmitting || submitCooldown > 0}>
-                        {isSubmitting ? 'Submitting...' : submitCooldown > 0 ? `Submitted! Wait ${submitCooldown}s` : `Submit Request (${totalItems} items)`}
+                      <button type="submit" className={styles.submitBtn} style={{ marginTop: 0, flex: 1 }}>
+                        Continue to Final Review
                       </button>
                     )}
                   </div>
                 </form>
+              ) : (
+                <div style={{ textAlign: 'center', padding: '1rem' }}>
+                  <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>⚠️</div>
+                  <h3 style={{ color: '#ff4d4f', marginBottom: '1rem', fontSize: '1.5rem' }}>Final Confirmation</h3>
+                  <p style={{ color: 'var(--text-primary)', marginBottom: '1rem', lineHeight: '1.6' }}>
+                    This submission is <strong>final</strong>. Upon submitting, your requested items cart will be emptied and we will receive this request.
+                  </p>
+                  <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem', lineHeight: '1.6' }}>
+                    If you are not entirely sure and may want to change your request later, you can safely close this webpage or shut down your PC. <strong>Your progress is automatically saved!</strong>
+                  </p>
+                  <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginTop: '2rem' }}>
+                    <button type="button" className={styles.qtyBtn} style={{ padding: '0.75rem 2rem', width: 'auto' }} onClick={() => setCheckoutStep(1)} disabled={isSubmitting}>
+                      ← Back to Details
+                    </button>
+                    <button type="button" className={styles.submitBtn} style={{ marginTop: 0, width: 'auto', backgroundColor: '#ff4d4f' }} onClick={confirmSubmission} disabled={isSubmitting || submitCooldown > 0}>
+                      {isSubmitting ? 'Submitting...' : submitCooldown > 0 ? `Submitted! Wait ${submitCooldown}s` : 'Yes, Submit Final Request'}
+                    </button>
+                  </div>
+                </div>
               )}
             </div>
           </div>
@@ -743,7 +767,7 @@ export default function Home() {
           <div style={{ display: 'flex', gap: '0.5rem' }}>
             <input
               type="text"
-              placeholder="Search catalog..."
+              placeholder="Search Tool..."
               value={globalSearchQuery}
               onChange={e => setGlobalSearchQuery(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && setActiveSearchQuery(globalSearchQuery)}
