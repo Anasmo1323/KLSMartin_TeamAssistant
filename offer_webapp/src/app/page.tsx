@@ -6,6 +6,7 @@ import Image from 'next/image';
 import catalogData from '../data/offer_catalog.json';
 import cloudinaryMapping from '../data/cloudinary_mapping.json';
 import familyCatalog from '../data/family_catalog.json';
+import ThemeToggle from './ThemeToggle';
 
 type Option = {
   option_id?: string;
@@ -388,7 +389,7 @@ export default function Home() {
                 setActiveFamilySetName(setName);
               }}
             >
-              👁️ View Family & Add to Cart ({familyVariationsCount})
+              👁️ Browse Family ({familyVariationsCount})
             </button>
           )}
         </div>
@@ -406,65 +407,22 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
-      {/* Onboarding Overlay */}
+      {/* Video Guide Overlay */}
       {showOnboarding && (
-        <div className={styles.onboardingOverlay}>
-          <div className={styles.onboardingModal}>
-            <button className={styles.onboardingSkip} onClick={() => {
-              localStorage.setItem('kls_onboarding_done', 'true');
-              setShowOnboarding(false);
-            }}>Skip Tour</button>
-
-            <div className={styles.onboardingContent}>
-              {onboardingStep === 0 && (
-                <div className={styles.onboardingSlide}>
-                  <h2>Welcome to KLSMartin Quick Order!</h2>
-                  <p>Start by entering your discipline access code to unlock your specialized instruments.</p>
-                  <Image src="/onboarding/login.png" alt="Login Screen" width={700} height={400} style={{ width: "100%", height: "auto" }} />
-                </div>
-              )}
-              {onboardingStep === 1 && (
-                <div className={styles.onboardingSlide}>
-                  <h2>Explore Categories & Sets</h2>
-                  <p>Browse easily. Open categories and explore Internal Sets mapped directly to your workflow.</p>
-                  <Image src="/onboarding/navigation.png" alt="Navigation" width={700} height={400} style={{ width: "100%", height: "auto" }} />
-                </div>
-              )}
-              {onboardingStep === 2 && (
-                <div className={styles.onboardingSlide}>
-                  <h2>Spot the Standards</h2>
-                  <p>KLSMartin standard items always appear at the top with a distinct red border.</p>
-                  <Image src="/onboarding/standard_items.png" alt="Standard Items" width={700} height={400} style={{ width: "100%", height: "auto" }} />
-                </div>
-              )}
-              {onboardingStep === 3 && (
-                <div className={styles.onboardingSlide}>
-                  <h2>Review and Submit</h2>
-                  <p>Add your quantities and seamlessly finalize your order in the cart.</p>
-                  <Image src="/onboarding/checkout.png" alt="Checkout" width={700} height={400} style={{ width: "100%", height: "auto" }} />
-                </div>
-              )}
-            </div>
-
-            <div className={styles.onboardingFooter}>
-              <div className={styles.onboardingDots}>
-                {[0, 1, 2, 3].map(step => (
-                  <span key={step} className={step === onboardingStep ? styles.dotActive : styles.dot}></span>
-                ))}
-              </div>
-              <div className={styles.onboardingActions}>
-                {onboardingStep > 0 && (
-                  <button className={styles.onboardingBtnSecondary} onClick={() => setOnboardingStep(prev => prev - 1)}>Back</button>
-                )}
-                {onboardingStep < 3 ? (
-                  <button className={styles.onboardingBtnPrimary} onClick={() => setOnboardingStep(prev => prev + 1)}>Next</button>
-                ) : (
-                  <button className={styles.onboardingBtnPrimary} onClick={() => {
-                    localStorage.setItem('kls_onboarding_done', 'true');
-                    setShowOnboarding(false);
-                  }}>Get Started</button>
-                )}
-              </div>
+        <div className={styles.onboardingOverlay} style={{ zIndex: 9999 }}>
+          <div className={styles.onboardingModal} style={{ width: '90%', maxWidth: '1000px', padding: '1rem', background: '#000', position: 'relative' }}>
+            <button 
+              className={styles.onboardingSkip} 
+              style={{ position: 'absolute', top: '15px', right: '20px', background: 'rgba(255,255,255,0.2)', color: '#fff', border: 'none', padding: '0.5rem 1rem', borderRadius: '4px', cursor: 'pointer', zIndex: 10 }} 
+              onClick={() => {
+                localStorage.setItem('kls_onboarding_done', 'true');
+                setShowOnboarding(false);
+              }}
+            >
+              Close Guide
+            </button>
+            <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '40px' }}>
+              <video src="/demo.mp4" controls autoPlay style={{ width: '100%', maxHeight: '80vh', borderRadius: '8px' }} />
             </div>
           </div>
         </div>
@@ -1000,6 +958,33 @@ export default function Home() {
         </svg>
         {totalItems > 0 && <span className={styles.mobileCartBadge}>{totalItems}</span>}
       </button>
+      {/* Floating Action Buttons (Bottom Left) */}
+      <div style={{ position: 'fixed', bottom: '20px', left: '20px', display: 'flex', flexDirection: 'column', gap: '15px', zIndex: 9999 }}>
+        <div style={{ transform: 'scale(1.2)' }}>
+          <ThemeToggle />
+        </div>
+        <button 
+          onClick={() => setShowOnboarding(true)}
+          style={{ 
+            background: 'var(--accent-blue)', 
+            color: 'white', 
+            border: 'none', 
+            borderRadius: '50%', 
+            width: '50px', 
+            height: '50px', 
+            cursor: 'pointer', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            fontSize: '1.5rem', 
+            boxShadow: '0 4px 12px rgba(0,0,0,0.3)' 
+          }}
+          title="Watch Guide"
+        >
+          ▶️
+        </button>
+      </div>
+
     </div>
   );
 }

@@ -21,7 +21,6 @@ export default function RootLayout({
         <header className="main-header">
           <img src="/Technowave.png" alt="Technowave Logo" className="header-logo-technowave" />
           <div style={{ display: 'flex', alignItems: 'center', height: '100%', gap: '1rem' }}>
-            <ThemeToggle />
             <img src="/kls.png" alt="KLS Martin Logo" className="header-logo-kls" />
           </div>
         </header>
