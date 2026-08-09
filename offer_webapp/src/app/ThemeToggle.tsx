@@ -5,7 +5,7 @@ export default function ThemeToggle() {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('kls_theme_v2');
+    const savedTheme = localStorage.getItem('kls_theme_v3');
     if (savedTheme === 'light' || savedTheme === 'dark') {
       setTheme(savedTheme);
       document.documentElement.setAttribute('data-theme', savedTheme);
@@ -17,7 +17,7 @@ export default function ThemeToggle() {
   const toggleTheme = () => {
     const newTheme = theme === 'dark' ? 'light' : 'dark';
     setTheme(newTheme);
-    localStorage.setItem('kls_theme_v2', newTheme);
+    localStorage.setItem('kls_theme_v3', newTheme);
     document.documentElement.setAttribute('data-theme', newTheme);
   };
 
