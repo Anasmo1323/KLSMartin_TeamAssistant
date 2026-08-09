@@ -43,7 +43,7 @@ export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [adminCodeInput, setAdminCodeInput] = useState('');
 
-  const ADMIN_CODE = '8899';
+  const ADMIN_CODE = '0507';
   const [notificationEmails, setNotificationEmails] = useState<string[]>([]);
   const [newEmailInput, setNewEmailInput] = useState('');
   const [emailsLoading, setEmailsLoading] = useState(true);
