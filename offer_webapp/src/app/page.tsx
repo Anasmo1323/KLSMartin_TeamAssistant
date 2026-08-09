@@ -964,9 +964,9 @@ export default function Home() {
         <button 
           onClick={() => setShowOnboarding(true)}
           style={{ 
-            background: 'var(--bg-secondary)', 
-            color: 'var(--text-primary)', 
-            border: '1px solid var(--border-light)', 
+            background: 'var(--text-primary)', 
+            color: 'var(--bg-primary)', 
+            border: 'none', 
             borderRadius: '50%', 
             width: '50px', 
             height: '50px', 
