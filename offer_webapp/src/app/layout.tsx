@@ -16,7 +16,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="light">
       <body className={inter.className}>
         <header className="main-header">
           <img src="/Technowave.png" alt="Technowave Logo" className="header-logo-technowave" />
