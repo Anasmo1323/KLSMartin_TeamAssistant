@@ -6,7 +6,8 @@ class SegmentedCodeEdit(QWidget):
     """Custom composite text field for XX-XXX-XX-XX format."""
     
     # Custom signal emitted when Enter is pressed in any of the boxes
-    returnPressed = pyqtSignal() 
+    returnPressed = pyqtSignal()
+    textChanged = pyqtSignal() 
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -33,6 +34,7 @@ class SegmentedCodeEdit(QWidget):
             edit.setMaximumWidth(max_w)
             
             edit.textChanged.connect(lambda text, idx=i: self.on_text_changed(text, idx))
+            edit.textChanged.connect(self.textChanged.emit)
             edit.installEventFilter(self)
             # Route individual enter presses to the widget's global signal
             edit.returnPressed.connect(self.returnPressed.emit)

@@ -1,1 +1,4 @@
-Offer List Search & Duplication: Added a brand new "Ctrl+F" style search bar inside the Offer List dialog. You can instantly jump between matches in your list, with a bright yellow highlight indicating the current selection. Also includes a toggle to search specifically "In Headers". You can now also duplicate any row(s) in the Offer List to the bottom by simply pressing Enter!
+Offer List Button Consolidation & Bulk Code Enrichment:
+- Grouped Export buttons and Import buttons into unified dropdown menus in the Offer List Dialog to declutter the UI.
+- Added a new 'Bulk Code Enrichment' dialog that allows users to paste a list of codes (or load a column from Excel via MappingDialog), select custom data columns from the master database (e.g. description, family, status), and instantly fetch and inject that data directly into the Offer List table.
+- Minor UI improvements: Ensured dropdown QMenus have standard hover highlights and resolved table selection bleed on the KLS Master Tab's family headers.

@@ -23,7 +23,7 @@ def shape_arabic(text):
         return ""
     return get_display(arabic_reshaper.reshape(text))
 
-from PyQt6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
+from PyQt6.QtWidgets import (QDialog, QMenu, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
                              QHeaderView, QTableWidgetItem, QMessageBox, QFileDialog, QWidget, QInputDialog, QLineEdit, QCheckBox, QAbstractItemView)
 from PyQt6.QtCore import Qt, QEvent
 from PyQt6.QtGui import QColor, QFont
@@ -32,6 +32,7 @@ from ui.widgets.dynamic_table import DynamicTableWidget
 from ui.dialogs.mapping_dialog import MappingDialog
 from ui.dialogs.pdf_dialog import PdfSettingsDialog
 from ui.dialogs.set_selection_dialog import SetSelectionDialog
+from ui.dialogs.enrich_codes_dialog import EnrichCodesDialog
 from core.utils import show_loading
 
 class OfferListDialog(QDialog):
@@ -99,30 +100,26 @@ class OfferListDialog(QDialog):
         self.btn_add_section = QPushButton("Add Section Header")
         self.btn_add_section.clicked.connect(self.add_section_manually)
         
-        self.btn_bulk_upload = QPushButton("Bulk Upload (Excel/CSV)")
-        self.btn_bulk_upload.clicked.connect(self.bulk_upload_offer)
+        self.btn_import_menu = QPushButton("Import / Load")
+        import_menu = QMenu()
+        import_menu.addAction("Load Set", self.load_set_offer)
+        import_menu.addAction("Bulk Upload (Excel/CSV)", self.bulk_upload_offer)
+        import_menu.addAction("Enrich via Codes", self.open_enrich_codes_dialog)
+        self.btn_import_menu.setMenu(import_menu)
 
-        self.btn_load_set = QPushButton("Load Set")
-        self.btn_load_set.clicked.connect(self.load_set_offer)
-
-        self.btn_export_excel = QPushButton("Export to Excel")
-        self.btn_export_excel.clicked.connect(self.export_excel)
-        
-        self.btn_export_pdf = QPushButton("Export to PDF")
-        self.btn_export_pdf.clicked.connect(self.export_pdf)
-        
-        self.btn_export_pptx = QPushButton("Export to PPTX")
-        self.btn_export_pptx.setObjectName("primaryButton")
-        self.btn_export_pptx.clicked.connect(self.export_pptx)
+        self.btn_export_menu = QPushButton("Export")
+        self.btn_export_menu.setObjectName("primaryButton")
+        export_menu = QMenu()
+        export_menu.addAction("Export to Excel", self.export_excel)
+        export_menu.addAction("Export to PDF", self.export_pdf)
+        export_menu.addAction("Export to PPTX", self.export_pptx)
+        self.btn_export_menu.setMenu(export_menu)
 
         btn_layout.addWidget(self.btn_clear)
         btn_layout.addWidget(self.btn_add_section)
-        btn_layout.addWidget(self.btn_bulk_upload)
-        btn_layout.addWidget(self.btn_load_set)
+        btn_layout.addWidget(self.btn_import_menu)
         btn_layout.addStretch()
-        btn_layout.addWidget(self.btn_export_excel)
-        btn_layout.addWidget(self.btn_export_pdf)
-        btn_layout.addWidget(self.btn_export_pptx)
+        btn_layout.addWidget(self.btn_export_menu)
         layout.addLayout(btn_layout)
 
     def refresh_offer_table(self):
@@ -329,6 +326,26 @@ class OfferListDialog(QDialog):
             if hasattr(self, 'master_tab') and hasattr(self.master_tab, 'save_offer_list'):
                 self.master_tab.save_offer_list()
             self.refresh_offer_table()
+
+    def open_enrich_codes_dialog(self):
+        master_df = self.master_tab.df if hasattr(self.master_tab, 'df') else None
+        if master_df is None or master_df.empty:
+            QMessageBox.warning(self, "No Master Data", "Master catalog is not loaded.")
+            return
+
+        dlg = EnrichCodesDialog(master_df, self)
+        if dlg.exec() == QDialog.DialogCode.Accepted:
+            # Add to self.extra_columns if not present
+            for col in dlg.selected_columns:
+                if col not in self.extra_columns:
+                    self.extra_columns.append(col)
+            
+            # Append rows to self.offer_data
+            for row in dlg.enriched_data:
+                self.offer_data.append(row)
+            
+            self.refresh_offer_table()
+            self.offer_table.scrollToBottom()
 
     def clear_offer_list(self):
         msg_box = QMessageBox(self)

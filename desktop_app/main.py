@@ -30,6 +30,7 @@ if __name__ == '__main__':
         
         QLineEdit, QListWidget, QTableWidget, QTreeWidget {
             background-color: #FFFFFF;
+            alternate-background-color: #F8F9FA;
             color: #282829;
             border: 1px solid #CCCCCC;
             border-radius: 4px;
@@ -92,7 +93,21 @@ if __name__ == '__main__':
             color: #E20303;
         }
         
-        QTabWidget::pane {
+        QMenu {
+            background-color: #FFFFFF;
+            color: #282829;
+            border: 1px solid #CCCCCC;
+        }
+        
+        QMenu::item {
+            padding: 6px 20px;
+        }
+        
+        QMenu::item:selected {
+            background-color: #E20303;
+            color: #FFFFFF;
+        }
+\n        QTabWidget::pane {
             border: 1px solid #E20303;
         }
         

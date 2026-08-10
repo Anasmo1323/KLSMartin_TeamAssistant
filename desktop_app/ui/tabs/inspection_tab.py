@@ -71,6 +71,7 @@ class InspectionTab(QWidget):
         
         # When code is entered, shift focus to the Quantity box
         self.code_verify_input.returnPressed.connect(self.focus_qty_box)
+        self.code_verify_input.textChanged.connect(self.apply_filter)
         verify_layout.addWidget(self.code_verify_input)
 
         verify_layout.addWidget(QLabel("<b>Qty:</b>"))
@@ -215,36 +216,79 @@ class InspectionTab(QWidget):
 
         if len(indices) == 0:
             QMessageBox.critical(self, "Invalid Match", "Code not found in client manifest.")
+            self.code_verify_input.blockSignals(True)
+            for edit in self.code_verify_input.edits: edit.blockSignals(True)
             self.code_verify_input.clear()
+            for edit in self.code_verify_input.edits: edit.blockSignals(False)
+            self.code_verify_input.blockSignals(False)
             self.code_verify_input.edits[0].setFocus()
             return
 
-        idx = indices[0]
         try:
             qty_to_add = int(self.qty_input.text())
         except:
             qty_to_add = 1
 
-        current_inspected = int(self.df.at[idx, 'inspected'])
-        target_max = int(self.df.at[idx, 'quantity'])
+        total_capacity = 0
+        available_rows = []
+        for idx in indices:
+            c_inspected = int(self.df.at[idx, 'inspected'])
+            t_max = int(self.df.at[idx, 'quantity'])
+            cap = max(0, t_max - c_inspected)
+            total_capacity += cap
+            if cap > 0:
+                available_rows.append((idx, cap))
 
-        if current_inspected < target_max:
-            new_inspected = min(current_inspected + qty_to_add, target_max) # Prevent exceeding target via batch
+        if qty_to_add > total_capacity:
+            QMessageBox.warning(self, "Limit Exceeded", f"Cannot add {qty_to_add}. Only {total_capacity} more needed across all duplicates for this code.")
+            self.code_verify_input.blockSignals(True)
+            for edit in self.code_verify_input.edits: edit.blockSignals(True)
+            self.code_verify_input.clear()
+            for edit in self.code_verify_input.edits: edit.blockSignals(False)
+            self.code_verify_input.blockSignals(False)
+            self.code_verify_input.edits[0].setFocus()
+            return
+
+        remaining = qty_to_add
+        for idx, cap in available_rows:
+            if remaining <= 0:
+                break
+            add_here = min(cap, remaining)
+            c_inspected = int(self.df.at[idx, 'inspected'])
+            new_inspected = c_inspected + add_here
             self.df.at[idx, 'inspected'] = new_inspected
-            if new_inspected == target_max:
+            if new_inspected == int(self.df.at[idx, 'quantity']):
                 self.df.at[idx, 'status'] = "CLEARED"
+            remaining -= add_here
             
-            self.set_modified(True)
-            self.apply_filter()
-            
-            # Workflow Reset
-            self.code_verify_input.clear()
-            self.qty_input.setText("1")
-            self.code_verify_input.edits[0].setFocus()
-        else:
-            QMessageBox.warning(self, "Limit Reached", f"Item already hit maximum target limit ({target_max}).")
-            self.code_verify_input.clear()
-            self.code_verify_input.edits[0].setFocus()
+            # Manually update UI so we don't need a full redraw
+            for ui_row in range(self.table.rowCount()):
+                item = self.table.item(ui_row, 0)
+                if item and item.data(Qt.ItemDataRole.UserRole) == idx:
+                    inspected_col = self.display_cols.index('inspected')
+                    status_col = self.display_cols.index('status')
+                    self.table.item(ui_row, inspected_col).setText(str(self.df.at[idx, 'inspected']))
+                    status = self.df.at[idx, 'status']
+                    self.table.item(ui_row, status_col).setText(status)
+                    if status == "CLEARED":
+                        from PyQt6.QtGui import QColor
+                        for c in range(self.table.columnCount()):
+                            self.table.item(ui_row, c).setBackground(QColor("#D4EDDA"))
+                            self.table.item(ui_row, c).setForeground(QColor("#155724"))
+                    break
+
+        self.set_modified(True)
+        
+        # Workflow Reset (with signals blocked so the table doesn't reset)
+        self.code_verify_input.blockSignals(True)
+        for edit in self.code_verify_input.edits:
+            edit.blockSignals(True)
+        self.code_verify_input.clear()
+        for edit in self.code_verify_input.edits:
+            edit.blockSignals(False)
+        self.code_verify_input.blockSignals(False)
+        self.qty_input.setText("1")
+        self.code_verify_input.edits[0].setFocus()
 
     def set_modified(self, state):
         self.is_modified = state
@@ -337,4 +381,17 @@ class InspectionTab(QWidget):
         if g_search:
             mask = filtered.astype(str).apply(lambda x: x.str.lower().str.contains(g_search)).any(axis=1)
             filtered = filtered[mask]
+            
+        code_segs = self.code_verify_input.get_segments()
+        active_code = any(s != "" for s in code_segs)
+        if active_code:
+            code_col = filtered['code'].astype(str).fillna('')
+            split_codes = code_col.str.split('-', expand=True)
+            for i, seg in enumerate(code_segs):
+                if seg:
+                    if i < split_codes.shape[1]:
+                        filtered = filtered[split_codes[i].str.startswith(seg, na=False)]
+                    else:
+                        filtered = filtered.iloc[0:0]
+
         self.populate_table(filtered)

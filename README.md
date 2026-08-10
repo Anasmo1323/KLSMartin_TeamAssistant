@@ -23,7 +23,7 @@ A comprehensive inventory control, verification, and AI-powered product mapping 
   - *Global Search*: Full-text search across all descriptions and data fields.
   - *Smart Segmented Search*: A dynamic composite text field that automatically parses both standard `XX-XXX-XX-XX` codes and shorter dot-separated codes (like `XX.XXX.XX`) natively from copy-pasting.
 - **Offers Manager**: Quickly build, review, and manage lists of items as an "Offer". Export directly to dynamically generated PowerPoint presentations, with one-click automatic PDF compilation via Microsoft COM integration.
-  - *Set Loading*: Features a dedicated dialog to search and instantly inject all constituent SKUs of a specific Instrument Set directly into the Offer List with correct quantities.
+  - *Bulk Code Enrichment*: A dedicated mode to paste raw codes or extract them from an Excel file via column mapping, selectively check required data columns from the master catalog, and instantly fetch and populate that data into the Offer List.\n  - *Set Loading*: Features a dedicated dialog to search and instantly inject all constituent SKUs of a specific Instrument Set directly into the Offer List with correct quantities.
   - *Rapid Entry*: Keyboard shortcuts ('Enter' key) inside the Master Grid seamlessly trigger the quantity entry prompt.
 - **One-Click Updates**: Readily upload new master catalog files (`KLS_All_Products.xlsx`) overwriting the old database instantly.
 
