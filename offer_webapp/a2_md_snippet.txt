@@ -1,0 +1,32 @@
+
+### Extracted Sets from A2.xls
+
+| Set Name | Item Count |
+|---|---|
+| 1.Self-Retain. Mitral Valve Retrac. | 7 |
+| 2.Aorta Set | 63 |
+| 3.Pediatric Thoracic Surgery Set. | 41 |
+| 4.Extra Vascular Pediatric Set. | 46 |
+| 5.Hysterectomy (Laparotomy Set) | 36 |
+| 6.Caesarean Set | 27 |
+| 7.Normal Labor Set. | 10 |
+| 8.Vaginal Surgery Set. | 32 |
+| 9.Hand Surgery Set. | 60 |
+| 10.General Plastic Surgical Instr. | 75 |
+| 11.Basic Instr. for Plast. & Reconst. | 82 |
+| APPLYING FORCEPS WITH LOCK, TOTAL LENGTH 140 MM/5 1/2" STRAIGHT, FOR CLAMP
+SIZE 1+2+3 | 14 |
+| 13.Maxillofac. Surg. Instr. Product. | 67 |
+| 14.Maxillofacial Instrument Set | 65 |
+| 15.Cleft Lip & Palate Instr. Set | 29 |
+| 16.Craniofacial Suspension Set | 28 |
+| 17.Rhinoplasty Set. | 55 |
+| 18.NEU Cervical Set. | 79 |
+| 19.Set for Septum & Nasal Surgery | 53 |
+| 20.Tracheostomy instruments. | 27 |
+| 21.Anal Set. | 29 |
+| 22.NEU BRAIN SET. | 111 |
+| 23.NEU Lumber Set. | 101 |
+| 24.Urology Open Set. | 93 |
+| 26.General Instrument Set ( Liver ) | 86 |
+| 27.Vascular Liver Transplant Set | 66 |

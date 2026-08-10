@@ -82,89 +82,89 @@ def search_competitor_sku(sku_list, auth_token):
         return None
 
 if __name__ == '__main__':
+    import openpyxl
+    
     # 1. Automatically fetch the token
     token = get_auth_token()
     
     if token:
         print("Authentication successful.")
         
-        # 2. Input the competitor SKUs you want to convert
-        test_skus = ["BD047R", "03-001-00-01"] 
+        file_path = "Set Proposals 11.xlsx"
+        print(f"Reading {file_path}...")
         
-        # 3. Execute the search
-        result_data = search_competitor_sku(test_skus, token)
-        
-        if result_data:
-            flattened_results = []
+        try:
+            wb = openpyxl.load_workbook(file_path)
             
-            for item in result_data:
-                search_term = item.get('searchTerm')
-                matches = item.get('matches', [])
+            # Collect all SKUs to search
+            all_skus = set()
+            for sheet_name in wb.sheetnames:
+                ws = wb[sheet_name]
+                # Assuming SKUs are in column C (column index 3)
+                for row in ws.iter_rows(min_row=2, min_col=3, max_col=3):
+                    for cell in row:
+                        if cell.value and isinstance(cell.value, str):
+                            sku = str(cell.value).strip()
+                            if sku and sku.lower() != 'nan':
+                                all_skus.add(sku)
+            
+            test_skus = list(all_skus)
+            print(f"Found {len(test_skus)} unique SKUs to convert.")
+            
+            sku_to_kls = {}
+            if test_skus:
+                # Chunk the search if necessary
+                chunk_size = 100
+                for i in range(0, len(test_skus), chunk_size):
+                    chunk = test_skus[i:i+chunk_size]
+                    print(f"Processing chunk {i//chunk_size + 1}/{(len(test_skus)-1)//chunk_size + 1}...")
+                    result_data = search_competitor_sku(chunk, token)
+                    
+                    if result_data:
+                        for item in result_data:
+                            search_term = item.get('searchTerm')
+                            matches = item.get('matches', [])
+                            if matches:
+                                kls_codes = []
+                                for match in matches:
+                                    kls_products = match.get('matchingKlsMartinProducts') or []
+                                    for kls_prod in kls_products:
+                                        target_obj = kls_prod.get('product', kls_prod) if isinstance(kls_prod, dict) else kls_prod
+                                        if isinstance(target_obj, dict):
+                                            kls_sku = target_obj.get('code') or target_obj.get('sku')
+                                            if kls_sku:
+                                                kls_codes.append(kls_sku)
+                                if kls_codes:
+                                    # Join multiple codes with a comma, unique ones only
+                                    unique_kls = list(dict.fromkeys(kls_codes))
+                                    sku_to_kls[search_term] = ", ".join(unique_kls)
+                    
+            print("Finished API queries. Updating sheets...")
+            
+            # Update the workbook
+            for sheet_name in wb.sheetnames:
+                ws = wb[sheet_name]
                 
-                if not matches:
-                    # Record the search term if no match is found
-                    flattened_results.append({
-                        'Search_Term': search_term, 
-                        'Match_Found': False,
-                        'Competitor_Manufacturer': None,
-                        'Competitor_SKU': None,
-                        'KLS_SKU': None,
-                        'KLS_Name': None
-                    })
-                else:
-                    for match in matches:
-                        # 1. Extract Competitor Metadata
-                        comp_prod = match.get('competitorProduct') or {}
-                        
-                        # Handle potential nesting within the manufacturer attribute
-                        mfr_data = comp_prod.get('manufacturer')
-                        if isinstance(mfr_data, dict):
-                            comp_mfr = mfr_data.get('name')
-                        else:
-                            comp_mfr = mfr_data
+                # Determine the next empty column
+                max_col = ws.max_column
+                new_col_idx = max_col + 1
+                
+                # Add Header
+                ws.cell(row=1, column=new_col_idx, value="KLS Martin Code")
+                
+                for row_idx in range(2, ws.max_row + 1):
+                    sku_cell = ws.cell(row=row_idx, column=3)
+                    if sku_cell.value and isinstance(sku_cell.value, str):
+                        sku = str(sku_cell.value).strip()
+                        kls_code = sku_to_kls.get(sku, "")
+                        if kls_code:
+                            ws.cell(row=row_idx, column=new_col_idx, value=kls_code)
                             
-                        comp_sku = comp_prod.get('code') or comp_prod.get('sku') or comp_prod.get('articleNumber')
-                        
-                        # 2. Extract KLS Martin Matches
-                        kls_products = match.get('matchingKlsMartinProducts') or []
-                        
-                        for kls_prod in kls_products:
-                            # Account for product object nesting if present
-                            if 'product' in kls_prod and isinstance(kls_prod['product'], dict):
-                                target_obj = kls_prod['product']
-                            else:
-                                target_obj = kls_prod
-                                
-                            kls_sku = target_obj.get('code') or target_obj.get('sku')
-                            
-                            # Parse name dict if necessary
-                            raw_name = target_obj.get('name')
-                            if isinstance(raw_name, dict):
-                                kls_name = raw_name.get('value')
-                            else:
-                                kls_name = raw_name
-                            
-                            # Append a unique row for every KLS mapping
-                            flattened_results.append({
-                                'Search_Term': search_term, 
-                                'Match_Found': True,
-                                'Competitor_Manufacturer': comp_mfr,
-                                'Competitor_SKU': comp_sku,
-                                'KLS_SKU': kls_sku,
-                                'KLS_Name': kls_name
-                            })
+            output_path = "Set Proposals 11_Updated.xlsx"
+            wb.save(output_path)
+            print(f"Updated Excel file saved to {output_path}")
             
-            # Standardize the output into a pandas DataFrame
-            df_converted = pd.DataFrame(flattened_results)
-            
-            print("\nFully Flattened Data Structure:")
-            print(df_converted.to_string(index=False))
+        except Exception as e:
+            print(f"An error occurred during processing: {e}")
     else:
         print("Authentication failed. Check credentials or network state.")
-
-df_converted = pd.DataFrame(flattened_results)
-df_converted = df_converted.drop(columns=['KLS_Name'])
-
-output_path = r"C:\Users\Anas Mohamed\PyCharmMiscProject\Competitor_Cross_Reference.xlsx"
-df_converted.to_excel(output_path, index=False)
-print(f"\nMapping table exported successfully to {output_path}")
