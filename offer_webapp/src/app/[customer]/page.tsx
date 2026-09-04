@@ -703,15 +703,9 @@ export default function CustomerPage() {
       <main className={styles.mainContent}>
         <div className={styles.header}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap' }}>
-            <p className={styles.subtitle} style={{ marginTop: '3rem' }}>Madinaty Medical Centre - Surgical Instrument project</p>
-            {!showLoginModal && (
-              <button
-                onClick={openLoginModal}
-                style={{ marginTop: '2.5rem', padding: '0.6rem 1.2rem', borderRadius: '4px', border: '1px solid var(--accent-cyan)', background: 'transparent', color: 'var(--accent-cyan)', cursor: 'pointer', fontWeight: 600 }}
-              >
-                Change Discipline
-              </button>
-            )}
+            <p className={styles.subtitle} style={{ marginTop: '3rem' }}>
+              {customerData?.name ? `${customerData.name} - Surgical Instrument project` : 'Surgical Instrument project'}
+            </p>
           </div>
         </div>
 
@@ -831,8 +825,30 @@ export default function CustomerPage() {
                   className={styles.categoryCard}
                   onClick={() => setActiveCategory(cat)}
                 >
-                  <img src={`/disciplines/${encodeURIComponent(cat.name)}.png`} alt="" style={{ position: 'absolute', right: '0px', bottom: '0px', height: '100%', width: '50%', objectFit: 'cover', pointerEvents: 'none', WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 30%)', maskImage: 'linear-gradient(to right, transparent 0%, black 30%)' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
-                  <h3>{cat.name}</h3>
+                  <img 
+                    src={`/disciplines/${cat.name.trim()}.png`} 
+                    alt="" 
+                    style={{ 
+                      position: 'absolute', 
+                      right: '0px', 
+                      bottom: '0px', 
+                      height: '100%', 
+                      width: '50%', 
+                      objectFit: 'cover', 
+                      pointerEvents: 'none', 
+                      WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 30%)', 
+                      maskImage: 'linear-gradient(to right, transparent 0%, black 30%)' 
+                    }} 
+                    onError={(e) => {
+                      // Fallback to try uppercase version if original fails
+                      if (!e.currentTarget.src.includes('fallback-checked')) {
+                        e.currentTarget.src = `/disciplines/${cat.name.trim().toUpperCase()}.png?fallback-checked=1`;
+                      } else {
+                        e.currentTarget.style.display = 'none';
+                      }
+                    }} 
+                  />
+                  <h3 style={{ position: 'relative', zIndex: 2 }}>{cat.name}</h3>
                   <p>{cat.sets.length} Subsets</p>
                 </div>
               ))}
