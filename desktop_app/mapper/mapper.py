@@ -22,7 +22,12 @@ from core.utils import resource_path, show_loading
 from ui.dialogs.mapping_dialog import MappingDialog
 
 class MappingMemory:
-    def __init__(self, db_path="mapping_memory.db"):
+    def __init__(self, db_path=None):
+        if db_path is None:
+            if getattr(sys, 'frozen', False):
+                db_path = os.path.join(os.path.dirname(sys.executable), "mapping_memory.db")
+            else:
+                db_path = "mapping_memory.db"
         self.db_path = db_path
         self.init_db()
 

@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel,
                              QLineEdit, QPushButton, QTableWidget, QTableWidgetItem, 
                              QHeaderView, QMessageBox, QComboBox)
 from PyQt6.QtCore import Qt
+from core.utils import resource_path
 from core.utils import show_loading
 
 class SetSelectionDialog(QDialog):
@@ -61,7 +62,7 @@ class SetSelectionDialog(QDialog):
         source = self.source_combo.currentText()
         if source == "ALMA Sets":
             base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-            file_path = os.path.join(base_dir, "data", "ALMA_Sets_Export.xlsx")
+            file_path = resource_path("data/ALMA_Sets_Export.xlsx")
             if not os.path.exists(file_path):
                 self.populate_table(None)
                 return
@@ -75,7 +76,7 @@ class SetSelectionDialog(QDialog):
                     QMessageBox.critical(self, "Error", f"Could not load ALMA sets: {e}")
         else:
             base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-            file_path = os.path.join(base_dir, "data", "master_surgical_sets.xlsx")
+            file_path = resource_path("data/master_surgical_sets.xlsx")
             if not os.path.exists(file_path):
                 self.populate_table(None)
                 return
@@ -145,7 +146,7 @@ class SetSelectionDialog(QDialog):
             return self.sets_df[self.sets_df['Set_Code'].astype(str) == self.selected_set_code]
         else:
             base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-            file_path = os.path.join(base_dir, "data", "master_surgical_sets.xlsx")
+            file_path = resource_path("data/master_surgical_sets.xlsx")
 
             if not os.path.exists(file_path): return None
             try:

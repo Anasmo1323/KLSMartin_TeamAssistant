@@ -1,1 +1,26 @@
-[]
+[
+  {
+    "code": "80-991-23-04",
+    "desc": "NST-RED-FCPS., BAY., STR., 0,6 MM, 23 CM",
+    "qty": 1,
+    "is_section": false
+  },
+  {
+    "code": "80-992-23-04",
+    "desc": "NST-RED-FCPS., BAY., STR., 1,0 MM, 23 CM",
+    "qty": 1,
+    "is_section": false
+  },
+  {
+    "code": "80-993-23-04",
+    "desc": "NST-RED-FCPS., BAY., STR., 2,0 MM, 23 CM",
+    "qty": 1,
+    "is_section": false
+  },
+  {
+    "code": "80-987-20-04",
+    "desc": "NST-RED-FCPS., ANG., BL. 1,0 MM, 20 CM",
+    "qty": 1,
+    "is_section": false
+  }
+]

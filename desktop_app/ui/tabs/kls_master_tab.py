@@ -14,6 +14,9 @@ from core.utils import resource_path, show_loading
 from ui.widgets.segmented_edit import SegmentedCodeEdit
 from ui.widgets.dynamic_table import DynamicTableWidget
 from ui.dialogs.mapping_dialog import MappingDialog
+from ui.dialogs.set_selection_dialog import SetSelectionDialog
+from ui.dialogs.enrich_codes_dialog import EnrichCodesDialog
+from ui.dialogs.enrich_results_dialog import EnrichResultsDialog
 from ui.dialogs.offer_dialog import OfferListDialog
 from ui.widgets.customer_wizard import CustomerWizardPanel
 from ui.widgets.checkable_list import CheckableListWidget, CheckableTreeWidget
@@ -37,9 +40,14 @@ class KlsMasterTab(QWidget):
         self.df = None
         self.offer_data = []
         import os
-        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        self.default_path = os.path.join(base_dir, "data", "KLS_All_Products.xlsx")
-        self.autosave_path = os.path.join(base_dir, "data", "offer_list_autosave.json")
+        import sys
+        if getattr(sys, 'frozen', False):
+            base_dir = os.path.dirname(sys.executable)
+        else:
+            base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            
+        self.default_path = resource_path("data/KLS_All_Products.xlsx")
+        self.autosave_path = os.path.join(base_dir, "offer_list_autosave.json")
         self.required_fields = ['code', 'description', 'brochures', 'state', 'family', 'inventor']
         
         # Ensure we have essential data files created
@@ -134,7 +142,7 @@ class KlsMasterTab(QWidget):
         search_layout.addWidget(self.txt_global_search)
         
         self.state_filter = QComboBox()
-        self.state_filter.addItems(["All", "Active", "Inactive"])
+        self.state_filter.addItems(["All", "Active", "NO PRICE"])
         self.state_filter.currentIndexChanged.connect(self.queue_filter)
         search_layout.addWidget(self.state_filter)
 
@@ -148,6 +156,13 @@ class KlsMasterTab(QWidget):
         self.btn_search.setCursor(Qt.CursorShape.PointingHandCursor)
         self.btn_search.clicked.connect(self.queue_filter)
         search_layout.addWidget(self.btn_search)
+
+        self.btn_enrich = QPushButton("⚡")
+        self.btn_enrich.setToolTip("Bulk Enrich Codes")
+        self.btn_enrich.setMinimumWidth(50)
+        self.btn_enrich.setMaximumWidth(80)
+        self.btn_enrich.clicked.connect(self.open_enrich_dialog)
+        search_layout.addWidget(self.btn_enrich)
 
         self.btn_manage_offer = QPushButton("📝")
         self.btn_manage_offer.setToolTip("Manage Offer List")
@@ -319,7 +334,7 @@ class KlsMasterTab(QWidget):
         source_text = source.currentText()
         if source_text == "ALMA Sets":
             base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-            alma_path = os.path.join(base_dir, "data", "ALMA_Sets_Export.xlsx")
+            alma_path = resource_path("data/ALMA_Sets_Export.xlsx")
             
             if os.path.exists(alma_path):
                 self.sets_df = pd.read_excel(alma_path)
@@ -335,7 +350,7 @@ class KlsMasterTab(QWidget):
                     self.set_skus_map[s] = skus
         else:
             base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-            tech_path = os.path.join(base_dir, "data", "master_surgical_sets.xlsx")
+            tech_path = resource_path("data/master_surgical_sets.xlsx")
             
             if os.path.exists(tech_path):
                 try:
@@ -473,7 +488,7 @@ class KlsMasterTab(QWidget):
                             item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                             if val.lower() == 'active':
                                 item.setForeground(QColor("green"))
-                            elif val.lower() == 'inactive':
+                            elif val.lower() == 'no price':
                                 item.setForeground(QColor("red"))
                             
                         self.table.setItem(ui_row_idx, c_idx + 1, item)
@@ -523,9 +538,19 @@ class KlsMasterTab(QWidget):
                     if and_terms:
                         group_mask = pd.Series(True, index=filtered.index)
                         for term in and_terms:
+                            is_not = term.startswith('!!')
+                            if is_not:
+                                term = term[2:].strip()
+                            if not term:
+                                continue
+                                
                             term_mask = pd.Series(False, index=filtered.index)
                             for c in filtered.columns:
                                 term_mask |= filtered[c].astype(str).str.lower().str.contains(term, regex=False)
+                                
+                            if is_not:
+                                term_mask = ~term_mask
+                                
                             group_mask &= term_mask
                         final_mask |= group_mask
                 filtered = filtered[final_mask]
@@ -554,6 +579,18 @@ class KlsMasterTab(QWidget):
             filtered = filtered[mask]
 
         self.populate_table(filtered)
+
+    def open_enrich_dialog(self):
+        if self.df is None or self.df.empty:
+            QMessageBox.warning(self, "No Master Data", "Master catalog is not loaded.")
+            return
+            
+        dlg = EnrichCodesDialog(self.df, self)
+        if dlg.exec() == QDialog.DialogCode.Accepted:
+            if not dlg.enriched_data:
+                return
+            results_dlg = EnrichResultsDialog(dlg.enriched_data, dlg.selected_columns, self)
+            results_dlg.exec()
 
     def open_offer_list(self):
         if not hasattr(self, 'offer_dialog') or not self.offer_dialog.isVisible():

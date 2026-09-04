@@ -1,5 +1,12 @@
-import os
 import sys
+import os
+
+# Add the desktop_app directory to the python path so it can find core.constants
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
+
 import json
 import requests
 import subprocess
@@ -19,14 +26,15 @@ def build_exe():
         "--icon=icon.ico",
         "--add-data=icon.ico;.",
         "--add-data=template.pptx;.",
+        "--add-data=data;data",
         "main.py",
         "-y"
     ]
     
     # We pass the list directly so subprocess handles quotes around spaces
-    subprocess.run(cmd, check=True)
+    subprocess.run(cmd, check=True, cwd=parent_dir)
     
-    exe_path = os.path.join("dist", "KLSMartin Team Assistant.exe")
+    exe_path = os.path.join(parent_dir, "dist", "KLSMartin Team Assistant.exe")
     if not os.path.exists(exe_path):
         raise FileNotFoundError(f"Failed to find built exe at {exe_path}")
         

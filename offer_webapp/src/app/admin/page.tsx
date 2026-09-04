@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import * as XLSX from 'xlsx';
 import styles from './page.module.css';
+import CustomersTab from './CustomersTab';
 
 type CartItem = {
   groupName: string;
@@ -13,13 +14,22 @@ type CartItem = {
   code: string;
 };
 
-type CustomerInfo = {
+export type CustomerInfo = {
   title: string;
   name: string;
   hospital: string;
   phone: string;
   email: string;
   notes: string;
+};
+
+export type CustomerDoc = {
+  id: string;
+  name: string;
+  slug: string;
+  pin: string;
+  catalogUrl: string | null;
+  createdAt: any;
 };
 
 type Submission = {
@@ -35,7 +45,7 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [selectedSub, setSelectedSub] = useState<Submission | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<'submissions' | 'analytics' | 'emails'>('submissions');
+  const [activeTab, setActiveTab] = useState<'submissions' | 'analytics' | 'emails' | 'customers'>('submissions');
   
   const [selectedSubIds, setSelectedSubIds] = useState<Set<string>>(new Set());
   const [expandedCats, setExpandedCats] = useState<Record<string, boolean>>({});
@@ -263,13 +273,21 @@ export default function AdminPage() {
         >
           Notification Emails
         </h3>
+        <h3 
+          style={{ cursor: 'pointer', paddingBottom: '0.5rem', color: activeTab === 'customers' ? 'var(--accent-cyan)' : 'var(--text-secondary)', borderBottom: activeTab === 'customers' ? '2px solid var(--accent-cyan)' : 'none' }}
+          onClick={() => setActiveTab('customers')}
+        >
+          Customers
+        </h3>
       </div>
 
       {loading ? (
         <div style={{color: 'var(--text-secondary)'}}>Loading submissions...</div>
       ) : (
         
-        activeTab === 'emails' ? (
+        activeTab === 'customers' ? (
+          <CustomersTab />
+        ) : activeTab === 'emails' ? (
           <div style={{display: 'flex', gap: '2rem', flexDirection: 'column'}}>
             <h2>Email Notifications</h2>
             <p style={{ color: 'var(--text-secondary)' }}>These emails will receive a notification whenever a new submission is made.</p>

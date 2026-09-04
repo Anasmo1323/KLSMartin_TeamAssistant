@@ -281,5 +281,5 @@ ALL_AVAILABLE_BROCHURES = [
     """Version Mmb And Mbb""",
 ]
 
-APP_VERSION = "1.19"
+APP_VERSION = "1.26"
 GITHUB_REPO = "Anasmo1323/KLSMartin_TeamAssistant"

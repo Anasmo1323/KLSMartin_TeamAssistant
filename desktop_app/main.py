@@ -5,6 +5,10 @@ from PyQt6.QtWidgets import QApplication
 from PyQt6.QtGui import QFont
 from ui.main_window import MainWindow
 
+# Pillow workaround for large PNGs metadata (Decompressed data too large for PngImagePlugin.MAX_TEXT_CHUNK)
+from PIL import PngImagePlugin
+PngImagePlugin.MAX_TEXT_CHUNK = 1048576 * 100  # Increase to 100MB
+
 # Enable automatic High-DPI scaling
 os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
 os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "1"
