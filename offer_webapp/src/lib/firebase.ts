@@ -3,13 +3,12 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCiXcGSaa70z1aLsjdzbgJZx1kaKVCcHdI",
-  authDomain: "mcc-database-718b5.firebaseapp.com",
-  projectId: "mcc-database-718b5",
-  storageBucket: "mcc-database-718b5.firebasestorage.app",
-  messagingSenderId: "915162560203",
-  appId: "1:915162560203:web:488a2e5e427d4504f24d4e",
-  measurementId: "G-M5665N5ZXE"
+  apiKey: "AIzaSyC7vQfkrHi3xWqZpjh4Iwspnv2QdYh1Klw",
+  authDomain: "klsmartin-eg-onlinecatalogue.firebaseapp.com",
+  projectId: "klsmartin-eg-onlinecatalogue",
+  storageBucket: "klsmartin-eg-onlinecatalogue.firebasestorage.app",
+  messagingSenderId: "453521156042",
+  appId: "1:453521156042:web:019e673bc86c92a84ed133"
 };
 
 // Initialize Firebase (prevent re-initialization in Next.js hot reload)
