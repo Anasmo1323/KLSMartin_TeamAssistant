@@ -27,6 +27,7 @@ def build_exe():
         "--add-data=icon.ico;.",
         "--add-data=template.pptx;.",
         "--add-data=data;data",
+        "--exclude-module=PyQt5",
         "main.py",
         "-y"
     ]
