@@ -23,8 +23,9 @@ def shape_arabic(text):
         return ""
     return get_display(arabic_reshaper.reshape(text))
 
+import re
 from PyQt6.QtWidgets import (QDialog, QMenu, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
-                             QHeaderView, QTableWidgetItem, QMessageBox, QFileDialog, QWidget, QInputDialog, QLineEdit, QCheckBox, QAbstractItemView)
+                             QHeaderView, QTableWidgetItem, QMessageBox, QFileDialog, QWidget, QInputDialog, QLineEdit, QCheckBox, QAbstractItemView, QComboBox, QDialogButtonBox)
 from PyQt6.QtCore import Qt, QEvent
 from PyQt6.QtGui import QColor, QFont
 
@@ -32,9 +33,8 @@ from ui.widgets.dynamic_table import DynamicTableWidget
 from ui.dialogs.mapping_dialog import MappingDialog
 from ui.dialogs.pdf_dialog import PdfSettingsDialog
 from ui.dialogs.set_selection_dialog import SetSelectionDialog
-from ui.dialogs.sheet_selection_dialog import SheetSelectionDialog
 from ui.dialogs.enrich_codes_dialog import EnrichCodesDialog
-from core.utils import show_loading
+from core.utils import show_loading, safe_read_csv, resource_path
 
 class OfferListDialog(QDialog):
     def __init__(self, master_tab, offer_data, parent=None):
@@ -105,6 +105,8 @@ class OfferListDialog(QDialog):
         import_menu = QMenu()
         import_menu.addAction("Load Set", self.load_set_offer)
         import_menu.addAction("Bulk Upload (Excel/CSV)", self.bulk_upload_offer)
+        import_menu.addAction("Populate Customer List", self.populate_customer_list)
+        import_menu.addAction("Enrich via Codes", self.open_enrich_codes_dialog)
         self.btn_import_menu.setMenu(import_menu)
 
         self.btn_export_menu = QPushButton("Export")
@@ -112,7 +114,6 @@ class OfferListDialog(QDialog):
         export_menu = QMenu()
         export_menu.addAction("Export to Excel", self.export_excel)
         export_menu.addAction("Export to PDF", self.export_pdf)
-        export_menu.addAction("Bulk Export PDF (from Excel)", self.bulk_export_pdf_from_excel)
         export_menu.addAction("Export to PPTX", self.export_pptx)
         self.btn_export_menu.setMenu(export_menu)
 
@@ -328,6 +329,26 @@ class OfferListDialog(QDialog):
                 self.master_tab.save_offer_list()
             self.refresh_offer_table()
 
+    def open_enrich_codes_dialog(self):
+        master_df = self.master_tab.df if hasattr(self.master_tab, 'df') else None
+        if master_df is None or master_df.empty:
+            QMessageBox.warning(self, "No Master Data", "Master catalog is not loaded.")
+            return
+
+        dlg = EnrichCodesDialog(master_df, self)
+        if dlg.exec() == QDialog.DialogCode.Accepted:
+            # Add to self.extra_columns if not present
+            for col in dlg.selected_columns:
+                if col not in self.extra_columns:
+                    self.extra_columns.append(col)
+            
+            # Append rows to self.offer_data
+            for row in dlg.enriched_data:
+                self.offer_data.append(row)
+            
+            self.refresh_offer_table()
+            self.offer_table.scrollToBottom()
+
     def clear_offer_list(self):
         msg_box = QMessageBox(self)
         msg_box.setWindowTitle("Clear Offer List")
@@ -421,63 +442,6 @@ class OfferListDialog(QDialog):
                 f"{len(skipped)} items from the set were not found in the master catalogue. They have been added using their default names from the sets export."
             )
 
-
-    def _parse_df_to_offer_data(self, upload_df, new_extras):
-        master_df = self.master_tab.df
-        master_codes = set(master_df['code'].astype(str).str.replace('-', '').str.strip().str.lower()) if master_df is not None else set()
-        
-        master_desc_lookup = {}
-        if master_df is not None:
-            for _, m_row in master_df.iterrows():
-                m_code_clean = str(m_row.get('code', '')).replace('-', '').strip().lower()
-                if m_code_clean:
-                    master_desc_lookup[m_code_clean] = str(m_row.get('description', ''))
-
-        valid_rows = []
-        skipped_codes = []
-        parsed_offer_data = []
-
-        for _, row in upload_df.iterrows():
-            code_val = str(row.get('code', '')).strip() if pd.notna(row.get('code')) else ""
-            desc_val = str(row.get('desc', '')).strip() if pd.notna(row.get('desc')) else ""
-
-            if (not code_val or code_val.lower() == 'nan') and desc_val and desc_val.lower() != 'nan':
-                sec_data = {"code": "", "desc": desc_val, "qty": "", "is_section": True}
-                for ext in self.extra_columns:
-                    sec_data[ext] = ""
-                parsed_offer_data.append(sec_data)
-                valid_rows.append(desc_val)
-                continue
-
-            if not code_val or code_val.lower() == 'nan':
-                continue
-
-            code_clean = code_val.replace('-', '').lower()
-
-            if code_clean not in master_codes:
-                skipped_codes.append(code_val)
-                continue
-                
-            if not desc_val:
-                desc_val = master_desc_lookup.get(code_clean, "")
-
-            qty_val = int(row['qty']) if pd.notna(row['qty']) else 1
-            row_data = {"code": code_val, "desc": desc_val, "qty": qty_val, "is_section": False}
-            for ext in new_extras:
-                if ext in upload_df.columns and pd.notna(row[ext]):
-                    raw_val = row[ext]
-                    if isinstance(raw_val, float) and raw_val.is_integer():
-                        val = str(int(raw_val)).strip()
-                    else:
-                        val = str(raw_val).strip()
-                else:
-                    val = ""
-                row_data[ext] = val
-            parsed_offer_data.append(row_data)
-            valid_rows.append(code_val)
-            
-        return parsed_offer_data, valid_rows, skipped_codes
-
     def bulk_upload_offer(self):
         file_path, _ = QFileDialog.getOpenFileName(
             self,
@@ -533,9 +497,59 @@ class OfferListDialog(QDialog):
                 if master_df is None or master_df.empty:
                     QMessageBox.warning(self, "No Master Data", "Please load the master catalogue before bulk uploading offers.")
                     return
+
+                master_codes = set(master_df['code'].astype(str).str.replace('-', '').str.strip().str.lower())
                 
-                parsed_offer_data, valid_rows, skipped_codes = self._parse_df_to_offer_data(upload_df, new_extras)
-                self.offer_data.extend(parsed_offer_data)
+                # Pre-build a fast lookup dictionary for descriptions from master_df
+                # This is much faster than boolean masking inside the loop
+                master_desc_lookup = {}
+                for _, m_row in master_df.iterrows():
+                    m_code_clean = str(m_row.get('code', '')).replace('-', '').strip().lower()
+                    if m_code_clean:
+                        master_desc_lookup[m_code_clean] = str(m_row.get('description', ''))
+
+                valid_rows = []
+                skipped_codes = []
+
+                for _, row in upload_df.iterrows():
+                    code_val = str(row.get('code', '')).strip() if pd.notna(row.get('code')) else ""
+                    desc_val = str(row.get('desc', '')).strip() if pd.notna(row.get('desc')) else ""
+
+                    if (not code_val or code_val.lower() == 'nan') and desc_val and desc_val.lower() != 'nan':
+                        sec_data = {"code": "", "desc": desc_val, "qty": "", "is_section": True}
+                        for ext in self.extra_columns:
+                            sec_data[ext] = ""
+                        self.offer_data.append(sec_data)
+                        valid_rows.append(desc_val)
+                        continue
+
+                    if not code_val or code_val.lower() == 'nan':
+                        continue
+
+                    code_clean = code_val.replace('-', '').lower()
+
+                    if code_clean not in master_codes:
+                        skipped_codes.append(code_val)
+                        continue
+                        
+                    # If description is missing, pull from master file
+                    if not desc_val:
+                        desc_val = master_desc_lookup.get(code_clean, "")
+
+                    qty_val = int(row['qty']) if pd.notna(row['qty']) else 1
+                    row_data = {"code": code_val, "desc": desc_val, "qty": qty_val, "is_section": False}
+                    for ext in new_extras:
+                        if ext in upload_df.columns and pd.notna(row[ext]):
+                            raw_val = row[ext]
+                            if isinstance(raw_val, float) and raw_val.is_integer():
+                                val = str(int(raw_val)).strip()
+                            else:
+                                val = str(raw_val).strip()
+                        else:
+                            val = ""
+                        row_data[ext] = val
+                    self.offer_data.append(row_data)
+                    valid_rows.append(code_val)
 
                 if valid_rows:
                     if hasattr(self, 'master_tab') and hasattr(self.master_tab, 'save_offer_list'):
@@ -552,6 +566,141 @@ class OfferListDialog(QDialog):
                     QMessageBox.information(self, "Bulk Upload Complete", "All uploaded items and sections were added.")
             except Exception as e:
                 QMessageBox.critical(self, "Bulk Upload Error", f"Failed to process uploaded file: {e}")
+
+    def populate_customer_list(self):
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Select Customer List File",
+            "",
+            "Data Files (*.xlsx *.xls *.csv)"
+        )
+        if not file_path:
+            return
+
+        master_df = self.master_tab.df
+        if master_df is None or master_df.empty:
+            QMessageBox.warning(self, "No Master Data", "Please load the master catalogue before populating customer lists.")
+            return
+
+        dlg = MappingDialog(
+            file_path,
+            required_fields=['code'],
+            optional_fields=['client description', 'quantity'],
+            allow_extras=False,
+            parent=self
+        )
+        if dlg.exec() != QDialog.DialogCode.Accepted:
+            return
+
+        replace_existing = False
+        if self.offer_data:
+            msg = QMessageBox(self)
+            msg.setWindowTitle("Import Mode")
+            msg.setText("Existing items detected in Offer List.")
+            msg.setInformativeText("Do you want to replace the current list or append the new items to it?")
+            btn_replace = msg.addButton("Replace", QMessageBox.ButtonRole.DestructiveRole)
+            btn_append = msg.addButton("Append", QMessageBox.ButtonRole.ActionRole)
+            btn_cancel = msg.addButton("Cancel", QMessageBox.ButtonRole.RejectRole)
+            msg.setDefaultButton(btn_append)
+            msg.exec()
+
+            clicked = msg.clickedButton()
+            if clicked == btn_cancel:
+                return
+            elif clicked == btn_replace:
+                replace_existing = True
+
+        with show_loading(self, "Processing Customer List..."):
+            try:
+                if dlg.is_excel:
+                    df = pd.read_excel(file_path, sheet_name=dlg.selected_sheet, header=dlg.header_row)
+                else:
+                    df = safe_read_csv(file_path, header=dlg.header_row)
+
+                code_col = dlg.mappings.get('code')
+                client_desc_col = dlg.mappings.get('client description')
+                qty_col = dlg.mappings.get('quantity')
+
+                master_codes_map = {}
+                for _, m_row in master_df.iterrows():
+                    m_code = str(m_row.get('code', '')).strip()
+                    m_norm = m_code.replace('-', '').replace(' ', '').lower()
+                    if m_norm:
+                        master_codes_map[m_norm] = {
+                            'code': m_code,
+                            'desc': str(m_row.get('description', '')).strip(),
+                            'price': str(m_row.get('price', '')).strip()
+                        }
+
+                new_offer_items = []
+                skipped_codes = []
+
+                for _, row in df.iterrows():
+                    raw_client_desc = str(row.get(client_desc_col, '')).strip() if client_desc_col and pd.notna(row.get(client_desc_col)) else ""
+                    if raw_client_desc.lower() == 'nan':
+                        raw_client_desc = ""
+
+                    raw_code = str(row.get(code_col, '')).strip() if code_col and pd.notna(row.get(code_col)) else ""
+                    if raw_code.lower() == 'nan':
+                        raw_code = ""
+
+                    raw_qty = row.get(qty_col, 1) if qty_col and pd.notna(row.get(qty_col)) else 1
+                    try:
+                        qty_val = int(float(str(raw_qty).strip()))
+                        if qty_val <= 0:
+                            qty_val = 1
+                    except Exception:
+                        qty_val = 1
+
+                    if not raw_code:
+                        if raw_client_desc:
+                            new_offer_items.append({
+                                "is_section": True,
+                                "desc": raw_client_desc
+                            })
+                        continue
+
+                    norm_code = raw_code.replace('-', '').replace(' ', '').lower()
+                    if norm_code in master_codes_map:
+                        cat_info = master_codes_map[norm_code]
+                        item_obj = {
+                            "is_section": False,
+                            "code": cat_info['code'],
+                            "desc": cat_info['desc'],
+                            "qty": qty_val,
+                            "client_desc": raw_client_desc
+                        }
+                        if raw_client_desc:
+                            new_offer_items.append({
+                                "is_section": True,
+                                "desc": raw_client_desc
+                            })
+                        new_offer_items.append(item_obj)
+                    else:
+                        skipped_codes.append(raw_code)
+
+                if replace_existing:
+                    self.offer_data.clear()
+                    self.offer_data.extend(new_offer_items)
+                else:
+                    self.offer_data.extend(new_offer_items)
+
+                self.refresh_offer_table()
+                if hasattr(self, 'master_tab') and hasattr(self.master_tab, 'save_offer_list'):
+                    self.master_tab.save_offer_list()
+
+                if skipped_codes:
+                    unique_skipped = sorted(set(skipped_codes))
+                    QMessageBox.warning(
+                        self,
+                        "Skipped Invalid Codes",
+                        f"The following codes were skipped because they were not found in the master catalogue:\n{', '.join(unique_skipped)}"
+                    )
+                else:
+                    QMessageBox.information(self, "Upload Complete", "Customer list populated successfully.")
+            except Exception as e:
+                QMessageBox.critical(self, "Error", f"Failed to populate customer list: {e}")
+
     def get_logical_col_key(self, logical_col):
         if logical_col == 1: return "#", "sr_no"
         elif logical_col == 2: return "CODE", "code"
@@ -648,137 +797,6 @@ class OfferListDialog(QDialog):
         buf.seek(0)
         return RLImage(buf, width=w * ratio, height=h * ratio)
 
-    def _generate_pdf_core(self, offer_data, visual_cols_metadata, settings, path):
-        try:
-            pdfmetrics.registerFont(TTFont('Arial', 'C:\Windows\Fonts\arial.ttf'))
-            pdfmetrics.registerFont(TTFont('Arial-Bold', 'C:\Windows\Fonts\arialbd.ttf'))
-            f_norm = 'Arial'
-            f_bold = 'Arial-Bold'
-        except Exception:
-            f_norm = 'Helvetica'
-            f_bold = 'Helvetica-Bold'
-
-        styles = getSampleStyleSheet()
-        cell_style = ParagraphStyle("cell", parent=styles["Normal"], fontSize=8, leading=10, fontName=f_norm)
-        qty_style = ParagraphStyle("qty", parent=cell_style, alignment=TA_CENTER)
-        header_cell_style = ParagraphStyle(
-            "hcell", parent=styles["Normal"], fontSize=8, leading=10,
-            textColor=colors.white, fontName=f_bold)
-
-        doc = SimpleDocTemplate(
-            path, pagesize=A4,
-            leftMargin=15 * mm, rightMargin=15 * mm,
-            topMargin=15 * mm, bottomMargin=15 * mm,
-            title=settings.get("reference", "Offer")
-        )
-
-        story = []
-        if settings.get('header'):
-            story.append(Paragraph(shape_arabic(settings['header']), ParagraphStyle(
-                "h1", parent=styles["Heading1"], fontSize=16, spaceAfter=2, fontName=f_bold)))
-        if settings.get('subheader'):
-            story.append(Paragraph(shape_arabic(settings['subheader']), ParagraphStyle(
-                "h2", parent=styles["Heading2"], fontSize=12, textColor=colors.grey, spaceAfter=2, fontName=f_norm)))
-        if settings.get('reference'):
-            story.append(Paragraph(shape_arabic(settings['reference']), ParagraphStyle(
-                "h3", parent=styles["Normal"], fontSize=10, spaceAfter=10, fontName=f_norm)))
-        story.append(Spacer(1, 6))
-
-        header_row = []
-        col_widths = []
-        
-        usable_width_mm = 180
-        total_text_cols_width = 0
-        
-        text_col_widths_mm = []
-        for header_name, dict_key in visual_cols_metadata:
-            if not header_name:
-                text_col_widths_mm.append(0)
-                continue
-            
-            shaped_header = shape_arabic(header_name)
-            max_w = stringWidth(shaped_header, f_bold, 8) / mm
-            
-            for data in offer_data:
-                if not data.get("is_section", False):
-                    text = str(data.get(dict_key, ""))
-                    shaped_text = shape_arabic(text)
-                    w = stringWidth(shaped_text, f_norm, 8) / mm
-                    if w > max_w:
-                        max_w = w
-                        
-            col_w = max_w + 6
-            if header_name == "DESCRIPTION":
-                col_w = min(col_w, 85.0)
-            elif header_name == "CODE":
-                col_w = min(col_w, 45.0)
-            else:
-                col_w = min(col_w, 35.0)
-
-            text_col_widths_mm.append(col_w)
-            total_text_cols_width += col_w
-
-        image_col_width = max(25.0, usable_width_mm - total_text_cols_width)
-        
-        for i, (header_name, _) in enumerate(visual_cols_metadata):
-            if header_name:
-                header_row.append(Paragraph(shape_arabic(header_name), header_cell_style))
-                col_widths.append(text_col_widths_mm[i] * mm)
-        
-        header_row.append(Paragraph("Image", header_cell_style))
-        col_widths.append(image_col_width * mm)
-        
-        table_data = [header_row]
-        
-        dynamic_styles = []
-
-        serial_counter = 1
-        for row_idx, data in enumerate(offer_data, start=1):
-            if data.get("is_section", False):
-                serial_counter = 1
-                sec_p = Paragraph(f"<b>{shape_arabic(data['desc'])}</b>", ParagraphStyle("sec", parent=cell_style, alignment=TA_CENTER, fontName=f_bold))
-                row_data = [sec_p] + [""] * len(visual_cols_metadata)
-                table_data.append(row_data)
-                dynamic_styles.append(("SPAN", (0, row_idx), (-1, row_idx)))
-                dynamic_styles.append(("BACKGROUND", (0, row_idx), (-1, row_idx), colors.HexColor("#DDE3EC")))
-                dynamic_styles.append(("ALIGN", (0, row_idx), (-1, row_idx), "CENTER"))
-            else:
-                img_cell = ""
-                if settings['include_images']:
-                    img_path = self._find_image_path(data['code'])
-                    avail_img_w = max(5, image_col_width - 4)
-                    img_cell = self._scaled_pdf_image(img_path, max_w_mm=avail_img_w, max_h_mm=25) if img_path else Paragraph("—", cell_style)
-
-                row_data = []
-                for header_name, dict_key in visual_cols_metadata:
-                    if header_name:
-                        if dict_key == "sr_no":
-                            row_data.append(Paragraph(str(serial_counter), qty_style))
-                        else:
-                            style = qty_style if header_name == "QTY" else cell_style
-                            row_data.append(Paragraph(shape_arabic(str(data.get(dict_key, ""))), style))
-                
-                row_data.append(img_cell)
-                table_data.append(row_data)
-                serial_counter += 1
-
-        tbl = Table(table_data, colWidths=col_widths, repeatRows=1)
-        
-        base_style = [
-            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#2C3E50")),
-            ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#CCCCCC")),
-            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-            ("TOPPADDING", (0, 0), (-1, -1), 4),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
-            ("LEFTPADDING", (0, 0), (-1, -1), 5),
-            ("RIGHTPADDING", (0, 0), (-1, -1), 5),
-        ]
-        
-        tbl.setStyle(TableStyle(base_style + dynamic_styles))
-        story.append(tbl)
-        doc.build(story)
-
-
     def export_pdf(self):
         if not self.offer_data:
             return
@@ -792,118 +810,149 @@ class OfferListDialog(QDialog):
         if not path:
             return
 
-        base_filename = os.path.splitext(os.path.basename(path))[0]
-        for key in ['header', 'subheader', 'reference']:
-            if settings.get(key):
-                settings[key] = settings[key].replace('{{filename}}', base_filename).replace('{{sheetname}}', base_filename)
-
         with show_loading(self, "Generating PDF, this may take a moment..."):
             try:
+                try:
+                    pdfmetrics.registerFont(TTFont('Arial', 'C:\\Windows\\Fonts\\arial.ttf'))
+                    pdfmetrics.registerFont(TTFont('Arial-Bold', 'C:\\Windows\\Fonts\\arialbd.ttf'))
+                    f_norm = 'Arial'
+                    f_bold = 'Arial-Bold'
+                except Exception:
+                    f_norm = 'Helvetica'
+                    f_bold = 'Helvetica-Bold'
+
+                styles = getSampleStyleSheet()
+                cell_style = ParagraphStyle("cell", parent=styles["Normal"], fontSize=8, leading=10, fontName=f_norm)
+                qty_style = ParagraphStyle("qty", parent=cell_style, alignment=TA_CENTER)
+                header_cell_style = ParagraphStyle(
+                    "hcell", parent=styles["Normal"], fontSize=8, leading=10,
+                    textColor=colors.white, fontName=f_bold)
+
+                doc = SimpleDocTemplate(
+                    path, pagesize=A4,
+                    leftMargin=15 * mm, rightMargin=15 * mm,
+                    topMargin=15 * mm, bottomMargin=15 * mm,
+                    title=settings.get("reference", "Offer")
+                )
+
+                story = []
+                if settings.get('header'):
+                    story.append(Paragraph(shape_arabic(settings['header']), ParagraphStyle(
+                        "h1", parent=styles["Heading1"], fontSize=16, spaceAfter=2, fontName=f_bold)))
+                if settings.get('subheader'):
+                    story.append(Paragraph(shape_arabic(settings['subheader']), ParagraphStyle(
+                        "h2", parent=styles["Heading2"], fontSize=12, textColor=colors.grey, spaceAfter=2, fontName=f_norm)))
+                if settings.get('reference'):
+                    story.append(Paragraph(shape_arabic(settings['reference']), ParagraphStyle(
+                        "h3", parent=styles["Normal"], fontSize=10, spaceAfter=10, fontName=f_norm)))
+                story.append(Spacer(1, 6))
+
                 header = self.offer_table.horizontalHeader()
                 visual_cols = [header.logicalIndex(v) for v in range(1, self.offer_table.columnCount())]
-                visual_cols_metadata = [self.get_logical_col_key(log_col) for log_col in visual_cols]
-                self._generate_pdf_core(self.offer_data, visual_cols_metadata, settings, path)
+                
+                header_row = []
+                col_widths = []
+                
+                usable_width_mm = 180
+                total_text_cols_width = 0
+                
+                text_col_widths_mm = []
+                for log_col in visual_cols:
+                    header_name, dict_key = self.get_logical_col_key(log_col)
+                    if not header_name:
+                        text_col_widths_mm.append(0)
+                        continue
+                    
+                    shaped_header = shape_arabic(header_name)
+                    max_w = stringWidth(shaped_header, f_bold, 8) / mm
+                    
+                    for data in self.offer_data:
+                        if not data.get("is_section", False):
+                            text = str(data.get(dict_key, ""))
+                            shaped_text = shape_arabic(text)
+                            w = stringWidth(shaped_text, f_norm, 8) / mm
+                            if w > max_w:
+                                max_w = w
+                                
+                    col_w = max_w + 6
+                    if header_name == "DESCRIPTION":
+                        col_w = min(col_w, 85.0)
+                    elif header_name == "CODE":
+                        col_w = min(col_w, 45.0)
+                    else:
+                        col_w = min(col_w, 35.0)
+
+                    text_col_widths_mm.append(col_w)
+                    total_text_cols_width += col_w
+
+                image_col_width = max(25.0, usable_width_mm - total_text_cols_width)
+                
+                for i, log_col in enumerate(visual_cols):
+                    header_name, _ = self.get_logical_col_key(log_col)
+                    if header_name:
+                        header_row.append(Paragraph(shape_arabic(header_name), header_cell_style))
+                        col_widths.append(text_col_widths_mm[i] * mm)
+                
+                header_row.append(Paragraph("Image", header_cell_style))
+                col_widths.append(image_col_width * mm)
+                
+                table_data = [header_row]
+                
+                dynamic_styles = []
+
+                serial_counter = 1
+                for row_idx, data in enumerate(self.offer_data, start=1):
+                    if data.get("is_section", False):
+                        serial_counter = 1
+                        sec_p = Paragraph(f"<b>{shape_arabic(data['desc'])}</b>", ParagraphStyle("sec", parent=cell_style, alignment=TA_CENTER, fontName=f_bold))
+                        row_data = [sec_p] + [""] * len(visual_cols)
+                        table_data.append(row_data)
+                        dynamic_styles.append(("SPAN", (0, row_idx), (-1, row_idx)))
+                        dynamic_styles.append(("BACKGROUND", (0, row_idx), (-1, row_idx), colors.HexColor("#DDE3EC")))
+                        dynamic_styles.append(("ALIGN", (0, row_idx), (-1, row_idx), "CENTER"))
+                    else:
+                        img_cell = ""
+                        if settings['include_images']:
+                            img_path = self._find_image_path(data['code'])
+                            avail_img_w = max(5, image_col_width - 4)
+                            img_cell = self._scaled_pdf_image(img_path, max_w_mm=avail_img_w, max_h_mm=25) if img_path else Paragraph("—", cell_style)
+
+                        row_data = []
+                        for log_col in visual_cols:
+                            header_name, dict_key = self.get_logical_col_key(log_col)
+                            if header_name:
+                                if dict_key == "sr_no":
+                                    row_data.append(Paragraph(str(serial_counter), qty_style))
+                                else:
+                                    style = qty_style if header_name == "QTY" else cell_style
+                                    row_data.append(Paragraph(shape_arabic(str(data.get(dict_key, ""))), style))
+                        
+                        row_data.append(img_cell)
+                        table_data.append(row_data)
+                        serial_counter += 1
+
+                tbl = Table(table_data, colWidths=col_widths, repeatRows=1)
+                
+                base_style = [
+                    ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#2C3E50")),
+                    ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#CCCCCC")),
+                    ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                    ("TOPPADDING", (0, 0), (-1, -1), 4),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 5),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 5),
+                ]
+                
+                tbl.setStyle(TableStyle(base_style + dynamic_styles))
+                story.append(tbl)
+
+                doc.build(story)
+
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"Generation failed: {str(e)}")
                 return
                 
         QMessageBox.information(self, "Success", "PDF Generated Successfully.")
-
-    def bulk_export_pdf_from_excel(self):
-        file_path, _ = QFileDialog.getOpenFileName(
-            self,
-            "Select Excel File for Bulk Export",
-            "",
-            "Excel Files (*.xlsx *.xls)"
-        )
-        if not file_path:
-            return
-            
-        try:
-            xl = pd.ExcelFile(file_path)
-        except Exception as e:
-            QMessageBox.critical(self, "Error", f"Failed to load Excel file:\n{e}")
-            return
-            
-        dlg = MappingDialog(file_path, required_fields=['code'], optional_fields=['description', 'quantity'], allow_extras=True, parent=self)
-        if dlg.exec() != QDialog.DialogCode.Accepted:
-            return
-            
-        settings_dialog = PdfSettingsDialog(self)
-        if settings_dialog.exec() != QDialog.DialogCode.Accepted:
-            return
-        settings = settings_dialog.get_settings()
-        
-        sheet_dlg = SheetSelectionDialog(xl.sheet_names, parent=self)
-        if sheet_dlg.exec() != QDialog.DialogCode.Accepted:
-            return
-            
-        selected_sheets = sheet_dlg.get_selected_sheets()
-        
-        out_dir = QFileDialog.getExistingDirectory(self, "Select Output Directory for PDFs")
-        if not out_dir:
-            return
-            
-        rename_map = {'code': 'code', 'description': 'desc', 'quantity': 'qty'}
-        mapped_cols = {}
-        for source_col, target_key in rename_map.items():
-            mapped_cols[source_col] = dlg.mappings.get(source_col, None)
-
-        rename_dict = {mapped_cols['code']: 'code'}
-        if mapped_cols['description']: rename_dict[mapped_cols['description']] = 'desc'
-        if mapped_cols['quantity']: rename_dict[mapped_cols['quantity']] = 'qty'
-
-        new_extras = getattr(dlg, 'extras', [])
-        
-        # Determine visual columns metadata manually for the generator
-        visual_cols_metadata = [("#", "sr_no"), ("CODE", "code"), ("DESCRIPTION", "desc"), ("QTY", "qty")]
-        for ext in new_extras:
-            visual_cols_metadata.append((ext.upper(), ext))
-            
-        # Temporarily append new extras to self.extra_columns so `_parse_df_to_offer_data` writes them cleanly
-        old_extras = list(self.extra_columns)
-        for ext in new_extras:
-            if ext not in self.extra_columns:
-                self.extra_columns.append(ext)
-
-        with show_loading(self, "Generating Bulk PDFs..."):
-            errors = []
-            base_filename = os.path.splitext(os.path.basename(file_path))[0]
-            for sheet in selected_sheets:
-                try:
-                    raw_df = pd.read_excel(file_path, sheet_name=sheet, header=dlg.header_row)
-                    upload_df = raw_df.rename(columns=rename_dict)
-                    
-                    if 'qty' not in upload_df.columns:
-                        upload_df['qty'] = 1
-                    else:
-                        upload_df['qty'] = pd.to_numeric(upload_df['qty'], errors='coerce').fillna(1).astype(int)
-
-                    if 'desc' not in upload_df.columns:
-                        upload_df['desc'] = ""
-                        
-                    parsed_offer_data, _, _ = self._parse_df_to_offer_data(upload_df, new_extras)
-                    
-                    if not parsed_offer_data:
-                        continue
-                        
-                    out_path = os.path.join(out_dir, f"{sheet}.pdf")
-                    
-                    sheet_settings = settings.copy()
-                    for key in ['header', 'subheader', 'reference']:
-                        if sheet_settings.get(key):
-                            sheet_settings[key] = sheet_settings[key].replace('{{filename}}', base_filename).replace('{{sheetname}}', sheet)
-                            
-                    self._generate_pdf_core(parsed_offer_data, visual_cols_metadata, sheet_settings, out_path)
-                except Exception as e:
-                    errors.append(f"{sheet}: {e}")
-                    
-        self.extra_columns = old_extras
-
-        if errors:
-            QMessageBox.warning(self, "Completed with Errors", "Bulk export completed but with some errors:\n" + "\n".join(errors))
-        else:
-            QMessageBox.information(self, "Success", "All selected sheets exported successfully!")
 
     def export_pptx(self):
         if not self.offer_data:
@@ -925,6 +974,93 @@ class OfferListDialog(QDialog):
             if not template_path:
                 return
 
+        # Locate Tender Workbook 'MMC_Surgical_Instruments_Tender_Tables Albear.xlsx'
+        albear_path = resource_path(os.path.join("data", "MMC_Surgical_Instruments_Tender_Tables Albear.xlsx"))
+        if not os.path.exists(albear_path):
+            albear_path = os.path.abspath("MMC_Surgical_Instruments_Tender_Tables Albear.xlsx")
+
+        selected_tender_sheet = None
+        albear_items_map = {} # client_desc_clean -> ref_no, code_clean -> ref_no, items_list: [(code, desc, no)]
+
+        if os.path.exists(albear_path):
+            try:
+                xl_albear = pd.ExcelFile(albear_path)
+                sheet_names = xl_albear.sheet_names
+
+                # Prompt user to select which sheet (set/group) to match items against
+                dlg = QDialog(self)
+                dlg.setWindowTitle("Select Tender Group Sheet")
+                dlg.resize(460, 180)
+                d_layout = QVBoxLayout(dlg)
+                d_layout.setSpacing(10)
+                
+                info_lbl = QLabel(
+                    "<b>Select the Tender Sheet (Group / Set)</b> to acquire <i>{{group_name}}</i> and <i>{{REF}}</i> from:<br>"
+                    "<span style='color: #666;'>This prevents duplicate instrument descriptions across different sets from getting confused.</span>"
+                )
+                info_lbl.setWordWrap(True)
+                d_layout.addWidget(info_lbl)
+
+                combo = QComboBox()
+                combo.addItems(sheet_names)
+
+                # Try auto-detecting current section name in offer_data
+                current_sec_name = ""
+                for d in self.offer_data:
+                    if d.get("is_section", False):
+                        current_sec_name = d.get("desc", "").strip().lower()
+                        break
+
+                if current_sec_name:
+                    sec_clean = re.sub(r'^[a-z0-9]+[-_ ]+', '', current_sec_name).strip()
+                    for idx, s in enumerate(sheet_names):
+                        s_clean = re.sub(r'^[a-z0-9]+[-_ ]+', '', s.lower()).strip()
+                        if s_clean and (s_clean in sec_clean or sec_clean in s_clean):
+                            combo.setCurrentIndex(idx)
+                            break
+
+                d_layout.addWidget(combo)
+
+                from PyQt6.QtWidgets import QDialogButtonBox
+                bbox = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
+                bbox.accepted.connect(dlg.accept)
+                bbox.rejected.connect(dlg.reject)
+                d_layout.addWidget(bbox)
+
+                if dlg.exec() != QDialog.DialogCode.Accepted:
+                    return
+
+                selected_tender_sheet = combo.currentText()
+                df_sheet = xl_albear.parse(selected_tender_sheet, header=1)
+
+                col_no = next((c for c in df_sheet.columns if str(c).strip().lower() in ['no.', 'no', 'item #', 'item no']), None)
+                col_desc = next((c for c in df_sheet.columns if 'source instrument' in str(c).lower() or 'desc' in str(c).lower()), None)
+                col_code = next((c for c in df_sheet.columns if 'kls code' in str(c).lower() or 'offered ref' in str(c).lower()), None)
+
+                for _, r in df_sheet.iterrows():
+                    r_no = str(r.get(col_no, '')).strip() if col_no else ""
+                    if r_no.lower() == 'nan': r_no = ""
+                    if r_no.endswith('.0'): r_no = r_no[:-2]
+
+                    r_desc = str(r.get(col_desc, '')).strip() if col_desc else ""
+                    if r_desc.lower() == 'nan': r_desc = ""
+                    r_desc_clean = r_desc.lower().strip()
+
+                    r_code = str(r.get(col_code, '')).strip() if col_code else ""
+                    if r_code.lower() == 'nan': r_code = ""
+                    r_code_clean = r_code.replace('-', '').replace(' ', '').lower()
+
+                    if r_desc_clean and r_desc_clean not in albear_items_map:
+                        albear_items_map[r_desc_clean] = r_no
+                    if r_code_clean and r_code_clean not in albear_items_map:
+                        albear_items_map[r_code_clean] = r_no
+                    if "all_items" not in albear_items_map:
+                        albear_items_map["all_items"] = []
+                    albear_items_map["all_items"].append((r_code_clean, r_desc_clean, r_no))
+
+            except Exception as e:
+                QMessageBox.warning(self, "Tender File Notice", f"Could not load tender sheet:\n{str(e)}")
+
         save_path, _ = QFileDialog.getSaveFileName(self, "Save PPTX", "Offer_Presentation.pptx", "PowerPoint Files (*.pptx)")
         if not save_path:
             return
@@ -933,8 +1069,22 @@ class OfferListDialog(QDialog):
             try:
                 from pptx import Presentation
                 from pptx.enum.shapes import PP_PLACEHOLDER
-                import re
+                # import re already at top level
                 from core.constants import BROCHURE_HIERARCHY
+
+                import json
+                catalog_index = {}
+                cat_index_path = resource_path(os.path.join("data", "catalog_page_index.json"))
+                if not os.path.exists(cat_index_path):
+                    cat_index_path = os.path.abspath(os.path.join("data", "catalog_page_index.json"))
+                if not os.path.exists(cat_index_path):
+                    cat_index_path = os.path.abspath(os.path.join("desktop_app", "data", "catalog_page_index.json"))
+                if os.path.exists(cat_index_path):
+                    try:
+                        with open(cat_index_path, "r", encoding="utf-8") as f_idx:
+                            catalog_index = json.load(f_idx)
+                    except Exception:
+                        catalog_index = {}
 
                 prs = Presentation(template_path)
                 
@@ -963,16 +1113,33 @@ class OfferListDialog(QDialog):
                     matches = re.findall(r'\b\d+(?:\.\d+)?\s*(?:mm|cm|inch|m)\b', desc, re.IGNORECASE)
                     return ", ".join(matches) if matches else "Standard"
                 
-                def apply_context(text, context):
-                    for key, val in context.items():
-                        text = text.replace(f"{{{{{key}}}}}", str(val))
-                    return text
+                def apply_context_smart(paragraph, context):
+                    # Pass 1: Try run-level replacement
+                    for r in paragraph.runs:
+                        for k, v in context.items():
+                            tag = f"{{{{{k}}}}}"
+                            if tag in r.text:
+                                r.text = r.text.replace(tag, str(v))
+
+                    # Pass 2: If placeholders were split across formatting runs, replace whole paragraph
+                    p_text = "".join(r.text for r in paragraph.runs)
+                    still_has_tags = any(f"{{{{{k}}}}}" in p_text for k in context)
+                    if still_has_tags:
+                        for k, v in context.items():
+                            tag = f"{{{{{k}}}}}"
+                            p_text = p_text.replace(tag, str(v))
+                        if paragraph.runs:
+                            paragraph.runs[0].text = p_text
+                            for r in paragraph.runs[1:]:
+                                r.text = ""
 
                 # First, enrich offer data
                 items_to_process = []
+                current_section_desc = ""
                 
                 for data in self.offer_data:
                     if data.get("is_section", False):
+                        current_section_desc = data.get("desc", "")
                         continue
                         
                     code = data.get("code", "")
@@ -980,6 +1147,7 @@ class OfferListDialog(QDialog):
                     brochures = ""
                     disciplines = ""
                     sizes = ""
+                    client_desc = data.get("client_desc", "") or current_section_desc
                     
                     if master_df is not None and not master_df.empty:
                         mask = master_df['code'].astype(str).str.replace('-', '').str.replace(' ', '').str.lower() == str(code).replace('-', '').replace(' ', '').lower()
@@ -988,33 +1156,91 @@ class OfferListDialog(QDialog):
                             master_row = match.iloc[0]
                             desc = master_row.get("description", desc)
                             brochures_val = master_row.get("brochures", "")
-                            brochures = brochures_val if pd.notna(brochures_val) else ""
-                            disciplines = get_disciplines(brochures)
+                            brochures_raw = str(brochures_val).strip() if pd.notna(brochures_val) else ""
+                            disciplines = get_disciplines(brochures_raw)
+                            # Split by semicolon first so composite brochure titles remain whole
+                            raw_candidates = [b.strip() for b in brochures_raw.split(';') if b.strip()]
+                            if not raw_candidates:
+                                raw_candidates = [b.strip() for b in brochures_raw.split(',') if b.strip()]
+                            brochures = raw_candidates[0] if raw_candidates else ""
                             sizes = get_sizes(desc)
-                            
-                        # We remove family logic for now
+
+                            # Determine page_no from the selected brochure catalog
+                            norm_code = str(code).replace('-', '').replace(' ', '').lower()
+                            page_no = ""
+                            if brochures and catalog_index:
+                                broc_norm = re.sub(r'[^a-z0-9]+', '', brochures.lower())
+                                for cat_file, code_map in catalog_index.items():
+                                    cat_norm = re.sub(r'[^a-z0-9]+', '', cat_file.lower().replace('.pdf', ''))
+                                    if broc_norm in cat_norm or cat_norm in broc_norm:
+                                        if norm_code in code_map:
+                                            page_no = str(code_map[norm_code])
+                                            break
+                                if not page_no:
+                                    for cat_file, code_map in catalog_index.items():
+                                        if norm_code in code_map:
+                                            page_no = str(code_map[norm_code])
+                                            break
+
+                    # Determine group_name and REF strictly from the user-selected sheet
+                    group_name = selected_tender_sheet if selected_tender_sheet else current_section_desc
+                    ref_val = ""
+
+                    c_desc_clean = client_desc.strip().lower()
+                    code_clean = str(code).replace('-', '').replace(' ', '').lower()
+
+                    # 1. Match by client description in the selected sheet
+                    if c_desc_clean and c_desc_clean in albear_items_map:
+                        ref_val = albear_items_map[c_desc_clean]
+
+                    # 2. Match by KLS Code in the selected sheet
+                    if not ref_val and code_clean and code_clean in albear_items_map:
+                        ref_val = albear_items_map[code_clean]
+
+                    # 3. Fuzzy description match in the selected sheet
+                    if not ref_val and c_desc_clean and "all_items" in albear_items_map:
+                        for r_c, r_d, r_n in albear_items_map["all_items"]:
+                            if r_d and (r_d in c_desc_clean or c_desc_clean in r_d):
+                                ref_val = r_n
+                                break
                                 
                     item = {
                         "code": code, "desc": desc, "brochures": brochures,
-                        "disciplines": disciplines, "sizes": sizes
+                        "disciplines": disciplines, "sizes": sizes,
+                        "page_no": page_no,
+                        "client_desc": client_desc,
+                        "group_name": group_name,
+                        "REF": ref_val
                     }
                     items_to_process.append(item)
 
                 for item in items_to_process:
                     context = {
                         "CODE": item["code"],
+                        "code": item["code"],
                         "DESCRIPTION": item["desc"],
+                        "description": item["desc"],
                         "BROCHURES": item["brochures"],
+                        "brochures": item["brochures"],
                         "DISCIPLINES": item["disciplines"],
+                        "disciplines": item["disciplines"],
                         "SIZES": item["sizes"],
                         "sizes": item["sizes"],
-                        "VARIATIONS": ""
+                        "VARIATIONS": "",
+                        "CLIENT_DESCRIPTION": item["client_desc"],
+                        "client_description": item["client_desc"],
+                        "group_name": item["group_name"],
+                        "GROUP_NAME": item["group_name"],
+                        "REF": item["REF"],
+                        "ref": item["REF"],
+                        "page_no": item.get("page_no", ""),
+                        "PAGE_NO": item.get("page_no", "")
                     }
                     
                     img_path = self._find_image_path(item["code"])
                     
                     # Convert comma/semicolon-separated lists into bullet points
-                    for k in ["BROCHURES", "DISCIPLINES", "SIZES", "sizes"]:
+                    for k in ["DISCIPLINES", "SIZES", "sizes"]:
                         if context[k]:
                             parts = [x.strip() for x in str(context[k]).replace(';', ',').split(',') if x.strip()]
                             if len(parts) > 1:
@@ -1087,20 +1313,23 @@ class OfferListDialog(QDialog):
                                     
                         slide.shapes._spTree.append(new_el)
                     
-                    # 2. Process all shapes on the new slide
-                    for shape in slide.shapes:
-                        if shape.is_placeholder and shape.placeholder_format.type == PP_PLACEHOLDER.PICTURE:
-                            # Keep fallback for Slide Master placeholders
+                    # 2. Process all shapes on the new slide (recursing into Group shapes)
+                    def process_shape_text(sh):
+                        if sh.shape_type == 6 and hasattr(sh, 'shapes'): # Group shape
+                            for sub_sh in sh.shapes:
+                                process_shape_text(sub_sh)
+                        elif sh.is_placeholder and sh.placeholder_format.type == PP_PLACEHOLDER.PICTURE:
                             if img_path and not img_box:
                                 try:
-                                    shape.insert_picture(img_path)
+                                    sh.insert_picture(img_path)
                                 except Exception:
                                     pass
-                        elif shape.has_text_frame:
-                            # Replace text in the shape
-                            for paragraph in shape.text_frame.paragraphs:
-                                for run in paragraph.runs:
-                                    run.text = apply_context(run.text, context)
+                        elif sh.has_text_frame:
+                            for paragraph in sh.text_frame.paragraphs:
+                                apply_context_smart(paragraph, context)
+
+                    for shape in slide.shapes:
+                        process_shape_text(shape)
                                     
                     # 3. Insert Custom {{IMAGE}} bounding box
                     if img_path and img_box:
@@ -1134,6 +1363,23 @@ class OfferListDialog(QDialog):
                     prs.slides._sldIdLst.remove(dummy_sld_elem)
                 except Exception:
                     pass
+
+                # Apply {{group_name}} and global placeholders to the intro/first slide(s)
+                first_slide_context = {
+                    "group_name": selected_tender_sheet if selected_tender_sheet else "",
+                    "GROUP_NAME": selected_tender_sheet if selected_tender_sheet else "",
+                }
+                for sld in prs.slides:
+                    def process_cover_shape(sh):
+                        if sh.shape_type == 6 and hasattr(sh, 'shapes'):
+                            for sub_sh in sh.shapes:
+                                process_cover_shape(sub_sh)
+                        elif sh.has_text_frame:
+                            for paragraph in sh.text_frame.paragraphs:
+                                apply_context_smart(paragraph, first_slide_context)
+                    for sh in sld.shapes:
+                        process_cover_shape(sh)
+                    break  # Apply to the title/first slide
 
                 prs.save(save_path)
                 

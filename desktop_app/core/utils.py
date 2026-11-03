@@ -47,3 +47,29 @@ def show_loading(parent, message="Processing, please wait..."):
         yield progress
     finally:
         progress.close()
+
+
+def safe_read_csv(filepath_or_buffer, **kwargs):
+    """
+    Robust CSV reader that attempts multiple common encodings 
+    (utf-8, utf-8-sig, cp1256, cp1252, latin1, iso-8859-1) to prevent UnicodeDecodeError.
+    """
+    import pandas as pd
+    encodings = ['utf-8', 'utf-8-sig', 'cp1256', 'cp1252', 'latin1', 'iso-8859-1']
+    last_err = None
+    for enc in encodings:
+        try:
+            if not isinstance(filepath_or_buffer, (str, bytes)) and hasattr(filepath_or_buffer, 'seek'):
+                filepath_or_buffer.seek(0)
+            return pd.read_csv(filepath_or_buffer, encoding=enc, **kwargs)
+        except (UnicodeDecodeError, UnicodeError) as e:
+            last_err = e
+            continue
+    try:
+        if not isinstance(filepath_or_buffer, (str, bytes)) and hasattr(filepath_or_buffer, 'seek'):
+            filepath_or_buffer.seek(0)
+        return pd.read_csv(filepath_or_buffer, encoding_errors='replace', **kwargs)
+    except Exception:
+        if last_err:
+            raise last_err
+        raise

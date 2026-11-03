@@ -18,7 +18,7 @@ from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QPalette, QColor, QFont, QIcon
 
 from core.stylesheet import APP_STYLESHEET
-from core.utils import resource_path, show_loading
+from core.utils import resource_path, show_loading, safe_read_csv
 from ui.dialogs.mapping_dialog import MappingDialog
 
 class MappingMemory:
@@ -458,7 +458,7 @@ class MapperApp(QMainWindow):
         with show_loading(self, "Processing Order List..."):
             try:
                 if file_path.lower().endswith('.csv'):
-                    raw_df = pd.read_csv(file_path, header=dlg.header_row)
+                    raw_df = safe_read_csv(file_path, header=dlg.header_row)
                 else:
                     raw_df = pd.read_excel(file_path, sheet_name=dlg.selected_sheet, header=dlg.header_row)
                     

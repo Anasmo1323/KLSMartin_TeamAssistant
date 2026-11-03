@@ -3,14 +3,15 @@ import re
 import pandas as pd
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QTableWidgetItem, QHeaderView, QSplitter,
-    QStackedWidget, QComboBox, QMessageBox, QFileDialog, QListWidgetItem, QApplication, QInputDialog, QDialog
+    QStackedWidget, QComboBox, QMessageBox, QFileDialog, QListWidgetItem, QApplication, QInputDialog, QDialog,
+    QTabWidget
 )
 from PyQt6.QtCore import Qt, QTimer, QEvent
 from PyQt6.QtGui import QPixmap, QIcon
 
 import math
 
-from core.utils import resource_path, show_loading
+from core.utils import resource_path, show_loading, safe_read_csv
 from ui.widgets.segmented_edit import SegmentedCodeEdit
 from ui.widgets.dynamic_table import DynamicTableWidget
 from ui.dialogs.mapping_dialog import MappingDialog
@@ -74,10 +75,34 @@ class KlsMasterTab(QWidget):
         main_splitter = QSplitter(Qt.Orientation.Horizontal)
         main_layout.addWidget(main_splitter)
 
-        left_panel_widget = QWidget()
-        left_panel_widget.setMinimumWidth(50)
-        left_layout = QVBoxLayout(left_panel_widget)
-        left_layout.setContentsMargins(0, 0, 0, 0)
+        # Left Panel (Tab System: Filters vs. Set Wizard)
+        self.left_tab_widget = QTabWidget()
+        self.left_tab_widget.setMinimumWidth(320)
+        self.left_tab_widget.setStyleSheet("""
+            QTabWidget::pane {
+                border: 1px solid #CBD5E1;
+                border-radius: 4px;
+                background-color: white;
+            }
+            QTabBar::tab {
+                padding: 6px 12px;
+                font-weight: bold;
+                border-top-left-radius: 4px;
+                border-top-right-radius: 4px;
+                background-color: #F1F5F9;
+                color: #475569;
+                margin-right: 2px;
+            }
+            QTabBar::tab:selected {
+                background-color: white;
+                color: #2563EB;
+                border-bottom: 2px solid #2563EB;
+            }
+        """)
+
+        left_filter_widget = QWidget()
+        left_layout = QVBoxLayout(left_filter_widget)
+        left_layout.setContentsMargins(4, 4, 4, 4)
         left_layout.setSpacing(4)
         
         # Categories Box
@@ -124,7 +149,14 @@ class KlsMasterTab(QWidget):
         left_layout.addWidget(self.set_box)
         
         left_layout.addStretch()
-        main_splitter.addWidget(left_panel_widget)
+        
+        # Add tabs
+        self.left_tab_widget.addTab(left_filter_widget, "🔍 Filters")
+        
+        self.wizard_panel = CustomerWizardPanel(self)
+        self.left_tab_widget.addTab(self.wizard_panel, "🪄 Set Wizard")
+        
+        main_splitter.addWidget(self.left_tab_widget)
 
         # Right Panel (Search & Content)
         right_widget = QWidget()
@@ -188,10 +220,6 @@ class KlsMasterTab(QWidget):
         
         search_layout.addStretch()
         right_panel.addLayout(search_layout)
-        # Right Splitter (Table top, Wizard bottom)
-        self.right_splitter = QSplitter(Qt.Orientation.Vertical)
-        self.right_splitter.setHandleWidth(8)
-        self.right_splitter.setStyleSheet("QSplitter::handle:vertical { background-color: #E2E8F0; margin: 2px; border-radius: 2px; }")
         
         self.stacked_widget = QStackedWidget()
         
@@ -219,25 +247,18 @@ class KlsMasterTab(QWidget):
         self.stacked_widget.addWidget(self.table)
         self.stacked_widget.setCurrentWidget(self.placeholder_label)
 
-        self.right_splitter.addWidget(self.stacked_widget)
-        
-        self.wizard_panel = CustomerWizardPanel(self)
-        self.wizard_panel.hide()
-        self.wizard_panel.btn_close.clicked.connect(lambda: self.wizard_panel.hide())
-        self.right_splitter.addWidget(self.wizard_panel)
-        
-        right_panel.addWidget(self.right_splitter)
+        right_panel.addWidget(self.stacked_widget)
         main_splitter.addWidget(right_widget)
         
         # Set standard initial ratios for Master Tab
-        main_splitter.setSizes([300, 900])
-        self.right_splitter.setSizes([700, 200])
+        main_splitter.setSizes([340, 860])
 
     def toggle_customer_wizard(self):
-        if self.wizard_panel.isVisible():
-            self.wizard_panel.hide()
-        else:
-            self.wizard_panel.show()
+        if hasattr(self, 'left_tab_widget'):
+            if self.left_tab_widget.currentIndex() == 1:
+                self.left_tab_widget.setCurrentIndex(0)
+            else:
+                self.left_tab_widget.setCurrentIndex(1)
 
     def eventFilter(self, source, event):
         if source == self.table and event.type() == QEvent.Type.KeyPress:
@@ -384,7 +405,7 @@ class KlsMasterTab(QWidget):
             with show_loading(self, "Processing Master File..."):
                 try:
                     if file_path.lower().endswith('.csv'):
-                        raw_df = pd.read_csv(file_path, header=dlg.header_row)
+                        raw_df = safe_read_csv(file_path, header=dlg.header_row)
                     else:
                         raw_df = pd.read_excel(file_path, header=dlg.header_row)
                         
@@ -621,6 +642,13 @@ class KlsMasterTab(QWidget):
         self.save_offer_list()
 
     def add_to_offer(self, code, desc, skip_prompt=False, default_qty=1):
+        # If Set Wizard is actively mapping an item, route selection to wizard
+        if hasattr(self, 'wizard_panel') and getattr(self.wizard_panel, 'is_mapping_active', False):
+            if self.wizard_panel.active_item_idx >= 0:
+                handled = self.wizard_panel.assign_catalogue_item(code, desc)
+                if handled:
+                    return
+
         if skip_prompt:
             qty, ok = default_qty, True
         else:

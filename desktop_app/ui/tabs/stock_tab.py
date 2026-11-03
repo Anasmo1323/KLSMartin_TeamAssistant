@@ -7,7 +7,7 @@ from PyQt6.QtCore import Qt, QTimer
 from ui.widgets.segmented_edit import SegmentedCodeEdit
 from ui.widgets.dynamic_table import DynamicTableWidget
 from ui.dialogs.mapping_dialog import MappingDialog
-from core.utils import show_loading
+from core.utils import show_loading, safe_read_csv
 
 class StockTab(QWidget):
     def __init__(self, master_tab):
@@ -92,7 +92,7 @@ class StockTab(QWidget):
         if os.path.exists(self.default_path):
             with show_loading(self, "Loading Stock Data..."):
                 try:
-                    self.df = pd.read_csv(self.default_path)
+                    self.df = safe_read_csv(self.default_path)
                     self.df.columns = [c.lower().strip() for c in self.df.columns]
                     self.populate_table(self.df)
                 except Exception as e:
@@ -116,7 +116,7 @@ class StockTab(QWidget):
                     if dlg.is_excel:
                         raw_df = pd.read_excel(file_path, sheet_name=dlg.selected_sheet, header=dlg.header_row)
                     else:
-                        raw_df = pd.read_csv(file_path, header=dlg.header_row)
+                        raw_df = safe_read_csv(file_path, header=dlg.header_row)
 
                     inverted_map = {v: k for k, v in dlg.mappings.items()}
                     cols_to_keep = list(dlg.mappings.values()) + getattr(dlg, 'extras', [])

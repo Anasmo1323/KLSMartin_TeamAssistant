@@ -16,14 +16,8 @@ class PdfSettingsDialog(QDialog):
         form_layout = QFormLayout()
         form_layout.setSpacing(10)
         
-        self.txt_company = QLineEdit("KLS Martin Egypt")
-        form_layout.addRow("<b>Main Header:</b>", self.txt_company)
-        
-        self.txt_subtitle = QLineEdit("TechnoWave")
-        form_layout.addRow("<b>Sub-Header:</b>", self.txt_subtitle)
-        
-        self.txt_reference = QLineEdit("Official Offer Document")
-        form_layout.addRow("<b>Reference text:</b>", self.txt_reference)
+        self.txt_customer_name = QLineEdit()
+        form_layout.addRow("<b>Customer Name:</b>", self.txt_customer_name)
         
         layout.addLayout(form_layout)
 
@@ -46,8 +40,6 @@ class PdfSettingsDialog(QDialog):
 
     def get_settings(self):
         return {
-            "header": self.txt_company.text().strip(),
-            "subheader": self.txt_subtitle.text().strip(),
-            "reference": self.txt_reference.text().strip(),
+            "customer_name": self.txt_customer_name.text().strip(),
             "include_images": self.chk_images.isChecked()
         }

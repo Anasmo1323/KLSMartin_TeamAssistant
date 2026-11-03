@@ -1,546 +1,760 @@
+import os
+import json
+import re
 import pandas as pd
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, 
     QTableWidget, QTableWidgetItem, QHeaderView, QFileDialog, QMessageBox, QFrame,
-    QGraphicsDropShadowEffect, QApplication, QCheckBox
+    QApplication, QCheckBox, QTreeWidget, QTreeWidgetItem,
+    QRadioButton, QButtonGroup, QInputDialog, QSplitter
 )
-from PyQt6.QtCore import Qt, pyqtSignal, QPoint
+from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QColor, QFont
 
 from ui.dialogs.mapping_dialog import MappingDialog
 
-class ActiveItemWidget(QWidget):
-    """A floating, semi-transparent widget to show the current item and actions."""
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Tool | Qt.WindowType.WindowStaysOnTopHint)
-        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
-        
-        # Main styled container
-        self.container = QFrame(self)
-        self.container.setObjectName("WizardContainer")
-        self.container.setStyleSheet("""
-            QFrame#WizardContainer {
-                background-color: rgba(30, 30, 40, 220);
-                border-radius: 8px;
-                border: 1px solid #444;
-            }
-            QLabel {
-                color: white;
-                font-size: 14px;
-                background-color: transparent;
-                border: none;
-            }
-        """)
-        
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(10, 10, 10, 10)
-        layout.addWidget(self.container)
-        
-        inner_layout = QVBoxLayout(self.container)
-        
-        top_layout = QHBoxLayout()
-        self.lbl_status = QLabel("Customer Wizard: Idle")
-        self.lbl_status.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
-        top_layout.addWidget(self.lbl_status)
-        top_layout.addStretch()
-        
-        self.btn_close_widget = QPushButton("X")
-        self.btn_close_widget.setFixedSize(24, 24)
-        self.btn_close_widget.setStyleSheet("""
-            QPushButton { 
-                background-color: #EF4444; 
-                color: white; 
-                border-radius: 12px; 
-                font-weight: bold; 
-                font-size: 12px; 
-            }
-            QPushButton:hover { background-color: #DC2626; }
-        """)
-        self.btn_close_widget.clicked.connect(self.hide)
-        top_layout.addWidget(self.btn_close_widget)
-        
-        inner_layout.addLayout(top_layout)
-        
-        self.lbl_desc = QLabel("")
-        self.lbl_desc.setWordWrap(True)
-        self.lbl_desc.setStyleSheet("color: #E2E8F0; font-size: 13px;")
-        inner_layout.addWidget(self.lbl_desc)
-        
-        self.lbl_qty = QLabel("")
-        self.lbl_qty.setStyleSheet("color: #94A3B8; font-size: 12px;")
-        inner_layout.addWidget(self.lbl_qty)
-        
-        # Actions
-        btn_layout = QHBoxLayout()
-        
-        self.btn_add_header = QPushButton("Add Section Header")
-        self.btn_add_header.setStyleSheet("""
-            QPushButton {
-                background-color: #3B82F6; color: white; border-radius: 4px; padding: 6px 12px; font-weight: bold;
-            }
-            QPushButton:hover { background-color: #2563EB; }
-        """)
-        
-        self.btn_done = QPushButton("Done")
-        self.btn_done.setStyleSheet("""
-            QPushButton {
-                background-color: #10B981; color: white; border-radius: 4px; padding: 6px 12px; font-weight: bold;
-            }
-            QPushButton:hover { background-color: #059669; }
-        """)
-        
-        self.btn_skip = QPushButton("Skip")
-        self.btn_skip.setStyleSheet("""
-            QPushButton {
-                background-color: #EF4444; color: white; border-radius: 4px; padding: 6px 12px; font-weight: bold;
-            }
-            QPushButton:hover { background-color: #DC2626; }
-        """)
-        
-        btn_layout.addWidget(self.btn_add_header)
-        btn_layout.addWidget(self.btn_done)
-        btn_layout.addWidget(self.btn_skip)
-        
-        inner_layout.addLayout(btn_layout)
-        
-        # Shadow effect
-        shadow = QGraphicsDropShadowEffect(self)
-        shadow.setBlurRadius(15)
-        shadow.setColor(QColor(0, 0, 0, 150))
-        shadow.setOffset(0, 4)
-        self.container.setGraphicsEffect(shadow)
-        
-        # Position offset tracking for dragging
-        self._drag_pos = None
-
-    def mousePressEvent(self, event):
-        if event.button() == Qt.MouseButton.LeftButton:
-            self._drag_pos = event.globalPosition().toPoint() - self.frameGeometry().topLeft()
-            event.accept()
-
-    def mouseMoveEvent(self, event):
-        if event.buttons() == Qt.MouseButton.LeftButton and self._drag_pos is not None:
-            self.move(event.globalPosition().toPoint() - self._drag_pos)
-            event.accept()
-
-    def update_item(self, index, total, desc, qty):
-        self.lbl_status.setText(f"Item {index} of {total}")
-        self.lbl_desc.setText(f"Description: {desc}")
-        self.lbl_qty.setText(f"Requested Qty: {qty}")
 
 class CustomerWizardPanel(QWidget):
-    """The bottom terminal-style panel that holds the loaded customer list."""
+    """
+    Revamped Set Wizard Panel (docked in left tab):
+    - Preserves file order for specialties and set names (no alphabetical sort).
+    - No distracting floating window: embedded active-item card right in the panel.
+    - Explicit item progression: User CANNOT proceed to the next item unless:
+        1. A catalogue item is assigned (via '+' button or Enter key).
+        2. OR the user clicks 'No Match Found' which assigns code '99-999-99-99' and desc 'NO BID'.
+    - Auto vs Manual Quantity modes:
+        * Auto: keeps Qty/Set and Sets from the original file, Total Qty = (Qty/Set * Sets).
+        * Manual: prompts for Qty/Set and Sets, Total Qty = (Qty/Set * Sets).
+    - Autosaves continuously to local JSON for crash resilience.
+    - Exports to {Specialty}_{SetName}.xlsx only when all items are mapped/handled.
+    """
     def __init__(self, master_tab, parent=None):
         super().__init__(parent)
         self.master_tab = master_tab
-        self.df = None
-        self.current_index = -1
-        self._initial_offer_len = 0
-        self._header_offer_index = None
-        
-        self.setStyleSheet("""
-            CustomerWizardPanel {
-                background-color: #F8FAFC;
-                border-top: 1px solid #CBD5E1;
+        self.full_df = None            # Complete dataframe
+        self.current_specialty = None
+        self.current_set_name = None
+        self.active_item_idx = -1      # Current item index within active set
+        self.is_mapping_active = False
+
+        # Determine autosave path
+        base_dir = getattr(self.master_tab, 'base_dir', None)
+        if not base_dir:
+            import sys
+            if getattr(sys, 'frozen', False):
+                base_dir = os.path.dirname(sys.executable)
+            else:
+                base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        self.autosave_path = os.path.join(base_dir, "customer_wizard_autosave.json")
+
+        self.init_ui()
+        self.load_autosaved_state()
+
+    def init_ui(self):
+        main_layout = QVBoxLayout(self)
+        main_layout.setContentsMargins(4, 4, 4, 4)
+        main_layout.setSpacing(6)
+
+        # Header toolbar
+        top_bar = QHBoxLayout()
+        lbl_title = QLabel("🪄 Customer Request Wizard")
+        lbl_title.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
+        top_bar.addWidget(lbl_title)
+        top_bar.addStretch()
+
+        self.btn_upload = QPushButton("📂 Upload Excel")
+        self.btn_upload.setToolTip("Upload customer request file (.xlsx)")
+        self.btn_upload.setStyleSheet("""
+            QPushButton {
+                padding: 4px 10px; font-weight: bold; background-color: #2563EB; color: white; border-radius: 4px;
+            }
+            QPushButton:hover { background-color: #1D4ED8; }
+        """)
+        self.btn_upload.clicked.connect(self.upload_excel)
+        top_bar.addWidget(self.btn_upload)
+        main_layout.addLayout(top_bar)
+
+        # Quantity mode selection
+        qty_box = QFrame()
+        qty_box.setStyleSheet("QFrame { background-color: #F1F5F9; border-radius: 4px; padding: 2px; }")
+        qty_layout = QHBoxLayout(qty_box)
+        qty_layout.setContentsMargins(6, 4, 6, 4)
+        qty_label = QLabel("<b>Qty Mode:</b>")
+        qty_label.setStyleSheet("color: #334155; font-size: 11px;")
+        qty_layout.addWidget(qty_label)
+
+        self.rb_auto_qty = QRadioButton("Auto (File Qty)")
+        self.rb_auto_qty.setChecked(True)
+        self.rb_auto_qty.setToolTip("Uses Qty/Set and Sets from the original Excel file; Total Qty = (Qty/Set * Sets)")
+        self.rb_manual_qty = QRadioButton("Manual Entry")
+        self.rb_manual_qty.setToolTip("Prompt for Qty/Set and Sets manually when adding an item; Total Qty = product")
+
+        self.qty_group = QButtonGroup(self)
+        self.qty_group.addButton(self.rb_auto_qty)
+        self.qty_group.addButton(self.rb_manual_qty)
+        qty_layout.addWidget(self.rb_auto_qty)
+        qty_layout.addWidget(self.rb_manual_qty)
+        qty_layout.addStretch()
+        main_layout.addWidget(qty_box)
+
+        # Vertical Splitter between Specialties/Sets Tree and Items Section
+        self.splitter = QSplitter(Qt.Orientation.Vertical)
+        self.splitter.setHandleWidth(6)
+        self.splitter.setStyleSheet("QSplitter::handle:vertical { background-color: #CBD5E1; margin: 1px; border-radius: 2px; }")
+
+        # Section 1: Specialties & Sets Tree
+        tree_container = QWidget()
+        tree_layout = QVBoxLayout(tree_container)
+        tree_layout.setContentsMargins(0, 0, 0, 0)
+        tree_layout.setSpacing(2)
+
+        lbl_tree = QLabel("<b>Specialties & Sets (In File Order):</b>")
+        lbl_tree.setStyleSheet("color: #475569; font-size: 11px;")
+        tree_layout.addWidget(lbl_tree)
+
+        self.tree_sets = QTreeWidget()
+        self.tree_sets.setHeaderHidden(True)
+        self.tree_sets.setStyleSheet("""
+            QTreeWidget {
+                border: 1px solid #CBD5E1;
+                border-radius: 4px;
+                background-color: white;
+            }
+            QTreeWidget::item {
+                padding: 3px 2px;
+            }
+            QTreeWidget::item:selected {
+                background-color: #DBEAFE;
+                color: #1E3A8A;
+                font-weight: bold;
             }
         """)
-        
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(5, 5, 5, 5)
-        
-        # Toolbar
-        toolbar = QHBoxLayout()
-        self.lbl_title = QLabel("Customer Request Wizard")
-        self.lbl_title.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
-        self.lbl_title.setStyleSheet("border: none; background: transparent;")
-        
-        self.btn_upload = QPushButton("Upload List (Excel/CSV)")
-        self.btn_upload.setStyleSheet("padding: 4px 10px; background-color: white; border: 1px solid #CBD5E1; border-radius: 4px;")
-        self.btn_upload.clicked.connect(self.upload_list)
-        
-        self.btn_expand = QPushButton("↕ Expand")
-        self.btn_expand.setStyleSheet("padding: 4px 10px; background-color: white; border: 1px solid #CBD5E1; border-radius: 4px;")
-        self.btn_expand.setCheckable(True)
-        self.btn_expand.toggled.connect(self.toggle_expand)
-        
-        self.btn_start = QPushButton("Start Mapping")
+        self.tree_sets.itemClicked.connect(self.on_set_selected)
+        tree_layout.addWidget(self.tree_sets)
+        self.splitter.addWidget(tree_container)
+
+        # Section 2: Items To-Do List & Active Item Card
+        items_container = QWidget()
+        items_layout = QVBoxLayout(items_container)
+        items_layout.setContentsMargins(0, 0, 0, 0)
+        items_layout.setSpacing(4)
+
+        # Toolbar above table
+        items_header = QHBoxLayout()
+        self.lbl_current_set = QLabel("Select a Set to begin")
+        self.lbl_current_set.setStyleSheet("font-weight: bold; color: #1E293B; font-size: 11px;")
+        items_header.addWidget(self.lbl_current_set)
+        items_header.addStretch()
+
+        self.btn_start = QPushButton("▶ Start")
         self.btn_start.setEnabled(False)
-        self.btn_start.setStyleSheet("padding: 4px 10px; background-color: white; border: 1px solid #CBD5E1; border-radius: 4px;")
-        self.btn_start.clicked.connect(self.start_mapping)
-        
-        self.btn_close = QPushButton("X")
-        self.btn_close.setFixedSize(24, 24)
-        self.btn_close.setStyleSheet("""
-            QPushButton { background-color: transparent; border: none; font-weight: bold; color: #64748B; font-size: 16px; }
-            QPushButton:hover { color: #EF4444; }
+        self.btn_start.setStyleSheet("""
+            QPushButton {
+                padding: 3px 10px; font-weight: bold; background-color: #10B981; color: white; border-radius: 3px;
+            }
+            QPushButton:hover { background-color: #059669; }
         """)
-        
-        toolbar.addWidget(self.lbl_title)
-        toolbar.addStretch()
-        toolbar.addWidget(self.btn_upload)
-        toolbar.addWidget(self.btn_expand)
-        toolbar.addWidget(self.btn_start)
-        toolbar.addWidget(self.btn_close)
-        
-        layout.addLayout(toolbar)
-        
-        # Table
+        self.btn_start.clicked.connect(self.toggle_start_resume)
+        items_header.addWidget(self.btn_start)
+
+        self.btn_export = QPushButton("💾 Export Excel")
+        self.btn_export.setEnabled(False)
+        self.btn_export.setToolTip("Export set once all items are completed")
+        self.btn_export.setStyleSheet("padding: 3px 8px; font-weight: bold; background-color: #64748B; color: white; border-radius: 3px;")
+        self.btn_export.clicked.connect(self.export_set_excel)
+        items_header.addWidget(self.btn_export)
+
+        items_layout.addLayout(items_header)
+
+        # Embedded Active Item Card (replaces floating window)
+        self.active_card = QFrame()
+        self.active_card.setStyleSheet("""
+            QFrame#ActiveCard {
+                background-color: #1E293B;
+                border-radius: 6px;
+                border: 1px solid #334155;
+            }
+        """)
+        self.active_card.setObjectName("ActiveCard")
+        card_layout = QVBoxLayout(self.active_card)
+        card_layout.setContentsMargins(8, 8, 8, 8)
+        card_layout.setSpacing(4)
+
+        card_top = QHBoxLayout()
+        self.lbl_active_status = QLabel("Active Item: None")
+        self.lbl_active_status.setFont(QFont("Segoe UI", 9, QFont.Weight.Bold))
+        self.lbl_active_status.setStyleSheet("color: #60A5FA; background: transparent;")
+        card_top.addWidget(self.lbl_active_status)
+        card_top.addStretch()
+
+        self.btn_no_match = QPushButton("⚠️ No Match Found (NO BID)")
+        self.btn_no_match.setToolTip("Assign special code 99-999-99-99 / NO BID and advance")
+        self.btn_no_match.setStyleSheet("""
+            QPushButton {
+                background-color: #DC2626; color: white; font-weight: bold; font-size: 11px;
+                padding: 3px 8px; border-radius: 3px;
+            }
+            QPushButton:hover { background-color: #B91C1C; }
+        """)
+        self.btn_no_match.clicked.connect(self.assign_no_match)
+        card_top.addWidget(self.btn_no_match)
+        card_layout.addLayout(card_top)
+
+        self.lbl_active_desc = QLabel("Click 'Start' to begin matching customer items with the catalogue.")
+        self.lbl_active_desc.setWordWrap(True)
+        self.lbl_active_desc.setStyleSheet("color: #F8FAFC; font-size: 11px; font-weight: 500; background: transparent;")
+        card_layout.addWidget(self.lbl_active_desc)
+
+        card_bottom = QHBoxLayout()
+        self.lbl_active_qty = QLabel("")
+        self.lbl_active_qty.setStyleSheet("color: #94A3B8; font-size: 11px; background: transparent;")
+        card_bottom.addWidget(self.lbl_active_qty)
+        card_bottom.addStretch()
+
+        self.lbl_active_matched = QLabel("")
+        self.lbl_active_matched.setStyleSheet("color: #34D399; font-size: 11px; font-weight: bold; background: transparent;")
+        card_bottom.addWidget(self.lbl_active_matched)
+        card_layout.addLayout(card_bottom)
+
+        self.active_card.hide()
+        items_layout.addWidget(self.active_card)
+
+        # To-Do Items Table
         self.table = QTableWidget()
-        self.table.setColumnCount(6)
-        self.table.setHorizontalHeaderLabels(["No", "Description", "Qty", "Header", "Done", "Skip"])
+        self.table.setColumnCount(4)
+        self.table.setHorizontalHeaderLabels(["#", "Description", "Matched KLS Code", "Status"])
         self.table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
-        for col in range(3, 6):
-            self.table.horizontalHeader().setSectionResizeMode(col, QHeaderView.ResizeMode.Fixed)
-            self.table.setColumnWidth(col, 60)
-        self.table.setStyleSheet("background-color: white;")
-        layout.addWidget(self.table)
-        
-        # Floating window setup
-        self.floating_widget = ActiveItemWidget()
-        self.floating_widget.btn_add_header.clicked.connect(self.add_section_header)
-        self.floating_widget.btn_done.clicked.connect(self.done_item)
-        self.floating_widget.btn_skip.clicked.connect(self.skip_item)
-        
-        self.table.cellDoubleClicked.connect(self.on_item_double_clicked)
+        self.table.setColumnWidth(0, 34)
+        self.table.setColumnWidth(2, 110)
+        self.table.setColumnWidth(3, 70)
+        self.table.setStyleSheet("""
+            QTableWidget {
+                background-color: white;
+                border: 1px solid #CBD5E1;
+                border-radius: 4px;
+                gridline-color: #F1F5F9;
+            }
+            QTableWidget::item:selected {
+                background-color: #EFF6FF;
+                color: #1E3A8A;
+            }
+        """)
+        self.table.cellDoubleClicked.connect(self.on_table_row_double_clicked)
+        items_layout.addWidget(self.table)
 
-    def toggle_expand(self, checked):
-        if hasattr(self, 'master_tab') and hasattr(self.master_tab, 'right_splitter'):
-            if checked:
-                self.btn_expand.setText("Collapse")
-                self.master_tab.right_splitter.setSizes([200, 700])
-            else:
-                self.btn_expand.setText("↕ Expand")
-                self.master_tab.right_splitter.setSizes([700, 200])
+        self.splitter.addWidget(items_container)
+        self.splitter.setSizes([160, 360])
+        main_layout.addWidget(self.splitter)
 
-    def upload_list(self):
+    # -------------------------------------------------------------
+    # Upload & Parsing
+    # -------------------------------------------------------------
+    def upload_excel(self):
         file_path, _ = QFileDialog.getOpenFileName(
-            self, "Open Customer List", "", "Excel/CSV Files (*.xlsx *.xls *.csv)"
+            self, "Open Customer Set Request File", "", "Excel Files (*.xlsx *.xls)"
         )
         if not file_path:
             return
-            
+
         try:
-            mapping_dialog = MappingDialog(file_path, ['desc', 'qty'], allow_extras=False, parent=self)
-            
-            if mapping_dialog.exec():
-                if mapping_dialog.is_excel:
-                    raw_df = pd.read_excel(file_path, sheet_name=mapping_dialog.selected_sheet, header=mapping_dialog.header_row)
-                else:
-                    raw_df = pd.read_csv(file_path, header=mapping_dialog.header_row)
+            xl = pd.ExcelFile(file_path)
+            sheet_name = xl.sheet_names[0]
+            raw_df = pd.read_excel(file_path, sheet_name=sheet_name)
 
-                mapping = mapping_dialog.mappings
-                # Invert mapping to map file_column -> our_column
-                inverted_map = {v: k for k, v in mapping.items() if v}
-                
-                cols_to_keep = [v for k, v in mapping.items() if v]
-                self.df = raw_df[cols_to_keep].rename(columns=inverted_map)
-                
-                # Convert to string and clean
-                self.df['desc'] = self.df['desc'].astype(str).str.strip()
-                if 'qty' in self.df.columns:
-                    self.df['qty'] = pd.to_numeric(self.df['qty'], errors='coerce').fillna(1).astype(int)
+            col_map = {
+                'item_id': 'Item ID',
+                'specialty': 'Specialty',
+                'set_name': 'Set Name',
+                'item_num': 'Item #',
+                'desc': 'Source Instrument Description / Specification',
+                'qty_set': 'Qty / Set',
+                'sets': 'Sets',
+                'total_qty': 'Total Qty'
+            }
+
+            raw_cols_lower = {str(c).strip().lower(): c for c in raw_df.columns}
+            missing = []
+            matched_mapping = {}
+
+            for key, target_name in col_map.items():
+                t_low = target_name.strip().lower()
+                if t_low in raw_cols_lower:
+                    matched_mapping[key] = raw_cols_lower[t_low]
                 else:
-                    self.df['qty'] = 1
-                    
-                # Initialize state columns
-                self.df['has_header'] = False
-                self.df['is_done'] = False
-                self.df['is_skipped'] = False
-                self.df['offer_start_index'] = -1
-                
-                self.populate_table()
-                self.btn_start.setEnabled(True)
-                
+                    found = None
+                    for c_low, orig in raw_cols_lower.items():
+                        if t_low in c_low or c_low in t_low:
+                            found = orig
+                            break
+                    if found:
+                        matched_mapping[key] = found
+                    else:
+                        missing.append(target_name)
+
+            if missing:
+                required = list(col_map.values())
+                mapping_dialog = MappingDialog(file_path, required, allow_extras=False, parent=self)
+                if not mapping_dialog.exec():
+                    return
+                sheet_name = mapping_dialog.selected_sheet or sheet_name
+                raw_df = pd.read_excel(file_path, sheet_name=sheet_name, header=mapping_dialog.header_row)
+                inverted = {v: k for k, v in mapping_dialog.mappings.items() if v}
+                std_rename = {}
+                for file_col, sys_col in inverted.items():
+                    for k, v in col_map.items():
+                        if v.lower() == sys_col.lower():
+                            std_rename[file_col] = k
+                self.full_df = raw_df[list(inverted.keys())].rename(columns=std_rename)
+            else:
+                inverted = {v: k for k, v in matched_mapping.items()}
+                self.full_df = raw_df[list(inverted.keys())].rename(columns=inverted)
+
+            self._clean_and_initialize_dataframe()
+            self.populate_tree()
+            self.save_autosave_state()
+            QMessageBox.information(self, "Success", f"Successfully loaded {len(self.full_df)} items in original file order.")
+
         except Exception as e:
-            QMessageBox.critical(self, "Error", f"Failed to load file: {e}")
+            QMessageBox.critical(self, "Import Error", f"Failed to load file: {e}")
 
-    def populate_table(self):
-        if self.df is None:
+    def _clean_and_initialize_dataframe(self):
+        if self.full_df is None:
             return
-            
+
+        for col in ['item_id', 'item_num']:
+            if col in self.full_df.columns:
+                self.full_df[col] = self.full_df[col].fillna('').astype(str).str.strip()
+            else:
+                self.full_df[col] = ''
+
+        self.full_df['specialty'] = self.full_df['specialty'].fillna('General').astype(str).str.strip()
+        self.full_df['set_name'] = self.full_df['set_name'].fillna('Unnamed Set').astype(str).str.strip()
+        self.full_df['desc'] = self.full_df['desc'].fillna('').astype(str).str.strip()
+
+        self.full_df['qty_set'] = pd.to_numeric(self.full_df['qty_set'], errors='coerce').fillna(1).astype(int)
+        self.full_df['sets'] = pd.to_numeric(self.full_df['sets'], errors='coerce').fillna(1).astype(int)
+        self.full_df['total_qty'] = self.full_df['qty_set'] * self.full_df['sets']
+
+        if 'is_done' not in self.full_df.columns:
+            self.full_df['is_done'] = False
+        if 'kls_code' not in self.full_df.columns:
+            self.full_df['kls_code'] = ''
+        if 'kls_desc' not in self.full_df.columns:
+            self.full_df['kls_desc'] = ''
+
+    # -------------------------------------------------------------
+    # Specialties & Sets Tree (FILE ORDER PRESERVED)
+    # -------------------------------------------------------------
+    def populate_tree(self):
+        self.tree_sets.clear()
+        if self.full_df is None or self.full_df.empty:
+            return
+
+        # Maintain exact file order: use dict.fromkeys on appearance
+        specialties_order = list(dict.fromkeys(self.full_df['specialty']))
+
+        for spec in specialties_order:
+            spec_item = QTreeWidgetItem(self.tree_sets)
+            spec_item.setText(0, f"📁 {spec}")
+            spec_item.setFont(0, QFont("Segoe UI", 9, QFont.Weight.Bold))
+            spec_item.setFlags(spec_item.flags() & ~Qt.ItemFlag.ItemIsSelectable)
+
+            # Preserve file order for sets within each specialty
+            spec_df = self.full_df[self.full_df['specialty'] == spec]
+            sets_order = list(dict.fromkeys(spec_df['set_name']))
+
+            for sname in sets_order:
+                sub_df = spec_df[spec_df['set_name'] == sname]
+                done_count = int(sub_df['is_done'].sum())
+                total_count = len(sub_df)
+                
+                is_complete = (done_count == total_count and total_count > 0)
+                status_icon = "✓ " if is_complete else "○ "
+                set_item = QTreeWidgetItem(spec_item)
+                set_item.setText(0, f"{status_icon}{sname} ({done_count}/{total_count})")
+                set_item.setData(0, Qt.ItemDataRole.UserRole, (spec, sname))
+                if is_complete:
+                    set_item.setForeground(0, QColor("#059669"))
+
+            spec_item.setExpanded(True)
+
+    def on_set_selected(self, item, column):
+        data = item.data(0, Qt.ItemDataRole.UserRole)
+        if not data:
+            return
+        spec, sname = data
+        self.select_set(spec, sname)
+
+    def select_set(self, spec, sname):
+        self.current_specialty = spec
+        self.current_set_name = sname
+        self.lbl_current_set.setText(f"{spec} → {sname}")
+        self.btn_start.setEnabled(True)
+        self.btn_start.setText("▶ Start")
+        self.is_mapping_active = False
+        self.active_item_idx = -1
+        self.active_card.hide()
+        self.populate_items_table()
+        self.check_export_readiness()
+
+    def get_current_set_rows(self):
+        if self.full_df is None or not self.current_specialty or not self.current_set_name:
+            return pd.DataFrame()
+        return self.full_df[
+            (self.full_df['specialty'] == self.current_specialty) & 
+            (self.full_df['set_name'] == self.current_set_name)
+        ]
+
+    # -------------------------------------------------------------
+    # To-Do Items Table
+    # -------------------------------------------------------------
+    def populate_items_table(self):
         self.table.setRowCount(0)
-        for i, row in self.df.iterrows():
+        sub_df = self.get_current_set_rows()
+        if sub_df.empty:
+            return
+
+        for idx, (real_idx, row) in enumerate(sub_df.iterrows()):
             row_idx = self.table.rowCount()
             self.table.insertRow(row_idx)
-            
-            item_no = QTableWidgetItem(str(i + 1))
-            item_desc = QTableWidgetItem(str(row.get('desc', '')))
-            item_qty = QTableWidgetItem(str(row.get('qty', '1')))
-            
-            for item in (item_no, item_desc, item_qty):
-                item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
-                
-            self.table.setItem(row_idx, 0, item_no)
-            self.table.setItem(row_idx, 1, item_desc)
-            self.table.setItem(row_idx, 2, item_qty)
-            
-            # Create checkbox widgets
-            self._add_checkbox_to_cell(row_idx, 3, "#3B82F6", row.get('has_header', False)) # Blue for Header
-            self._add_checkbox_to_cell(row_idx, 4, "#10B981", row.get('is_done', False))    # Green for Done
-            self._add_checkbox_to_cell(row_idx, 5, "#EF4444", row.get('is_skipped', False)) # Red for Skip
 
-    def _add_checkbox_to_cell(self, row, col, color, checked):
-        widget = QWidget()
-        layout = QHBoxLayout(widget)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        cb = QCheckBox()
-        cb.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
-        cb.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        cb.setChecked(checked)
-        cb.setStyleSheet(f"""
-            QCheckBox::indicator {{ width: 16px; height: 16px; }}
-            QCheckBox::indicator:checked {{ background-color: {color}; border: 1px solid {color}; border-radius: 3px; }}
-            QCheckBox::indicator:unchecked {{ background-color: white; border: 1px solid #CBD5E1; border-radius: 3px; }}
-        """)
-        layout.addWidget(cb)
-        self.table.setCellWidget(row, col, widget)
+            item_num = str(row.get('item_num', '') or (idx + 1))
+            t_num = QTableWidgetItem(item_num)
+            t_num.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
 
+            desc = str(row.get('desc', ''))
+            t_desc = QTableWidgetItem(desc)
+            t_desc.setToolTip(desc)
 
-    def start_mapping(self):
-        if self.df is None or self.df.empty:
+            matched_code = str(row.get('kls_code', ''))
+            t_matched = QTableWidgetItem(matched_code)
+            t_matched.setToolTip(str(row.get('kls_desc', '')))
+
+            is_done = bool(row.get('is_done', False))
+            t_status = QTableWidgetItem("✓ Done" if is_done else "Pending")
+            t_status.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+
+            if is_done:
+                if matched_code == "99-999-99-99":
+                    t_matched.setForeground(QColor("#DC2626"))
+                    t_matched.setFont(QFont("Segoe UI", 8, QFont.Weight.Bold))
+                    t_status.setForeground(QColor("#DC2626"))
+                else:
+                    t_matched.setForeground(QColor("#059669"))
+                    t_matched.setFont(QFont("Segoe UI", 8, QFont.Weight.Bold))
+                    t_status.setForeground(QColor("#059669"))
+            else:
+                t_status.setForeground(QColor("#94A3B8"))
+
+            for it in (t_num, t_desc, t_matched, t_status):
+                it.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
+                it.setData(Qt.ItemDataRole.UserRole, real_idx)
+
+            self.table.setItem(row_idx, 0, t_num)
+            self.table.setItem(row_idx, 1, t_desc)
+            self.table.setItem(row_idx, 2, t_matched)
+            self.table.setItem(row_idx, 3, t_status)
+
+        self.check_export_readiness()
+
+    # -------------------------------------------------------------
+    # Explicit Matching Workflow
+    # -------------------------------------------------------------
+    def toggle_start_resume(self):
+        sub_df = self.get_current_set_rows()
+        if sub_df.empty:
             return
-            
-        if self.current_index < 0:
-            self.current_index = 0
-            
-        self.btn_start.setText("Resume Mapping")
-        self.show_floating_widget()
-        self.update_active_item()
 
-    def reset_mapping(self):
-        if self.df is not None and not self.df.empty:
-            self.df['has_header'] = False
-            self.df['is_done'] = False
-            self.df['is_skipped'] = False
-            self.populate_table()
-            
-            self.floating_widget.hide()
-            self.btn_start.setText("Start Mapping")
-            self.current_index = -1
+        if not self.is_mapping_active:
+            # Find first incomplete item
+            first_incomplete = 0
+            for i, (_, row) in enumerate(sub_df.iterrows()):
+                if not row.get('is_done', False):
+                    first_incomplete = i
+                    break
 
-    def show_floating_widget(self):
-        # Center it on the screen initially
-        screen_geometry = QApplication.primaryScreen().geometry()
-        x = (screen_geometry.width() - self.floating_widget.width()) // 2
-        y = screen_geometry.height() - self.floating_widget.height() - 200
-        self.floating_widget.move(x, y)
-        self.floating_widget.show()
+            self.active_item_idx = first_incomplete
+            self.is_mapping_active = True
+            self.btn_start.setText("⏸ Pause")
+            self.active_card.show()
+            self.update_active_item()
+        else:
+            # Pause
+            self.is_mapping_active = False
+            self.btn_start.setText("▶ Resume")
+            self.active_card.hide()
 
     def update_active_item(self):
-        if self.current_index < 0 or self.current_index >= len(self.df):
-            self.floating_widget.hide()
-            self.btn_start.setText("Start Mapping")
-            self.current_index = -1
-            QMessageBox.information(self, "Wizard Complete", "All items have been mapped!")
+        sub_df = self.get_current_set_rows()
+        if sub_df.empty:
+            self.active_card.hide()
+            self.is_mapping_active = False
             return
-            
-        # Store state to detect if items are added to the offer list during this step
-        if hasattr(self.master_tab, 'offer_data'):
-            self._initial_offer_len = len(self.master_tab.offer_data)
-        else:
-            self._initial_offer_len = 0
-            
-        self.df.at[self.current_index, 'offer_start_index'] = self._initial_offer_len
-        self._header_offer_index = None
-            
-        row = self.df.iloc[self.current_index]
+
+        if self.active_item_idx < 0 or self.active_item_idx >= len(sub_df):
+            self.active_card.hide()
+            self.is_mapping_active = False
+            self.btn_start.setText("▶ Start")
+            self.check_export_readiness()
+            QMessageBox.information(self, "Set Complete", f"All items in '{self.current_set_name}' are completed!")
+            return
+
+        real_idx = sub_df.index[self.active_item_idx]
+        row = self.full_df.loc[real_idx]
+
         desc = str(row.get('desc', ''))
-        qty = str(row.get('qty', '1'))
-        
-        self.floating_widget.update_item(self.current_index + 1, len(self.df), desc, qty)
-        
-        # Highlight in table
-        self.table.selectRow(self.current_index)
-        
-        # Auto-search (Idea 3 implementation)
-        # Search the first few words of the description to avoid zero results
-        words = desc.split()[:2]
-        search_term = " ".join(words)
+        qty_set = row.get('qty_set', 1)
+        sets = row.get('sets', 1)
+        tot_qty = row.get('total_qty', qty_set * sets)
+
+        self.lbl_active_status.setText(f"Active Item {self.active_item_idx + 1} of {len(sub_df)}")
+        self.lbl_active_desc.setText(desc)
+        self.lbl_active_qty.setText(f"Qty/Set: {qty_set} | Sets: {sets} | Total: {tot_qty}")
+
+        matched_code = str(row.get('kls_code', ''))
+        if matched_code:
+            self.lbl_active_matched.setText(f"Matched: {matched_code}")
+        else:
+            self.lbl_active_matched.setText("Awaiting catalogue match (+ or Enter)...")
+
+        # Highlight row in wizard table
+        self.table.selectRow(self.active_item_idx)
+
+        # Trigger smart search in catalogue
+        words = [w for w in re.split(r'\s+', desc) if len(w) > 2][:2]
+        search_query = " ".join(words)
         if hasattr(self.master_tab, 'txt_global_search'):
-            self.master_tab.txt_global_search.setText(search_term)
+            self.master_tab.txt_global_search.setText(search_query)
             self.master_tab.queue_filter()
-            
-        # Reset the add header button state
-        self.floating_widget.btn_add_header.setText("Add Section Header")
-        self.floating_widget.btn_add_header.setStyleSheet("""
-            QPushButton {
-                background-color: #3B82F6; color: white; border-radius: 4px; padding: 6px 12px; font-weight: bold;
-            }
-            QPushButton:hover { background-color: #2563EB; }
-        """)
-        self.floating_widget.btn_add_header.setEnabled(True)
 
-    def add_section_header(self):
-        if self.current_index < 0 or self.current_index >= len(self.df):
-            return
-            
-        row = self.df.iloc[self.current_index]
-        desc = str(row.get('desc', ''))
-        
-        # Add a section header to the offer data
-        insert_idx = getattr(self.master_tab, 'insert_mode_index', None)
-        
-        if hasattr(self.master_tab, 'offer_data'):
-            if insert_idx is not None:
-                self.master_tab.offer_data.insert(insert_idx, {
-                    "is_section": True,
-                    "desc": desc,
-                    "qty": ""
-                })
-                self._header_offer_index = insert_idx
-                self.master_tab.insert_mode_index += 1
-            else:
-                self.master_tab.offer_data.append({
-                    "is_section": True,
-                    "desc": desc,
-                    "qty": ""
-                })
-                self._header_offer_index = len(self.master_tab.offer_data) - 1
-            
-            # Record state
-            self.df.at[self.current_index, 'has_header'] = True
-            
-            # Update Checkbox
-            self._add_checkbox_to_cell(self.current_index, 3, "#3B82F6", True)
-            
-            if hasattr(self.master_tab, 'save_offer_list'):
-                self.master_tab.save_offer_list()
-            
-            # If the dialog is open, refresh it
-            if hasattr(self.master_tab, 'offer_dialog') and self.master_tab.offer_dialog and self.master_tab.offer_dialog.isVisible():
-                self.master_tab.offer_dialog.refresh_offer_table()
-                self.master_tab.offer_dialog.offer_table.scrollToBottom()
-                
-        # Visual indication of success
-        self.floating_widget.btn_add_header.setText("Header Added ✓")
-        self.floating_widget.btn_add_header.setStyleSheet("""
-            QPushButton {
-                background-color: #94A3B8; color: white; border-radius: 4px; padding: 6px 12px; font-weight: bold;
-            }
-        """)
-        self.floating_widget.btn_add_header.setEnabled(False)
+    def assign_catalogue_item(self, code, desc):
+        """
+        Called when user presses Enter or clicks '+' on a catalogue item
+        while the set wizard is actively mapping.
+        """
+        if not self.is_mapping_active:
+            return False
 
-    def skip_item(self):
-        if self.current_index < 0 or self.current_index >= len(self.df):
-            return
-            
-        # If a header was added but they skipped, delete the header
-        if self.df.at[self.current_index, 'has_header'] and self._header_offer_index is not None:
-            if hasattr(self.master_tab, 'offer_data') and len(self.master_tab.offer_data) > self._header_offer_index:
-                # Remove the header
-                del self.master_tab.offer_data[self._header_offer_index]
-                self.df.at[self.current_index, 'has_header'] = False
-                self._add_checkbox_to_cell(self.current_index, 3, "#3B82F6", False)
-                
-                if hasattr(self.master_tab, 'save_offer_list'):
-                    self.master_tab.save_offer_list()
-                    
-                if hasattr(self.master_tab, 'offer_dialog') and self.master_tab.offer_dialog and self.master_tab.offer_dialog.isVisible():
-                    self.master_tab.offer_dialog.refresh_offer_table()
+        sub_df = self.get_current_set_rows()
+        if sub_df.empty or self.active_item_idx < 0 or self.active_item_idx >= len(sub_df):
+            return False
+
+        real_idx = sub_df.index[self.active_item_idx]
         
-        # Mark as skipped
-        self.df.at[self.current_index, 'is_skipped'] = True
-        self._add_checkbox_to_cell(self.current_index, 5, "#EF4444", True)
-        
-        if hasattr(self.master_tab, 'insert_mode_index') and self.master_tab.insert_mode_index is not None:
-            self.master_tab.insert_mode_index = None
-            
-            # Snap back to the furthest incomplete item
-            next_idx = len(self.df) - 1
-            for i in range(len(self.df)):
-                if not self.df.at[i, 'is_done'] and not self.df.at[i, 'is_skipped']:
-                    next_idx = i
-                    break
-            self.current_index = next_idx
+        # Check quantity mode
+        if self.rb_manual_qty.isChecked():
+            cur_qty_set = int(self.full_df.at[real_idx, 'qty_set'] or 1)
+            cur_sets = int(self.full_df.at[real_idx, 'sets'] or 1)
+
+            qs, ok1 = QInputDialog.getInt(self, "Manual Quantity", f"Enter Qty/Set for {code}:", cur_qty_set, 1, 9999)
+            if not ok1:
+                return False
+            s_count, ok2 = QInputDialog.getInt(self, "Manual Sets", f"Enter Number of Sets for {code}:", cur_sets, 1, 9999)
+            if not ok2:
+                return False
+
+            self.full_df.at[real_idx, 'qty_set'] = qs
+            self.full_df.at[real_idx, 'sets'] = s_count
+            self.full_df.at[real_idx, 'total_qty'] = qs * s_count
         else:
-            self.current_index += 1
-            
+            qs = int(self.full_df.at[real_idx, 'qty_set'] or 1)
+            s_count = int(self.full_df.at[real_idx, 'sets'] or 1)
+            self.full_df.at[real_idx, 'total_qty'] = qs * s_count
+
+        # Assign strictly 1-to-1
+        self.full_df.at[real_idx, 'kls_code'] = str(code)
+        self.full_df.at[real_idx, 'kls_desc'] = str(desc)
+        self.full_df.at[real_idx, 'is_done'] = True
+
+        self._update_table_row_ui(self.active_item_idx, str(code), str(desc), is_no_bid=False)
+        self.save_autosave_state()
+        self.populate_tree()
+        self.check_export_readiness()
+
+        # Advance to next item
+        self.active_item_idx += 1
         self.update_active_item()
-        
-    def done_item(self):
-        if self.current_index < 0 or self.current_index >= len(self.df):
+        return True
+
+    def assign_no_match(self):
+        """
+        User explicitly clicks 'No Match Found':
+        Assigns KLS Code '99-999-99-99' and description 'NO BID', marks Done, and advances.
+        """
+        if not self.is_mapping_active:
             return
-            
-        if hasattr(self.master_tab, 'offer_data'):
-            current_offer_len = len(self.master_tab.offer_data)
-            added_items = current_offer_len - self._initial_offer_len
-            
-            # If the user clicked Add Header, that accounts for 1 item. 
-            # Anything more means they added sub-items.
-            header_offset = 1 if self.df.at[self.current_index, 'has_header'] else 0
-            
-            if added_items > header_offset:
-                # They added items to the list
-                self.df.at[self.current_index, 'is_done'] = True
-                self._add_checkbox_to_cell(self.current_index, 4, "#10B981", True)
-            else:
-                # No items added. (It's just "Header Only" or they did literally nothing)
-                self.df.at[self.current_index, 'is_done'] = False
-        
-        if hasattr(self.master_tab, 'insert_mode_index') and self.master_tab.insert_mode_index is not None:
-            self.master_tab.insert_mode_index = None
-            
-            # Snap back to the furthest incomplete item
-            next_idx = len(self.df) - 1
-            for i in range(len(self.df)):
-                if not self.df.at[i, 'is_done'] and not self.df.at[i, 'is_skipped']:
-                    next_idx = i
-                    break
-            self.current_index = next_idx
+
+        sub_df = self.get_current_set_rows()
+        if sub_df.empty or self.active_item_idx < 0 or self.active_item_idx >= len(sub_df):
+            return
+
+        real_idx = sub_df.index[self.active_item_idx]
+
+        # Preserve quantities, assign NO BID
+        qs = int(self.full_df.at[real_idx, 'qty_set'] or 1)
+        s_count = int(self.full_df.at[real_idx, 'sets'] or 1)
+        self.full_df.at[real_idx, 'total_qty'] = qs * s_count
+
+        self.full_df.at[real_idx, 'kls_code'] = "99-999-99-99"
+        self.full_df.at[real_idx, 'kls_desc'] = "NO BID"
+        self.full_df.at[real_idx, 'is_done'] = True
+
+        self._update_table_row_ui(self.active_item_idx, "99-999-99-99", "NO BID", is_no_bid=True)
+        self.save_autosave_state()
+        self.populate_tree()
+        self.check_export_readiness()
+
+        # Advance to next item
+        self.active_item_idx += 1
+        self.update_active_item()
+
+    def _update_table_row_ui(self, row_idx, code, desc, is_no_bid=False):
+        t_matched = self.table.item(row_idx, 2)
+        if t_matched:
+            t_matched.setText(code)
+            t_matched.setToolTip(desc)
+            color = "#DC2626" if is_no_bid else "#059669"
+            t_matched.setForeground(QColor(color))
+            t_matched.setFont(QFont("Segoe UI", 8, QFont.Weight.Bold))
+
+        t_status = self.table.item(row_idx, 3)
+        if t_status:
+            t_status.setText("NO BID" if is_no_bid else "✓ Done")
+            color = "#DC2626" if is_no_bid else "#059669"
+            t_status.setForeground(QColor(color))
+
+    def on_table_row_double_clicked(self, row, col):
+        sub_df = self.get_current_set_rows()
+        if sub_df.empty or row < 0 or row >= len(sub_df):
+            return
+
+        real_idx = sub_df.index[row]
+        item_desc = self.full_df.at[real_idx, 'desc']
+
+        msg = QMessageBox(self)
+        msg.setWindowTitle("Item Action")
+        msg.setText(f"Item {row + 1}: {item_desc}\nChoose an action:")
+        btn_jump = msg.addButton("Set as Active Item", QMessageBox.ButtonRole.ActionRole)
+        btn_clear = msg.addButton("Clear Mapping", QMessageBox.ButtonRole.DestructiveRole)
+        msg.addButton(QMessageBox.StandardButton.Cancel)
+        msg.exec()
+
+        if msg.clickedButton() == btn_jump:
+            self.active_item_idx = row
+            self.is_mapping_active = True
+            self.btn_start.setText("⏸ Pause")
+            self.active_card.show()
+            self.update_active_item()
+            self.check_export_readiness()
+        elif msg.clickedButton() == btn_clear:
+            self.full_df.at[real_idx, 'kls_code'] = ''
+            self.full_df.at[real_idx, 'kls_desc'] = ''
+            self.full_df.at[real_idx, 'is_done'] = False
+            self.populate_items_table()
+            self.populate_tree()
+            self.save_autosave_state()
+            self.check_export_readiness()
+            if self.is_mapping_active and self.active_item_idx == row:
+                self.update_active_item()
+
+    # -------------------------------------------------------------
+    # Export & Completion
+    # -------------------------------------------------------------
+    def check_export_readiness(self):
+        sub_df = self.get_current_set_rows()
+        if sub_df.empty:
+            self.btn_export.setEnabled(False)
+            self.btn_export.setStyleSheet("padding: 3px 8px; font-weight: bold; background-color: #64748B; color: white; border-radius: 3px;")
+            return False
+
+        all_finished = bool(sub_df['is_done'].all())
+        if all_finished:
+            self.btn_export.setEnabled(True)
+            self.btn_export.setStyleSheet("""
+                QPushButton {
+                    padding: 3px 8px; font-weight: bold; background-color: #2563EB; color: white; border-radius: 3px;
+                }
+                QPushButton:hover { background-color: #1D4ED8; }
+            """)
+            return True
         else:
-            self.current_index += 1
-            
-        self.update_active_item()
-        
-    def on_item_double_clicked(self, row, col):
-        if self.df is None or self.df.empty:
+            self.btn_export.setEnabled(False)
+            self.btn_export.setStyleSheet("padding: 3px 8px; font-weight: bold; background-color: #64748B; color: white; border-radius: 3px;")
+            return False
+
+    def export_set_excel(self):
+        if not self.check_export_readiness():
+            QMessageBox.warning(self, "Set Incomplete", "Please complete all items in the set before exporting.")
             return
-            
-        start_idx = self.df.at[row, 'offer_start_index']
-        if start_idx == -1:
-            QMessageBox.information(self, "Not Mapped", "This item has not been mapped yet. You can just skip to it by completing the previous ones, or restore to an earlier point.")
+
+        sub_df = self.get_current_set_rows()
+        if sub_df.empty:
             return
-            
-        msg_box = QMessageBox(self)
-        msg_box.setWindowTitle("Wizard Control")
-        msg_box.setText(f"You selected item {row + 1}. What would you like to do?")
-        btn_restore = msg_box.addButton("Restore list to this point (Delete after)", QMessageBox.ButtonRole.ActionRole)
-        btn_insert = msg_box.addButton("Hover Wizard (Insert Mode)", QMessageBox.ButtonRole.ActionRole)
-        btn_cancel = msg_box.addButton(QMessageBox.StandardButton.Cancel)
-        msg_box.exec()
-        
-        if msg_box.clickedButton() == btn_cancel:
+
+        export_df = pd.DataFrame()
+        export_df['Item ID'] = sub_df['item_id']
+        export_df['Specialty'] = sub_df['specialty']
+        export_df['Set Name'] = sub_df['set_name']
+        export_df['Item #'] = sub_df['item_num']
+        export_df['Source Instrument Description / Specification'] = sub_df['desc']
+        export_df['Qty / Set'] = sub_df['qty_set']
+        export_df['Sets'] = sub_df['sets']
+        export_df['Total Qty'] = sub_df['total_qty']
+        export_df['KLS CODE'] = sub_df['kls_code']
+        export_df['KLS DESCRIPTION'] = sub_df['kls_desc']
+
+        safe_spec = re.sub(r'[^\w\-_]', '_', str(self.current_specialty).strip())
+        safe_set = re.sub(r'[^\w\-_]', '_', str(self.current_set_name).strip())
+        suggested_name = f"{safe_spec}_{safe_set}.xlsx"
+        sheet_name = f"{safe_spec}_{safe_set}"[:31]
+
+        file_path, _ = QFileDialog.getSaveFileName(
+            self, "Save Set Excel", suggested_name, "Excel Files (*.xlsx)"
+        )
+        if not file_path:
             return
-            
-        if msg_box.clickedButton() == btn_restore:
-            # Delete everything in offer_data from start_idx onwards
-            if hasattr(self.master_tab, 'offer_data') and start_idx < len(self.master_tab.offer_data):
-                self.master_tab.offer_data = self.master_tab.offer_data[:start_idx]
-                if hasattr(self.master_tab, 'save_offer_list'):
-                    self.master_tab.save_offer_list()
-                if hasattr(self.master_tab, 'offer_dialog') and self.master_tab.offer_dialog and self.master_tab.offer_dialog.isVisible():
-                    self.master_tab.offer_dialog.refresh_offer_table()
-                    
-            # Reset dataframe states for this row and all subsequent rows
-            for i in range(row, len(self.df)):
-                self.df.at[i, 'has_header'] = False
-                self.df.at[i, 'is_done'] = False
-                self.df.at[i, 'is_skipped'] = False
-                self.df.at[i, 'offer_start_index'] = -1
-                self._add_checkbox_to_cell(i, 3, "#3B82F6", False)
-                self._add_checkbox_to_cell(i, 4, "#10B981", False)
-                self._add_checkbox_to_cell(i, 5, "#EF4444", False)
-                
-            self.master_tab.insert_mode_index = None
-            self.current_index = row
-            self.show_floating_widget()
-            self.update_active_item()
-            
-        elif msg_box.clickedButton() == btn_insert:
-            # Turn on insert mode
-            self.master_tab.insert_mode_index = start_idx
-            self.current_index = row
-            self.show_floating_widget()
-            self.update_active_item()
+
+        try:
+            with pd.ExcelWriter(file_path, engine='openpyxl') as writer:
+                export_df.to_excel(writer, sheet_name=sheet_name, index=False)
+            QMessageBox.information(self, "Export Successful", f"Set exported successfully to:\n{file_path}")
+        except Exception as e:
+            QMessageBox.critical(self, "Export Error", f"Failed to save Excel file: {e}")
+
+    # -------------------------------------------------------------
+    # Autosave & Crash Recovery
+    # -------------------------------------------------------------
+    def save_autosave_state(self):
+        if self.full_df is None or self.full_df.empty:
+            return
+        try:
+            state = {
+                "current_specialty": self.current_specialty,
+                "current_set_name": self.current_set_name,
+                "active_item_idx": self.active_item_idx,
+                "data": self.full_df.to_dict(orient='records')
+            }
+            with open(self.autosave_path, 'w', encoding='utf-8') as f:
+                json.dump(state, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            print(f"Failed to autosave wizard state: {e}")
+
+    def load_autosaved_state(self):
+        if not os.path.exists(self.autosave_path):
+            return
+        try:
+            with open(self.autosave_path, 'r', encoding='utf-8') as f:
+                state = json.load(f)
+            records = state.get("data", [])
+            if records:
+                self.full_df = pd.DataFrame(records)
+                self._clean_and_initialize_dataframe()
+                self.populate_tree()
+
+                spec = state.get("current_specialty")
+                sname = state.get("current_set_name")
+                if spec and sname:
+                    self.select_set(spec, sname)
+                    self.active_item_idx = state.get("active_item_idx", -1)
+        except Exception as e:
+            print(f"Failed to load autosaved wizard state: {e}")

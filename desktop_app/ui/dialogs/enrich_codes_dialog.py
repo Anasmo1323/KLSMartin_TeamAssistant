@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel, QPushBut
                              QTextEdit, QCheckBox, QScrollArea, QWidget, QMessageBox, QFileDialog)
 from PyQt6.QtCore import Qt
 from ui.dialogs.mapping_dialog import MappingDialog
-from core.utils import show_loading
+from core.utils import show_loading, safe_read_csv
 
 class EnrichCodesDialog(QDialog):
     def __init__(self, master_df, parent=None):
@@ -84,7 +84,7 @@ class EnrichCodesDialog(QDialog):
                     if dlg.is_excel:
                         df = pd.read_excel(file_path, sheet_name=dlg.selected_sheet, header=dlg.header_row)
                     else:
-                        df = pd.read_csv(file_path, header=dlg.header_row)
+                        df = safe_read_csv(file_path, header=dlg.header_row)
                         
                     code_col = dlg.mappings['code']
                     codes = df[code_col].dropna().astype(str).tolist()

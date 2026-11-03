@@ -1,5 +1,6 @@
 import pandas as pd
 from PyQt6.QtWidgets import QDialog, QVBoxLayout, QScrollArea, QWidget, QFormLayout, QComboBox, QLabel, QCheckBox, QPushButton, QMessageBox, QSpinBox
+from core.utils import safe_read_csv
 
 class MappingDialog(QDialog):
     """Dynamic window for mapping required logic fields and selecting additional columns."""
@@ -41,8 +42,11 @@ class MappingDialog(QDialog):
             self.form_layout.addRow("Select Sheet:", self.sheet_combo)
             self.available_columns = xl.parse(xl.sheet_names[0], nrows=0, header=0).columns.tolist()
         else:
-            df = pd.read_csv(self.file_path, nrows=0, header=0)
-            self.available_columns = df.columns.tolist()
+            try:
+                df = safe_read_csv(self.file_path, nrows=0, header=0)
+                self.available_columns = df.columns.tolist()
+            except Exception:
+                self.available_columns = []
 
         self.form_layout.addRow(QLabel("<b>Required System Fields:</b>"))
         self.combos = {}
@@ -99,7 +103,7 @@ class MappingDialog(QDialog):
                 self.available_columns = []
         else:
             try:
-                df = pd.read_csv(self.file_path, nrows=0, header=header_idx)
+                df = safe_read_csv(self.file_path, nrows=0, header=header_idx)
                 self.available_columns = df.columns.tolist()
             except Exception:
                 self.available_columns = []

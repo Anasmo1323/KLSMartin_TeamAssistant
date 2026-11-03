@@ -1,7 +1,535 @@
 [
   {
-    "code": "11-895-16-07",
-    "desc": "Aquila scissors, acc. to Mayo-Lexer, curved, length 16 cm",
+    "is_section": true,
+    "desc": "Right angle small"
+  },
+  {
+    "is_section": false,
+    "code": "13-451-13-07",
+    "desc": "Dissecting forceps, acc. to Gemini, curved, length 13 cm",
+    "qty": 8,
+    "client_desc": "Right angle small"
+  },
+  {
+    "is_section": true,
+    "desc": "Right angle large"
+  },
+  {
+    "is_section": false,
+    "code": "13-451-28-07",
+    "desc": "Dissecting forceps, acc. to Gemini, curved, length 28 cm",
+    "qty": 8,
+    "client_desc": "Right angle large"
+  },
+  {
+    "is_section": true,
+    "desc": "Right angle medium"
+  },
+  {
+    "is_section": false,
+    "code": "13-451-18-07",
+    "desc": "Dissecting forceps, acc. to Gemini, curved, length 18 cm",
+    "qty": 8,
+    "client_desc": "Right angle medium"
+  },
+  {
+    "is_section": true,
+    "desc": "Kocher"
+  },
+  {
+    "is_section": false,
+    "code": "13-414-18-07",
+    "desc": "Hemostatic forceps, acc. to Kocher, 1 x 2 teeth, straight, length 18.5 cm",
+    "qty": 24,
+    "client_desc": "Kocher"
+  },
+  {
+    "is_section": true,
+    "desc": "Needle holder small"
+  },
+  {
+    "is_section": false,
+    "code": "20-642-16-07",
+    "desc": "TC-Gold needle holder, acc. to Mayo-Hegar, straight, standard model, thread size 6-0 - 4-0, length 16 cm",
+    "qty": 8,
+    "client_desc": "Needle holder small"
+  },
+  {
+    "is_section": true,
+    "desc": "Needle holder large"
+  },
+  {
+    "is_section": false,
+    "code": "20-642-26-07",
+    "desc": "TC-Gold needle holder, acc. to Mayo-Hegar, straight, standard model, thread size 6-0 - 4-0, length 26.5 cm",
+    "qty": 8,
+    "client_desc": "Needle holder large"
+  },
+  {
+    "is_section": true,
+    "desc": "Needle holder medium"
+  },
+  {
+    "is_section": false,
+    "code": "20-642-18-07",
+    "desc": "TC-Gold needle holder, acc. to Mayo-Hegar, straight, standard model, thread size 6-0 - 4-0, length 18.5 cm",
+    "qty": 8,
+    "client_desc": "Needle holder medium"
+  },
+  {
+    "is_section": true,
+    "desc": "Allice Long"
+  },
+  {
+    "is_section": false,
+    "code": "30-136-30-07",
+    "desc": "Intestinal and tissue grasping forceps, Atrauma, acc. to Allis, length 30 cm",
+    "qty": 20,
+    "client_desc": "Allice Long"
+  },
+  {
+    "is_section": true,
+    "desc": "Allice short"
+  },
+  {
+    "is_section": false,
+    "code": "30-136-16-07",
+    "desc": "Intestinal and tissue grasping forceps, Atrauma, acc. to Allis, length 15.5 cm",
+    "qty": 20,
+    "client_desc": "Allice short"
+  },
+  {
+    "is_section": true,
+    "desc": "Babcok Long"
+  },
+  {
+    "is_section": false,
+    "code": "30-192-24-07",
+    "desc": "Intestinal and tissue grasping forceps, acc. to Babcock, fenestrated, length 24 cm",
+    "qty": 20,
+    "client_desc": "Babcok Long"
+  },
+  {
+    "is_section": true,
+    "desc": "Babcok short"
+  },
+  {
+    "is_section": false,
+    "code": "30-192-16-07",
+    "desc": "Intestinal and tissue grasping forceps, acc. to Babcock, fenestrated, length 15.5 cm",
+    "qty": 20,
+    "client_desc": "Babcok short"
+  },
+  {
+    "is_section": true,
+    "desc": "Doval"
+  },
+  {
+    "is_section": false,
+    "code": "30-210-20-07",
+    "desc": "Intestinal and tissue grasping forceps, acc. to Duval, slim, fenestrated, length 20.5 cm",
+    "qty": 20,
+    "client_desc": "Doval"
+  },
+  {
+    "is_section": true,
+    "desc": "mosquito curved"
+  },
+  {
+    "is_section": false,
+    "code": "13-311-14-07",
+    "desc": "Hemostatic forceps, acc. to Mosquito, curved, length 14 cm",
+    "qty": 60,
+    "client_desc": "mosquito curved"
+  },
+  {
+    "is_section": true,
+    "desc": "Mosquito straight"
+  },
+  {
+    "is_section": false,
+    "code": "13-310-14-07",
+    "desc": "Hemostatic forceps, acc. to Mosquito, straight, length 14.5 cm",
+    "qty": 40,
+    "client_desc": "Mosquito straight"
+  },
+  {
+    "is_section": true,
+    "desc": "Doyen"
+  },
+  {
+    "is_section": false,
+    "code": "32-342-24-01",
+    "desc": "Vaginal retractor, acc. to Doyen, 70 x 30 mm, length 25 cm",
+    "qty": 4,
+    "client_desc": "Doyen"
+  },
+  {
+    "is_section": true,
+    "desc": "Morse Medium"
+  },
+  {
+    "is_section": false,
+    "code": "24-170-00-07",
+    "desc": "Sternum and rib retractor, acc. to Morse, for adults, 4 adjustable blades,  blade depth 27 mm x blade width 22 mm, arm length 145 mm, spreading width 200 mm",
+    "qty": 4,
+    "client_desc": "Morse Medium"
+  },
+  {
+    "is_section": true,
+    "desc": "Morse Large"
+  },
+  {
+    "is_section": false,
+    "code": "24-171-00-07",
+    "desc": "Sternum and rib retractor, acc. to Morse, for adults, 4 adjustable blades,  blade depth 42 mm x blade width 29 mm, arm length 140 mm, spreading width 210 mm",
+    "qty": 4,
+    "client_desc": "Morse Large"
+  },
+  {
+    "is_section": true,
+    "desc": "Kely"
+  },
+  {
+    "is_section": false,
+    "code": "13-330-14-07",
+    "desc": "Hemostatic forceps, acc. to Kelly, straight, length 14.5 cm",
+    "qty": 4,
+    "client_desc": "Kely"
+  },
+  {
+    "is_section": true,
+    "desc": "Scalpel 3"
+  },
+  {
+    "is_section": false,
+    "code": "10-130-03-07",
+    "desc": "Scalpel handle, no. 3, length 12 cm",
+    "qty": 4,
+    "client_desc": "Scalpel 3"
+  },
+  {
+    "is_section": true,
+    "desc": "Scalpel 4"
+  },
+  {
+    "is_section": false,
+    "code": "10-100-04-07",
+    "desc": "Scalpel handle, no. 4, length 13.5 cm",
+    "qty": 4,
+    "client_desc": "Scalpel 4"
+  },
+  {
+    "is_section": true,
+    "desc": "Scalpel 7"
+  },
+  {
+    "is_section": false,
+    "code": "10-137-07-07",
+    "desc": "Scalpel handle, no. 7, solid, length 16 cm",
+    "qty": 4,
+    "client_desc": "Scalpel 7"
+  },
+  {
+    "is_section": true,
+    "desc": "Artery curved"
+  },
+  {
+    "is_section": false,
+    "code": "13-411-18-07",
+    "desc": "Hemostatic forceps, acc. to Pean, curved, length 18 cm",
+    "qty": 20,
+    "client_desc": "Artery curved"
+  },
+  {
+    "is_section": true,
+    "desc": "Artery spencer"
+  },
+  {
+    "is_section": false,
+    "code": "13-248-18-07",
+    "desc": "Forceps, acc. to Spencer-Wells, straight, length 18.5 cm",
+    "qty": 20,
+    "client_desc": "Artery spencer"
+  },
+  {
+    "is_section": true,
+    "desc": "Sponge Holder"
+  },
+  {
+    "is_section": false,
+    "code": "14-352-25-07",
+    "desc": "Sponge forceps, acc. to FÃ¶rster, serrated jaws, straight, length 25 cm",
+    "qty": 8,
+    "client_desc": "Sponge Holder"
+  },
+  {
+    "is_section": true,
+    "desc": "Dever small"
+  },
+  {
+    "is_section": false,
+    "code": "15-592-04-07",
+    "desc": "Retractor, acc. to Deaver-Grip, 25 mm, length 31.5 cm",
+    "qty": 8,
+    "client_desc": "Dever small"
+  },
+  {
+    "is_section": true,
+    "desc": "Dever medium"
+  },
+  {
+    "is_section": false,
+    "code": "15-592-08-07",
+    "desc": "Retractor, acc. to Deaver-Grip, 50 mm, length 31.5 cm",
+    "qty": 8,
+    "client_desc": "Dever medium"
+  },
+  {
+    "is_section": true,
+    "desc": "Ven ret"
+  },
+  {
+    "is_section": false,
+    "code": "15-172-10-07",
+    "desc": "Hooklet, acc. to Cushing, width 10 mm, length 24 cm",
+    "qty": 8,
+    "client_desc": "Ven ret"
+  },
+  {
+    "is_section": true,
+    "desc": "Robert"
+  },
+  {
+    "is_section": false,
+    "code": "13-428-22-07",
+    "desc": "Dissecting forceps, acc. to Roberts, straight, length 22.5 cm",
+    "qty": 8,
+    "client_desc": "Robert"
+  },
+  {
+    "is_section": true,
+    "desc": "Towel clps"
+  },
+  {
+    "is_section": false,
+    "code": "13-915-11-07",
+    "desc": "Towel forceps, acc. to Backhaus, sharp, length 11 cm",
+    "qty": 60,
+    "client_desc": "Towel clps"
+  },
+  {
+    "is_section": true,
+    "desc": "Metzen baum scissor small"
+  },
+  {
+    "is_section": false,
+    "code": "11-255-14-07",
+    "desc": "Dissecting scissors, acc. to Metzenbaum, blunt/blunt, curved, length 14.5 cm",
+    "qty": 8,
+    "client_desc": "Metzen baum scissor small"
+  },
+  {
+    "is_section": true,
+    "desc": "Metzen baum scissor meddium"
+  },
+  {
+    "is_section": false,
+    "code": "11-285-18-07",
+    "desc": "Dissecting scissors, acc. to Metzenbaum, curved, length 18 cm",
+    "qty": 8,
+    "client_desc": "Metzen baum scissor meddium"
+  },
+  {
+    "is_section": true,
+    "desc": "Mayo scissor"
+  },
+  {
+    "is_section": false,
+    "code": "11-170-14-07",
+    "desc": "Scissors, acc. to Mayo, straight, length 14.5 cm",
+    "qty": 8,
+    "client_desc": "Mayo scissor"
+  },
+  {
+    "is_section": true,
+    "desc": "Debakey M"
+  },
+  {
+    "is_section": false,
+    "code": "24-388-16-07",
+    "desc": "Atraumatic forceps, acc. to De Bakey, width 2 mm, length 16 cm",
+    "qty": 8,
+    "client_desc": "Debakey M"
+  },
+  {
+    "is_section": true,
+    "desc": "Debakey L"
+  },
+  {
+    "is_section": false,
+    "code": "24-388-20-07",
+    "desc": "Atraumatic forceps, acc. to De Bakey, width 2 mm, length 20 cm",
+    "qty": 8,
+    "client_desc": "Debakey L"
+  },
+  {
+    "is_section": true,
+    "desc": "Non-Tooth fcp M"
+  },
+  {
+    "is_section": false,
+    "code": "12-100-16-07",
+    "desc": "Dressing forceps, standard pattern, length 16 cm",
+    "qty": 8,
+    "client_desc": "Non-Tooth fcp M"
+  },
+  {
+    "is_section": true,
+    "desc": "Non-Tooth Tissue fce L"
+  },
+  {
+    "is_section": false,
+    "code": "12-100-30-07",
+    "desc": "Dressing forceps, standard pattern, length 30.5 cm",
+    "qty": 8,
+    "client_desc": "Non-Tooth Tissue fce L"
+  },
+  {
+    "is_section": true,
+    "desc": "Adson forceps toothed"
+  },
+  {
+    "is_section": false,
+    "code": "12-168-15-07",
+    "desc": "Dressing forceps, acc. to Adson, length 15 cm",
+    "qty": 20,
+    "client_desc": "Adson forceps toothed"
+  },
+  {
+    "is_section": true,
+    "desc": "Langen beck M"
+  },
+  {
+    "is_section": false,
+    "code": "15-293-02-07",
+    "desc": "Retractor, acc. to Langenbeck, 30 mm x 14 mm, length 22 cm",
+    "qty": 8,
+    "client_desc": "Langen beck M"
+  },
+  {
+    "is_section": true,
+    "desc": "Langen beck L"
+  },
+  {
+    "is_section": false,
+    "code": "15-293-05-07",
+    "desc": "Retractor, acc. to Langenbeck, 50 mm x 11 mm, length 22 cm",
+    "qty": 8,
+    "client_desc": "Langen beck L"
+  },
+  {
+    "is_section": true,
+    "desc": "Bladder"
+  },
+  {
+    "is_section": false,
+    "code": "99-999-99-99",
+    "desc": "No equivalent KLS Martin product available",
+    "qty": 12,
+    "client_desc": "Bladder"
+  },
+  {
+    "is_section": true,
+    "desc": "self-retaining ret s"
+  },
+  {
+    "is_section": false,
+    "code": "15-748-10-07",
+    "desc": "Woundspreader, acc. to Weitlaner, sharp, 2 x 3 teeth, 40 mm, length 11 cm",
+    "qty": 8,
+    "client_desc": "self-retaining ret s"
+  },
+  {
+    "is_section": true,
+    "desc": "self-retaining ret m"
+  },
+  {
+    "is_section": false,
+    "code": "15-750-16-07",
+    "desc": "Woundspreader, acc. to Weitlaner, sharp, 3 x 4 teeth, 83 mm, length 16 cm",
+    "qty": 8,
+    "client_desc": "self-retaining ret m"
+  },
+  {
+    "is_section": true,
+    "desc": "Yankauer suction"
+  },
+  {
+    "is_section": false,
+    "code": "18-543-27-01",
+    "desc": "Suction tube, acc. to Yankauer, complete, length 31 cm",
+    "qty": 20,
+    "client_desc": "Yankauer suction"
+  },
+  {
+    "is_section": true,
+    "desc": "Appendectoy Fcp"
+  },
+  {
+    "is_section": false,
+    "code": "99-999-99-99",
+    "desc": "No equivalent KLS Martin product available",
+    "qty": 20,
+    "client_desc": "Appendectoy Fcp"
+  },
+  {
+    "is_section": true,
+    "desc": "Tooth Tissue fce L"
+  },
+  {
+    "is_section": false,
+    "code": "12-301-30-07",
+    "desc": "Tissue forceps, standard pattern, 1 x 2 teeth, length 30.5 cm",
+    "qty": 20,
+    "client_desc": "Tooth Tissue fce L"
+  },
+  {
+    "is_section": true,
+    "desc": "Tooth Tissue fce M"
+  },
+  {
+    "is_section": false,
+    "code": "12-301-16-07",
+    "desc": "Tissue forceps, standard pattern, 1 x 2 teeth, length 16 cm",
+    "qty": 20,
+    "client_desc": "Tooth Tissue fce M"
+  },
+  {
+    "is_section": true,
+    "desc": "Malleable"
+  },
+  {
+    "is_section": false,
+    "code": "15-963-01-01",
+    "desc": "Abdominal spatula, malleable, width 30 mm, length 33 cm",
+    "qty": 20,
+    "client_desc": "Malleable"
+  },
+  {
+    "is_section": true,
+    "desc": "surgical instrument Tray large medium"
+  },
+  {
+    "is_section": false,
+    "code": "55-804-44-01",
+    "desc": "marTray, 3/4, 410x251x94 mm",
+    "qty": 4,
+    "client_desc": "surgical instrument Tray large medium"
+  },
+  {
+    "code": "80-633-01-04",
+    "desc": "marSeal® 5 plus Maryland IQ System, shaft length 450 mm, instrument, complete, incl. 80-633-12-04, 80-633-13-04, without blades",
     "qty": 1
   }
 ]
